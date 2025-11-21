@@ -1,23 +1,38 @@
 import { User } from "../models/user.model.js";
+import { uploadToCloud } from "../utils/uploadToCloud.js";
 
-export const updateProfile = async ({ userId, fullname, email, phoneNumber, bio, skills }) => {
-  try {
-    const user = await User.findById(userId);
-    if (!user) throw new Error("User not found");
+export const updateProfile = async ({
+  userId, fullname, email, phoneNumber, bio, skills,
+  resumeFile, profilePhotoFile
+}) => {
 
-    const updates = {
-      ...(fullname && { fullname }),
-      ...(email && { email }),
-      ...(phoneNumber && { phoneNumber }),
-      ...(bio && { bio }),
-      ...(skills && { skills: skills.split(",") }),
-    };
+  const user = await User.findById(userId);
+  if (!user) throw new Error("User not found");
 
-    Object.assign(user, updates); // merge updates into user object
-    const updatedUser = await user.save();
+// if (resumeFile) {
+//   const url = await uploadToCloud(resumeFile);
+//   console.log("Uploaded PDF URL:", url); // <--- ADD THIS
+//   user.profile.resume = url;
+// }
 
-    return updatedUser;
-  } catch (error) {
-    throw new Error("Error updating profile: " + error.message);
+
+
+  if (resumeFile) {
+    const url = await uploadToCloud(resumeFile, "raw");
+    user.profile.resume = url;
+    user.profile.resumeOriginalName = resumeFile.originalname;
   }
+
+  if (profilePhotoFile) {
+    const url = await uploadToCloud(profilePhotoFile, "image");
+    user.profile.profilePhoto = url;
+  }
+
+  if (fullname) user.fullname = fullname;
+  if (email) user.email = email;
+  if (phoneNumber) user.phoneNumber = phoneNumber;
+  if (bio) user.profile.bio = bio;
+  if (skills) user.profile.skills = skills;  // should be string!
+
+  return await user.save();
 };

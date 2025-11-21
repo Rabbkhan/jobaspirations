@@ -8,16 +8,23 @@ import { updateProfile } from "../services/user.service.js";
 
 export const register = async (req, res) => {
   try {
-    // 1️⃣ Validate input using express-validator
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
 
-    // 2️⃣ Call service to handle business logic
-    const result = await registerUser(req.body);
+    const { fullname, email, phoneNumber, password, role } = req.body;
+    const profilePhoto = req.file;            // <-- THE FIX
 
-    // 3️⃣ Send success response
+    const result = await registerUser({
+      fullname,
+      email,
+      phoneNumber,
+      password,
+      role,
+      profilePhoto,
+    });
+
     res.status(STATUS.CREATED).json(result);
   } catch (error) {
     console.error("Register Error:", error);
@@ -27,6 +34,7 @@ export const register = async (req, res) => {
     });
   }
 };
+
 
 // Login
 
@@ -62,7 +70,8 @@ export const login = async (req, res) => {
     console.log(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: MESSAGES.SERVER_ERROR,
+            message: error.message || MESSAGES.SERVER_ERROR,
+
     });
   }
 };
@@ -94,36 +103,27 @@ export const logout = async (req, res) => {
 
 //update profile
 
-
 export const updateProfileController = async (req, res) => {
-
-   const userId = req.user.id;
-
   try {
-    
-const updatedUser = await updateProfile({
-    userId,
+    const resumeFile = req.files?.resume?.[0] || null;
+    const profilePhotoFile = req.files?.profilePhoto?.[0] || null;
+
+    const updatedUser = await updateProfile({
+      userId: req.user.id,
       fullname: req.body.fullname,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
       bio: req.body.bio,
       skills: req.body.skills,
-});
+      resumeFile,
+      profilePhotoFile,
+    });
 
-
-res.status(STATUS.OK).json({
-  success:true,
-  message: MESSAGES.PROFILE_UPDATE,
-  data:updatedUser
-})
-
-  } catch (error) {
-    res.status(STATUS.BAD_REQUEST).json({
-      success:false,
-      message:MESSAGES.INTERNAL_SERVER_ERROR,
-      error: error.message
-    })
+    res.status(200).json({
+      success: true,
+      data: updatedUser,
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
   }
-
-
-}
+};
