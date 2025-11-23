@@ -114,6 +114,25 @@ export const updateJob = async ({ jobId, data, userId }) => {
   };
 };
 
+// =============================
+// GET ADMIN JOBS (Created by logged-in user)
+// =============================
+export const getAdminJobs = async (userId) => {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    const err = new Error("Invalid user ID");
+    err.status = 400;
+    throw err;
+  }
+
+  const jobs = await Job.find({ created_by: userId })
+    .populate("company", "name location")
+    .populate("created_by", "fullname email");
+
+  return { success: true, jobs };
+};
+
+
+
 
 // =============================
 // DELETE JOB

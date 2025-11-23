@@ -6,6 +6,7 @@ import {
   getJobById,
   updateJob,
   deleteJob,
+  getAdminJobs,
 } from "../services/job.service.js";
 import { STATUS } from "../constants/statusCodes.js";
 import { MESSAGES } from "../constants/messages.js";
@@ -68,6 +69,28 @@ export const updateJobController = async (req, res) => {
     return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
+
+//admin job 
+
+export const getAdminJobsController = async (req, res) => {
+  try {
+    const userId = req.user.id; // Coming from auth middleware
+
+    const data = await getAdminJobs(userId);
+
+    return res.status(200).json({
+      success: true,
+      jobs: data.jobs
+    });
+
+  } catch (error) {
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 
 
 // DELETE JOB
