@@ -1,26 +1,53 @@
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
 import { Company } from "../models/company.model.js";
+import { uploadToCloud } from "../utils/uploadToCloud.js";
 
-export const createCompany = async (data, userId) => {
-  const existingCompany = await Company.findOne({ name: data.name });
-
-  if (existingCompany) {
-    const err = new Error(MESSAGES.COMPANY_EXISTS);
-    err.status = STATUS.BAD_REQUEST;
+export const createCompany = async (data, userId, file) => {
+  if (!userId) {
+    const err = new Error("userId is required");
+    err.status = 400;
     throw err;
   }
 
-  const company = await Company.create({ ...data, userId });
+  // FIX: Use correct field
+  const existingCompany = await Company.findOne({ companyname: data.companyname });
+  if (existingCompany) {
+    const err = new Error("Company already exists");
+    err.status = 400;
+    throw err;
+  }
+
+  let logoURL = "";
+if (file) {
+  logoURL = await uploadToCloud(file, "image");
+}
+
+
+  const company = await Company.create({
+    companyname: data.companyname,
+    description: data.description,
+    website: data.website,
+    location: data.location,
+    employees: data.employees,
+    logo: logoURL,
+    userId: userId,
+  });
+
   return {
     success: true,
-    message: MESSAGES.COMPANY_CREATED,
-    company,
+    message: "Company created successfully",
+    companyId: company._id,
   };
 };
 
+
+
 export const getAllCompanies = async (userId) => {
-  const companies = await Company.find({userId}).populate("userId", "name email");
+  const companies = await Company.find({ userId }).populate(
+    "userId",
+    "name email"
+  );
   return { success: true, companies };
 };
 
@@ -54,7 +81,6 @@ export const updateCompany = async (id, data, userId) => {
   return { success: true, message: MESSAGES.COMPANY_UPDATED, company };
 };
 
-
 export const deleteCompany = async (id, userId) => {
   const company = await Company.findById(id);
   if (!company) {
@@ -70,5 +96,5 @@ export const deleteCompany = async (id, userId) => {
   }
 
   await company.deleteOne();
-  return { success: true, message: MESSAGES.COMPANY_DELETED};
+  return { success: true, message: MESSAGES.COMPANY_DELETED };
 };

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,35 +13,75 @@ import {
   ClockIcon,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { JOB_API_END_POINT } from "../../utils/constants";
+import {
+  APPLICATIONS_API_END_POINT,
+  JOB_API_END_POINT,
+} from "../../utils/constants";
 import axios from "axios";
+import { toast } from "sonner";
 import { setSingleJob } from "../../features/jobSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const JobDetails = () => {
- 
   const params = useParams();
   const jobId = params.id;
   const { singleJob } = useSelector((store) => store.job);
   const disptach = useDispatch();
   const { user } = useSelector((store) => store.auth);
+  const isIntiallyApplied =
+    singleJob?.applications?.some(
+      (application) => application.applicant === user?._id
+    ) || false;
 
-  useEffect(() => {
-    const fetchSingleJob = async () => {
-      try {
-        const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, {
-          withCredentials: true,
-        });
+  const [isApplied, setIsApplied] = useState(isIntiallyApplied);
 
-        if (res.data.success) {
-          disptach(setSingleJob(res.data.job));
-        }
-      } catch (error) {
-        console.log(error);
+useEffect(() => {
+  const fetchSingleJob = async () => {
+    try {
+      const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, {
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        disptach(setSingleJob(res.data.job));
+
+        setIsApplied(
+          res.data.job.applications.some(
+            (app) => app?.applicant?._id === user?._id
+          )
+        );
       }
-    };
-    fetchSingleJob();
-  }, [jobId, disptach, user?._id]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  fetchSingleJob();
+}, [jobId, disptach, user?._id]);
+
+  const applyJobHandler = async () => {
+    try {
+      const res = await axios.post(
+        `${APPLICATIONS_API_END_POINT}/apply/${jobId}`,
+        {},
+        { withCredentials: true }
+      );
+
+      console.log(res.data);
+
+      if (res.data.success) {
+        setIsApplied(true);
+        const updateSingleJob = {
+          ...singleJob,
+          applications: [...singleJob.applications, { applicant: user?._id }],
+        };
+        disptach(setSingleJob(updateSingleJob)); // help to get realtime applicant count
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,9 +118,8 @@ const JobDetails = () => {
                 {/* Applicants */}
                 <span className="flex items-center gap-1">
                   <UsersIcon className="w-4 h-4" />
-                  {singleJob?.applications?.length || 0} Applicants
+                  {singleJob?.applications?.length || 0}
                 </span>
-
                 {/* Open positions */}
                 <span className="flex items-center gap-1">
                   <LayersIcon className="w-4 h-4" />
@@ -127,9 +166,16 @@ const JobDetails = () => {
 
                 <Button
                   size="lg"
-                  className="w-full md:w-auto bg-primary text-primary-foreground"
+                  onClick={isApplied ? null : applyJobHandler}
+                  disabled={isApplied}
+                  className={`w-full md:w-auto text-primary-foreground cursor-pointer rounded-lg
+    ${
+      isApplied
+        ? "bg-gray-600 cursor-not-allowed"
+        : "bg-[#7209b7] hover:bg-[#5f32ad]"
+    }`}
                 >
-                  Apply Now
+                  {isApplied ? "Already Applied" : "Apply Now"}
                 </Button>
               </div>
             </CardContent>

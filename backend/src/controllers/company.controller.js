@@ -24,7 +24,7 @@ export const createCompanyController = async (req, res) => {
     }
 
     // Service layer handles logic
-    const result = await createCompany(req.body, userId);
+const result = await createCompany(req.body, userId, req.file);
 
     return res.status(STATUS.CREATED).json(result);
   } catch (error) {

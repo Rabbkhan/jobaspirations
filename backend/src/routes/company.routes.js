@@ -9,6 +9,8 @@ import {
 } from "../controllers/company.controller.js";
 
 import { companyValidation } from "../validations/company.validation.js";
+import { upload } from "../middlewares/multer.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
@@ -17,20 +19,23 @@ const router = express.Router();
 // ===============================
 router.post(
   "/create",
-  authenticate,        // Must be logged in
-  companyValidation,   // Validate fields
+  authenticate, // Must be logged in
+   authorizeRoles("recruiter"),  // Only recruiters & admins allowed
+  upload.single("logo"),
+  companyValidation, // Validate fields
+
   createCompanyController
 );
 
 // ===============================
 // 📌 GET ALL COMPANIES
 // ===============================
-router.get("/", authenticate, getAllCompaniesController);
+router.get("/", authenticate, authorizeRoles("recruiter"),  getAllCompaniesController);
 
 // ===============================
 // 📌 GET SINGLE COMPANY BY ID
 // ===============================
-router.get("/:id", authenticate, getCompanyByIdController);
+router.get("/:id", authenticate, authorizeRoles("recruiter"),  getCompanyByIdController);
 
 // ===============================
 // 📌 UPDATE COMPANY (Only owner / recruiter)
@@ -38,6 +43,7 @@ router.get("/:id", authenticate, getCompanyByIdController);
 router.put(
   "/:id",
   authenticate,
+   authorizeRoles("recruiter"), 
   companyValidation, // optional: only if you want validation on update
   updateCompanyController
 );
@@ -45,11 +51,6 @@ router.put(
 // ===============================
 // ❌ DELETE COMPANY (Only owner / recruiter)
 // ===============================
-router.delete("/:id", authenticate, deleteCompanyController);
+router.delete("/:id", authenticate, authorizeRoles("recruiter"),  deleteCompanyController);
 
 export default router;
-
-
-
-
-

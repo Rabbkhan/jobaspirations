@@ -70,7 +70,14 @@ export const getJobById = async (id) => {
 
   const job = await Job.findById(id)
     .populate("company", "name location")
-    .populate("created_by", "fullname email");
+    .populate("created_by", "fullname email")
+    .populate({
+      path: "applications",
+      populate: {
+        path: "applicant",
+        select: "_id fullname email"
+      }
+    });
 
   if (!job) {
     const err = new Error("Job not found");

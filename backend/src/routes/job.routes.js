@@ -12,14 +12,15 @@ import {
   getAdminJobsController,
 } from "../controllers/job.controller.js";
 import { jobValidation } from "../validations/jobValidation.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
-router.post("/create", authenticate, jobValidation, createJobController);
+router.post("/create", authenticate,  authorizeRoles("recruiter"),jobValidation, createJobController);
 router.get("/", getAllJobsController);
-router.get("/getadminJobs", authenticate, getAdminJobsController)
+router.get("/getadminJobs", authenticate,  authorizeRoles("recruiter"),  getAdminJobsController)
 router.get("/:id", getJobByIdController);
-router.put("/:id", authenticate,jobValidation, updateJobController);
-router.delete("/:id", authenticate, deleteJobController);
+router.put("/:id", authenticate,jobValidation,  authorizeRoles("recruiter"),  updateJobController);
+router.delete("/:id", authenticate,  authorizeRoles("recruiter"),  deleteJobController);
 
 export default router;

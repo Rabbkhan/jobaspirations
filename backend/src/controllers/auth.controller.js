@@ -43,13 +43,14 @@ export const login = async (req, res) => {
     const { user, token } = await loginUser(req.body);
 
     // Store token in cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path:'/',
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    });
+  res.cookie("token", token, {
+  httpOnly: true,
+  secure: false,       // MUST be false on localhost
+  sameSite: "lax",     // NOT strict!
+  path: "/",
+  maxAge: 24 * 60 * 60 * 1000,
+});
+
 
    const  safeUser = {
       _id: user._id,

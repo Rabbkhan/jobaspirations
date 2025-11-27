@@ -1,0 +1,85 @@
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Building2, Briefcase, LayoutDashboard, LogOut } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { USER_API_END_POINT } from "../../utils/constants";
+import { setUser } from "../../features/authSlice";
+import { toast } from "sonner";
+
+const Sidebar = () => {
+  const { pathname } = useLocation();
+  const { user } = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = async () => {
+    try {
+      const res = await axios.get(`${USER_API_END_POINT}/logout`, {
+        withCredentials: true,
+      });
+
+      if (res.data.success) {
+        dispatch(setUser(null));
+        navigate("/login");
+        toast.success("Logged out successfully");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Logout failed");
+    }
+  };
+
+  const linkClass = (path) =>
+    `flex items-center gap-3 p-3 rounded-lg text-sm transition 
+     ${pathname === path ? "bg-primary text-primary-foreground" : "hover:bg-accent"}`;
+
+  return (
+    <aside className="w-64 h-screen border-r bg-card flex flex-col p-4">
+      {/* Header */}
+      <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
+
+      {/* User Profile */}
+      <div className="flex items-center gap-3 mb-6 p-3 rounded-lg bg-accent">
+        <Avatar>
+          <AvatarImage src={user?.profile?.profilePhoto} alt={user?.fullName} />
+          <AvatarFallback>{user?.fullName?.[0] || "A"}</AvatarFallback>
+        </Avatar>
+
+        <div>
+          <p className="font-medium">{user?.fullname}</p>
+          {/* <p className="text-xs text-muted-foreground">Admin</p> */}
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex flex-col gap-2">
+        <Link to="/admin" className={linkClass("/admin")}>
+          <LayoutDashboard size={18} /> Dashboard
+        </Link>
+
+        <Link to="/admin/companies" className={linkClass("/admin/companies")}>
+          <Building2 size={18} /> Companies
+        </Link>
+
+        <Link to="/admin/jobs" className={linkClass("/admin/jobs")}>
+          <Briefcase size={18} /> Jobs
+        </Link>
+      </nav>
+
+      {/* Logout Button */}
+      <div className="mt-auto pt-4">
+        <Button
+          variant="destructive"
+          className="w-full flex  cursor-pointer items-center gap-2"
+          onClick={logoutHandler}
+        >
+          <LogOut size={18} />
+          Logout
+        </Button>
+      </div>
+    </aside>
+  );
+};
+
+export default Sidebar;

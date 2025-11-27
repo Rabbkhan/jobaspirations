@@ -65,7 +65,8 @@ import { useSelector } from "react-redux";
 const LatestJobs = () => {
 
   const {allJobs} = useSelector(store=>store.job);
-  
+const latestSixJobs = allJobs.slice(-6).reverse();
+
 const timeAgo = (timestamp) => {
   const now = new Date();
   const created = new Date(timestamp);
@@ -93,7 +94,7 @@ const formatExperience = (exp) => {
       <p className="text-muted-foreground mb-8">Fresh jobs curated specially for you</p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {allJobs.length < 0? <span>No job Avaliable</span> :allJobs?.map((job, idx) => (
+        {latestSixJobs.length < 0? <span>No job Avaliable</span> :latestSixJobs?.map((job, idx) => (
           <Card
             key={idx}
             className="relative p-5 border shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl"

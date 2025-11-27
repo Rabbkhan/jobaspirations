@@ -6,18 +6,22 @@ import userRoutes from './src/routes/user.routes.js'
 import companyRoutes from './src/routes/company.routes.js'
 import jobRoutes from './src/routes/job.routes.js'
 import connectDb from "./src/config/db.js";
-
+import applicationRoutes from './src/routes/application.routes.js'
 dotenv.config({});
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 
-const corsOptions = {
-  origin: "http://localhost:5173",
-  credentials: true,
-};
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  })
+);
+
 
 // app.get("/", (req, res) => {
 //   return res.status(200).json({
@@ -38,6 +42,7 @@ app.use(cookieParser()); //cookie parser
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/job", jobRoutes);
+app.use("/api/v1/applications", applicationRoutes);
 
 // http://localhost:8000/api/v1/auth/register
 
