@@ -21,7 +21,9 @@ export const authenticate = (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
 
-    req.user = { id: decoded.userId };
+    req.user = { id: decoded.userId,
+      role: decoded.role,   // ✅ REQUIRED
+     };
     next();
   } catch (error) {
     return res.status(STATUS.FORBIDDEN).json({
