@@ -23,12 +23,12 @@ app.use(
 );
 
 
-// app.get("/", (req, res) => {
-//   return res.status(200).json({
-//     message: " I am coming from backend!",
-//     success: true,
-//   });
-// });
+app.get("/", (req, res) => {
+  return res.status(200).json({
+    message: " I am coming from backend!",
+    success: true,
+  });
+});
 
 //middlewares
 
