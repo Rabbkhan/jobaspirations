@@ -2,24 +2,20 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import './index.css'
-import { Toaster } from "@/components/ui/sonner"
-import { Provider } from "react-redux"
-import { store } from "./store/store"; // make sure store exports persistor too
-import { PersistGate } from 'redux-persist/integration/react'
-import { persistStore } from "redux-persist";
+import "./index.css";
+import { Toaster } from "@/components/ui/sonner";
+import { Provider } from "react-redux";
+import { store, persistor } from "./store/store";
+import { PersistGate } from "redux-persist/integration/react";
 import DashboardLoading from "./components/common/loading/DashboardLoading";
-
-const persistor = persistStore(store)
-
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<DashboardLoading />} persistor={persistor}>
         <BrowserRouter>
           <App />
-          <Toaster /> {/* moved inside */}
+          <Toaster />
         </BrowserRouter>
       </PersistGate>
     </Provider>

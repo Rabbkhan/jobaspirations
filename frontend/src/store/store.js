@@ -1,7 +1,8 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "../features/authSlice";
 import jobSlice from "../features/jobSlice";
-import companySlice from "../features/companySlice"
+import companySlice from "../features/companySlice";
+
 import {
   persistStore,
   persistReducer,
@@ -15,32 +16,32 @@ import {
 
 import storage from "redux-persist/lib/storage";
 
-// ---- Persist Config (only for auth) ----
-const persistConfig = {
-  key: "root",
+// ✅ ONLY AUTH IS PERSISTED (FAST STARTUP)
+const authPersistConfig = {
+  key: "auth",
   version: 1,
   storage,
+  whitelist: ["user", "isAuthenticated"], // ✅ persist only what is needed
 };
 
-
+// ✅ ROOT REDUCER
 const rootReducer = combineReducers({
-  auth:authSlice,
-  job:jobSlice,
-  company:companySlice
-})
+  auth: persistReducer(authPersistConfig, authSlice),
+  job: jobSlice,
+  company: companySlice,
+});
 
-// ---- Wrap ONLY Auth Reducer ----
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-// ---- Store ----
+// ✅ STORE
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
+  devTools: process.env.NODE_ENV !== "production",
 });
 
+// ✅ PERSISTOR
 export const persistor = persistStore(store);
