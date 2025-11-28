@@ -175,12 +175,17 @@ export default function Navbar() {
             <div className="mt-4">
               {!user ? (
                 <div className="flex flex-col gap-2">
+               <Link to ="/login"> 
                   <Button variant="ghost" className="w-full text-foreground">
-                    Login
+                  Login
                   </Button>
+                   </Link>
+                                  <Link to ="/register"> 
+
                   <Button className="w-full bg-primary hover:bg-primary-dark text-white">
                     Register
                   </Button>
+                  </Link>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
