@@ -94,7 +94,7 @@ export const logout = async (req, res) => {
     console.error("Logout Error:", error.message);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: "Failed to logout",
+      message: MESSAGES.LOGOUT_FAILED,
     });
   }
 };

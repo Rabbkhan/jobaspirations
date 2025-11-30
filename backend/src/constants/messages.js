@@ -15,6 +15,7 @@ export const MESSAGES = {
   REGISTER_SUCCESS: "Account created successfully.",
   LOGIN_SUCCESS: "Logged in successfully.",
   LOGOUT_SUCCESS: "Logged out successfully.",
+  LOGOUT_FAILED: "Failed to Logout .",
   USER_EXISTS: "An account already exists with this email.",
   AUTH_REQUIRED: "Please login to continue.",
   SESSION_EXPIRED: "Your session has expired. Please login again.",
