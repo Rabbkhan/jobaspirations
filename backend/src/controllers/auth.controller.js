@@ -41,13 +41,14 @@ export const login = async (req, res) => {
   try {
     const { user, token } = await loginUser(req.body);
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // must be HTTPS in production
-      sameSite: "none", // required for cross-domain
-      path: "/",
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+res.cookie("token", token, {
+  httpOnly: true,   // ✅ secure
+  secure: true,    // ✅ localhost only
+  sameSite: "none",  // ✅ localhost
+  // path: "/",
+  maxAge: 24 * 60 * 60 * 1000,
+});
+
 
     const safeUser = {
       _id: user._id,

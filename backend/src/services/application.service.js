@@ -56,15 +56,40 @@ export const applyForJob = async ({ jobId, userId }) => {
   };
 };
 
+export const getMyApplications = async (userId, page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
 
+  const [apps, total] = await Promise.all([
+    Application.find({ applicant: userId })
+      .populate({
+        path: "job",
+        select: "title location salary jobType company",
+        populate: {
+          path: "company",
+          select: "companyname logo location"
+        }
+      })
+      .populate("applicant", "fullname email")
+      .sort({ createdAt: -1 })
+      .skip(skip)         // ✅ pagination
+      .limit(limit),     // ✅ pagination
 
-export const getMyApplications = async (userId) => {
-  const apps = await Application.find({ applicant: userId })
-    .populate("job", "title company location salary")
-    .populate("applicant", "fullname email");
+    Application.countDocuments({ applicant: userId }) // ✅ total count
+  ]);
 
-  return { success: true, applications: apps };
+  return {
+    success: true,
+    applications: apps,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    }
+  };
 };
+
+
 
 
 

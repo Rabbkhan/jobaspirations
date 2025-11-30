@@ -14,22 +14,14 @@ const app = express();
 
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL_LOCAL,
+  // process.env.FRONTEND_URL_LOCAL,
   process.env.FRONTEND_URL_LIVE
 ];
 
 app.use(cors({
-  origin: function(origin, callback){
-    if(!origin) return callback(null, true); // mobile apps, Postman
-    if(allowedOrigins.indexOf(origin) === -1){
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    return callback(null, true);
-  },
-  credentials: true
+  origin: "http://localhost:5173",  // ✅ ONLY frontend
+  credentials: true                // ✅ MUST be true
 }));
-
 
 
 app.get("/", (req, res) => {

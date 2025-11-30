@@ -25,10 +25,17 @@ export const applyForJobController = async (req, res) => {
 // GET MY APPLICATIONS
 export const getMyApplicationsController = async (req, res) => {
   try {
-    const result = await getMyApplications(req.user.id);
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+
+    const result = await getMyApplications(req.user.id, page, limit);
+
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 

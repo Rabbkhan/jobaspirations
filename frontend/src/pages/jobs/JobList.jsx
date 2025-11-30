@@ -118,7 +118,7 @@ const JobList = () => {
   const {allJobs} = useSelector(store=>store.job);
 
 
-console.log(allJobs);
+// console.log(allJobs);
 
   return (
     <div className="container px-4 py-6">
