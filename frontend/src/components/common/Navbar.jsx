@@ -198,9 +198,8 @@ export default function Navbar() {
                   </Link>
                   <button
                     className="inline-flex items-center gap-2 text-destructive"
-                    onClick={() => {
-                      /* logout */
-                    }}
+                                       onClick={logoutHandler}
+
                   >
                     <LogOut className="w-4 h-4" /> Logout
                   </button>

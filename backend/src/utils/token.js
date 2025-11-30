@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const generateToken = (user) => {
   const payload = {
-    userId: user._id,
+    userId: user._id.toString(),
     role: user.role,   // ✅ THIS FIXES EVERYTHING
   };
 

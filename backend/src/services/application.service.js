@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
 import { STATUS } from "../constants/statusCodes.js";
+import { MESSAGES } from "../constants/messages.js";
 
 
 // APPLY FOR A JOB
@@ -18,7 +19,7 @@ export const applyForJob = async ({ jobId, userId }) => {
   const job = await Job.findById(jobId);
 
   if (!job) {
-    const err = new Error("Job not found");
+    const err = new Error(MESSAGES.JOB_NOT_FOUND);
     err.status = STATUS.NOT_FOUND;
     throw err;
   }
@@ -33,7 +34,7 @@ export const applyForJob = async ({ jobId, userId }) => {
   });
 
   if (alreadyApplied) {
-    const err = new Error("You already applied for this job");
+    const err = new Error(MESSAGES.APPLICATION_EXISTS);
     err.status = STATUS.BAD_REQUEST;
     throw err;
   }
@@ -50,7 +51,7 @@ export const applyForJob = async ({ jobId, userId }) => {
 
   return {
     success: true,
-    message: "Application submitted successfully",
+    message: MESSAGES.APPLICATION_SUBMITTED,
     application,
   };
 };

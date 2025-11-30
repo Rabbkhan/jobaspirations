@@ -1,24 +1,20 @@
+import { Outlet } from "react-router-dom";
 import Footer from "../components/common/Footer";
 import Navbar from "../components/common/Navbar";
-import { useLocation } from "react-router-dom";
 
-const MainLayout = ({ children }) => {
-  const { pathname } = useLocation();
-
-  // hide Navbar + Footer if route starts with "/admin"
-  const isAdminRoute = pathname.startsWith("/admin");
-
+const MainLayout = () => {
   return (
     <div className="min-h-screen bg-background">
-      
-      {!isAdminRoute && <Navbar />}
+      <Navbar />
 
-      <div className="min-h-[80vh]">{children}</div>
+      <div className="min-h-[80vh]">
+        <Outlet />
+      </div>
 
-      {!isAdminRoute && <Footer />}
-
+      <Footer />
     </div>
   );
 };
 
 export default MainLayout;
+   

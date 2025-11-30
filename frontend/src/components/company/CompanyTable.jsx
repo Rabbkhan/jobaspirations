@@ -51,7 +51,7 @@ const CompanyTable = ({ data, loading }) => {
 
           {!loading &&
             data?.map((company) => (
-              <TableRow key={company.id} className="hover:bg-muted/30">
+              <TableRow key={company._id} className="hover:bg-muted/30">
                 <TableCell className="text-center py-4">
                   <Avatar className="h-16 w-16 mx-auto">
                     <AvatarImage

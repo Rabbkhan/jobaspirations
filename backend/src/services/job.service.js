@@ -132,7 +132,8 @@ export const getAdminJobs = async (userId) => {
   }
 
   const jobs = await Job.find({ created_by: userId })
-    .populate("company", "name location")
+ 
+    .populate({path:"company"})
     .populate("created_by", "fullname email");
 
   return { success: true, jobs };
@@ -152,22 +153,26 @@ export const deleteJob = async ({ jobId, userId }) => {
   }
 
   const job = await Job.findById(jobId);
+
   if (!job) {
     const err = new Error(MESSAGES.JOB_NOT_FOUND);
     err.status = STATUS.NOT_FOUND;
     throw err;
   }
 
-  if (job.created_by.toString() !== userId) {
+  // ✅ FIXED: Safe ownership check
+  if (job.created_by.toString() !== userId.toString()) {
     const err = new Error(MESSAGES.CANNOT_DELETE_OTHERS_JOB);
     err.status = STATUS.FORBIDDEN;
     throw err;
   }
 
-  await Job.findByIdAndDelete(jobId);
+  // ✅ FIXED: Delete the actual instance
+  await job.deleteOne();
 
   return {
     success: true,
     message: MESSAGES.JOB_DELETED,
+    deletedJobId: jobId,
   };
 };

@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ShieldAlert } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Unauthorized = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
 
+  // 1. If NOT logged in → force login
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  useEffect(() => {
+    // 2. Recruiter/Admin trying to access student pages (like /profile)
+    if (user.role === "recruiter" || user.role === "admin") {
+      navigate("/admin", { replace: true });
+      return;
+    }
+
+    // 3. Student unauthorized → go back or home
+    if (user.role === "student") {
+      if (location.key !== "default") {
+        navigate(-1); // go back if history exists
+      } else {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [user, navigate, location]);
+
+  // 4. Fallback UI (only flashes briefly if navigation is blocked)
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-6">
       <div className="bg-background border border-border rounded-2xl shadow-lg p-10 max-w-md text-center space-y-6">
@@ -17,8 +43,7 @@ const Unauthorized = () => {
         <h1 className="text-3xl font-bold">Access Denied</h1>
 
         <p className="text-muted-foreground text-sm leading-relaxed">
-          You do not have permission to access this page.  
-          Please contact the administrator if you believe this is a mistake.
+          You do not have permission to access this page.
         </p>
 
         <div className="flex flex-col gap-3 mt-6">

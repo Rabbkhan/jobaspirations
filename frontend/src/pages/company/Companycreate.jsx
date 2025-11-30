@@ -34,7 +34,7 @@ const Companycreate = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const { user } = useSelector((store) => store.auth);
+  // const { user } = useSelector((store) => store.auth);
 
   // Logo Upload Handler
   const handleLogoUpload = (e) => {

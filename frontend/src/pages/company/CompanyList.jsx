@@ -20,7 +20,7 @@ const CompanyList = () => {
         withCredentials: true,
       });
 
-      console.log(res);
+      // console.log(res);
 
       setCompanies(res.data.companies);
       // setFilteredData(res.data.data);

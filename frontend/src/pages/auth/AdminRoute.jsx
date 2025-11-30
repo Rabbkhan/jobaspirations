@@ -8,7 +8,10 @@ const AdminRoute = ({ children }) => {
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== "recruiter") return <Navigate to="/unauthorized" replace />;
 
-  return children;
+  return children ? children : <Outlet />;
 };
 
 export default AdminRoute;
+
+
+

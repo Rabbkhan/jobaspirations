@@ -1,14 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { ArrowLeft, PlusCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import {
+  COMPANY_API_END_POINT,
+  JOB_API_END_POINT,
+} from "../../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { setAllCompany, setLoading } from "../../features/companySlice";
+import { toast } from "sonner";
 
 const Jobcreate = () => {
+  // const [companies, setCompanies] = useState([]);
+  const { loading, allCompany } = useSelector((store) => store.company);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: "",
     company: "",
@@ -20,6 +38,32 @@ const Jobcreate = () => {
     skills: "",
   });
 
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        dispatch(setLoading(true));
+
+        const res = await axios.get(COMPANY_API_END_POINT, {
+          withCredentials: true,
+        });
+
+        console.log("Companies API:", res.data);
+
+        // ✅ IMPORTANT: use correct response key
+        dispatch(setAllCompany(res?.data?.companies || []));
+
+        toast.success(res?.data?.message || "Companies loaded");
+      } catch (error) {
+        console.log("Fetch company error:", error);
+        toast.error("Failed to load companies");
+      } finally {
+        dispatch(setLoading(false)); // ✅ NOW IT IS CORRECT
+      }
+    };
+
+    fetchCompanies();
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -28,10 +72,33 @@ const Jobcreate = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Job Created:", formData);
-    // API call here
+
+    try {
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        requirements: formData.skills.split(",").map((s) => s.trim()), // ✅ ARRAY
+        salary: Number(formData.salary), // ✅ NUMBER
+        experienceLevel: Number(formData.experience), // ✅ NUMBER
+        location: formData.location,
+        jobType: formData.type,
+        position: 1, // ✅ you can make this dynamic later
+        company: formData.company, // ✅ ObjectId from Select
+      };
+
+      const res = await axios.post(`${JOB_API_END_POINT}/create`, payload, {
+        withCredentials: true,
+      });
+
+      toast.success(res?.data?.message);
+
+      navigate("/admin/jobs");
+    } catch (error) {
+      console.log("Create job error:", error?.response?.data || error);
+      toast.error(error?.response?.data?.message || "Failed to create job");
+    }
   };
 
   return (
@@ -67,14 +134,31 @@ const Jobcreate = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Company */}
             <div className="space-y-2">
-              <Label>Company Name</Label>
-              <Input
-                placeholder="TechHive Solutions"
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                required
-              />
+              <Label>Company</Label>
+
+              <Select onValueChange={(value) => handleSelect("company", value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a company" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {loading ? (
+                    <div className="p-3 text-sm text-muted-foreground text-center">
+                      Loading companies...
+                    </div>
+                  ) : allCompany?.length === 0 ? (
+                    <div className="p-3 text-sm text-muted-foreground text-center">
+                      No companies found
+                    </div>
+                  ) : (
+                    allCompany?.map((company) => (
+                      <SelectItem key={company._id} value={company._id}>
+                        {company.companyname}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Job Location */}
@@ -109,10 +193,12 @@ const Jobcreate = () => {
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Full-time">Full-time</SelectItem>
-                  <SelectItem value="Part-time">Part-time</SelectItem>
-                  <SelectItem value="Internship">Internship</SelectItem>
-                  <SelectItem value="Remote">Remote</SelectItem>
+                  <SelectContent>
+                    <SelectItem value="Full-Time">Full-Time</SelectItem>
+                    <SelectItem value="Part-Time">Part-Time</SelectItem>
+                    <SelectItem value="Internship">Internship</SelectItem>
+                    <SelectItem value="Contract">Contract</SelectItem>
+                  </SelectContent>
                 </SelectContent>
               </Select>
             </div>

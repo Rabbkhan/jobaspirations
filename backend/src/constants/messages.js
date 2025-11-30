@@ -16,6 +16,9 @@ export const MESSAGES = {
   LOGIN_SUCCESS: "Logged in successfully.",
   LOGOUT_SUCCESS: "Logged out successfully.",
   USER_EXISTS: "An account already exists with this email.",
+  AUTH_REQUIRED: "Please login to continue.",
+  SESSION_EXPIRED: "Your session has expired. Please login again.",
+  AUTH_INVALID: "Authentication failed. Please login again.",
   INVALID_CREDENTIALS: "Invalid email or password.",
   ROLE_MISMATCH: "Account doesn't exist with current role.",
   TOKEN_EXPIRED: "Session expired, please login again.",
@@ -73,8 +76,7 @@ export const MESSAGES = {
   ACCOUNT_DISABLED: "This account has been disabled by the admin.",
   ACCOUNT_VERIFIED: "Account verified successfully.",
   ACCOUNT_ALREADY_VERIFIED: "Account already verified.",
-  
-  
+
   // ==========================
   // 🏢 COMPANY MANAGEMENT
   // ==========================

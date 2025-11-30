@@ -1,23 +1,42 @@
 // routes/application.routes.js
 import express from "express";
-import { authenticate } from "../middlewares/auth.middleware..js";
 
 import {
   applyForJobController,
   getMyApplicationsController,
-  updateApplicationStatusController
+  updateApplicationStatusController,
 } from "../controllers/application.controller.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
+import { authenticate } from "../middlewares/auth.middleware..js";
 
 const router = express.Router();
 
-// Apply for job
-router.post("/apply/:jobId", authenticate, applyForJobController);
+/* ================= STUDENT ONLY ================= */
 
-// Get my applications
-router.get("/mine", authenticate, getMyApplicationsController);
+// Apply for a job (STUDENT ONLY)
+router.post(
+  "/apply/:jobId",
+  authenticate,
+  authorizeRoles("student"),
+  applyForJobController
+);
 
+// Get my applications (STUDENT ONLY)
+router.get(
+  "/mine",
+  authenticate,
+  authorizeRoles("student"),
+  getMyApplicationsController
+);
 
-// Update application status
-router.put("/:appId/status", authenticate, updateApplicationStatusController);
+/* ================= RECRUITER ONLY ================= */
+
+// Update application status (RECRUITER ONLY)
+router.put(
+  "/:appId/status",
+  authenticate,
+  authorizeRoles("recruiter"),
+  updateApplicationStatusController
+);
 
 export default router;

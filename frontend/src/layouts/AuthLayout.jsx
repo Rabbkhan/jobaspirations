@@ -1,7 +1,9 @@
-const AuthLayout = ({ children }) => {
+import { Outlet } from "react-router-dom";
+
+const AuthLayout = () => {
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      {children}
+    <div className="min-h-screen flex items-center justify-center">
+      <Outlet />
     </div>
   );
 };

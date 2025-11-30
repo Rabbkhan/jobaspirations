@@ -19,6 +19,13 @@ export const createJobController = async (req, res) => {
     if (!errors.isEmpty()) {
       return res.status(STATUS.BAD_REQUEST).json({ success: false, errors: errors.array() });
     }
+// if (req.body.jobType) {
+//   req.body.jobType =
+//     req.body.jobType
+//       .toLowerCase()
+//       .replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+//       .replace("-", "-");
+// }
 
     const userId = req.user?.id;
     if (!userId)

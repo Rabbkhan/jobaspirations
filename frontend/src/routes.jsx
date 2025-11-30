@@ -1,166 +1,152 @@
 import { Routes, Route } from "react-router-dom";
 
+/* Layouts */
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import DashboardLayout from "./layouts/DashboardLayout";
 
-// Pages
+/* Route Guards */
+import ProtectedRoute from "./pages/auth/ProtectedRoute";
+import AdminRoute from "./pages/auth/AdminRoute";
+
+/* Pages */
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-
+import Home from "./components/common/Home/Home";
 import JobList from "./pages/jobs/JobList";
 import JobDetails from "./pages/jobs/JobDetails";
-
+import Profile from "./pages/user/Profile";
 import CompanyList from "./pages/company/CompanyList";
 import CompanyDetails from "./pages/company/CompanyDetails";
-
-import Profile from "./pages/user/Profile";
-import AdminDashboard from "./pages/dashboard/AdminDashboard";
-import Home from "./components/common/Home/Home";
-import AppliedJobs from "./pages/jobs/AppliedJobs";
-import DashboardLayout from "./layouts/DashboardLayout";
 import Companycreate from "./pages/company/Companycreate";
-import AdminRoute from "./pages/auth/AdminRoute";
-import Unauthorized from "./pages/Unauthorized";
-import ProtectedRoute from "./pages/auth/ProtectedRoute";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import Adminjobs from "./pages/jobs/Adminjobs";
 import Jobcreate from "./pages/jobs/Jobcreate";
+import Unauthorized from "./pages/Unauthorized";
+import StudentRoute from "./pages/auth/StudentRoute";
+import GuestOrStudentRoute from "./pages/auth/GuestOrStudentRoute";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Auth Pages - NO NAVBAR */}
-      <Route
-        path="/login"
-        element={
-          <AuthLayout>
-            <Login />
-          </AuthLayout>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <AuthLayout>
-            <Register />
-          </AuthLayout>
-        }
-      />
 
-      {/* Main app pages - WITH NAVBAR */}
-      <Route
-        path="/"
-        element={
-          <MainLayout>
-            <Home />
-          </MainLayout>
-        }
-      />
+      {/* ================= Guest  ================= */}
 
-      <Route
-        path="/jobs"
-        element={
-          <MainLayout>
-            <JobList />
-          </MainLayout>
-        }
-      />
+<Route element={<MainLayout />}>
 
-      <Route
-        path="/jobs/:id"
-        element={
-          <MainLayout>
-            <JobDetails />
-          </MainLayout>
-        }
-      />
-      {/* <Route
-        path="/applied-jobs"
-        element={
-          <MainLayout>
-            <AppliedJobs />
-          </MainLayout>
-        }
-      /> */}
+  {/* Home – Guest + Student only */}
+  <Route
+    path="/"
+    element={
+      <GuestOrStudentRoute>
+        <Home />
+      </GuestOrStudentRoute>
+    }
+  />
 
-      <Route
-        path="/profile"
-        element={
-          <MainLayout>
-            <ProtectedRoute>
+  {/* Jobs – Guest + Student only */}
+  <Route
+    path="/jobs"
+    element={
+      <GuestOrStudentRoute>
+        <JobList />
+      </GuestOrStudentRoute>
+    }
+  />
 
-            <Profile />
-            </ProtectedRoute>
-          </MainLayout>
-        }
-      />
+  <Route
+    path="/jobs/:id"
+    element={
+      <GuestOrStudentRoute>
+        <JobDetails />
+      </GuestOrStudentRoute>
+    }
+  />
 
-      {/* admin routes  */}
-      <Route element={<DashboardLayout />}>
-        <Route
-          path="/admin"
-          element={
-            <MainLayout>
-              <AdminRoute>
-                <AdminDashboard />
-              </AdminRoute>
-            </MainLayout>
-          }
-        />
+  {/* Profile – Student ONLY */}
+  <Route
+    path="/profile"
+    element={
+      <StudentRoute>
+        <Profile />
+      </StudentRoute>
+    }
+  />
 
-        <Route
-          path="/admin/companies"
-          element={
-            <MainLayout>
-              <AdminRoute>
-                <CompanyList />
-              </AdminRoute>
-            </MainLayout>
-          }
-        />
+</Route>
 
-        <Route
-          path="/admin/companies/create"
-          element={
-            <MainLayout>
-              <AdminRoute>
-                <Companycreate />
-              </AdminRoute>
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/admin/companies/:id"
-          element={
-            <MainLayout>
-              <AdminRoute>
-                <CompanyDetails />
-              </AdminRoute>
-            </MainLayout>
-          }
-        />
-          <Route
-          path="/admin/jobs"
-          element={
-            <MainLayout>
-              <AdminRoute>
-                <Adminjobs />
-              </AdminRoute>
-            </MainLayout>
-          }
-        />
-          <Route
-          path="/admin/jobs/create"
-          element={
-            <MainLayout>
-              <AdminRoute>
-                <Jobcreate />
-              </AdminRoute>
-            </MainLayout>
-          }
-        />
+
+
+
+
+
+      {/* ================= AUTH ROUTES (NO NAVBAR / NO SIDEBAR) ================= */}
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Route>
 
-            <Route path="/unauthorized" element={<Unauthorized />} />
+      {/* ================= PUBLIC + USER ROUTES (NAVBAR ONLY) ================= */}
+   <Route element={<MainLayout />}>
+<Route
+  path="/"
+  element={
+    <StudentRoute>
+      <Home />
+    </StudentRoute>
+  }
+/>
+
+  <Route
+    path="/jobs"
+    element={
+      <StudentRoute>
+        <JobList />
+      </StudentRoute>
+    }
+  />
+
+  <Route
+    path="/jobs/:id"
+    element={
+      <StudentRoute>
+        <JobDetails />
+      </StudentRoute>
+    }
+  />
+
+  <Route
+    path="/profile"
+    element={
+      <StudentRoute>
+        <Profile />
+      </StudentRoute>
+    }
+  />
+
+</Route>
+
+
+
+
+      {/* ================= ADMIN ROUTES (SIDEBAR ONLY) ================= */}
+      <Route
+        element={
+          <AdminRoute>
+            <DashboardLayout />
+          </AdminRoute>
+        }
+      >
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/companies" element={<CompanyList />} />
+        <Route path="/admin/companies/create" element={<Companycreate />} />
+        <Route path="/admin/companies/:id" element={<CompanyDetails />} />
+        <Route path="/admin/jobs" element={<Adminjobs />} />
+        <Route path="/admin/jobs/create" element={<Jobcreate />} />
+      </Route>
+
+      {/* ================= FALLBACK ================= */}
+      <Route path="/unauthorized" element={<Unauthorized />} />
 
     </Routes>
   );

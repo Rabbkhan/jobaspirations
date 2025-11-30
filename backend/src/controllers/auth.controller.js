@@ -42,15 +42,13 @@ export const login = async (req, res) => {
   try {
     const { user, token } = await loginUser(req.body);
 
-    // Store token in cookie
- res.cookie("token", token, {
+res.cookie("token", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",   // ✅ mobile fix
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // ✅ mobile fix
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   path: "/",
   maxAge: 24 * 60 * 60 * 1000,
 });
-
 
 
    const  safeUser = {

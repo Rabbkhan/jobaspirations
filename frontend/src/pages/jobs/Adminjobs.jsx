@@ -14,18 +14,39 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useGetAllAdminJobs from "../../hooks/useGetAllAdminJobs";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { JOB_API_END_POINT } from "../../utils/constants";
+import { toast } from "sonner";
+import { removeAdminJob } from "../../features/jobSlice";
 const AdminJobs = () => {
   useGetAllAdminJobs();
   const [search, setSearch] = useState("");
-const  {allAdminJobs} = useSelector(store=>store.job || {})
-  // Dummy Data (Replace with API data)
-  
+  const dispatch = useDispatch();
+  const { allAdminJobs } = useSelector((store) => store.job || {});
 
   const filteredJobs = allAdminJobs.filter((job) =>
     job.title.toLowerCase().includes(search.toLowerCase())
   );
+
+  const deleteJob = async (jobId) => {
+    try {
+      const res = await axios.delete(`${JOB_API_END_POINT}/${jobId}`, {
+        withCredentials: true,
+      });
+
+      dispatch(removeAdminJob(jobId)); // ✅ Instantly update UI
+
+      if (res.data.success) {
+        toast.success(res?.data?.message);
+
+        // ✅ Remove deleted job from UI immediately
+      }
+    } catch (error) {
+      console.log("Delete job error:", error);
+      toast.error(error?.response?.data?.message || "Failed to delete job");
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -75,7 +96,7 @@ const  {allAdminJobs} = useSelector(store=>store.job || {})
               <TableHead>Company</TableHead>
               <TableHead>Location</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
+              {/* <TableHead>Status</TableHead> */}
               <TableHead>Applicants</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -83,14 +104,14 @@ const  {allAdminJobs} = useSelector(store=>store.job || {})
 
           <TableBody>
             {filteredJobs.map((job) => (
-              <TableRow key={job.id} className="hover:bg-muted/40">
+              <TableRow key={job._id} className="hover:bg-muted/40">
                 <TableCell className="font-medium">{job.title}</TableCell>
-                <TableCell>{job.company}</TableCell>
+                <TableCell>{job.company?.companyname}</TableCell>
                 <TableCell>{job.location}</TableCell>
                 <TableCell>
-                  <Badge variant="secondary">{job.type}</Badge>
+                  <Badge variant="secondary">{job?.jobType}</Badge>
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Badge
                     className={
                       job.status === "Open"
@@ -98,15 +119,25 @@ const  {allAdminJobs} = useSelector(store=>store.job || {})
                         : "bg-red-100 text-red-700"
                     }
                   >
-                    {job.status}
+                    {job?.status}
                   </Badge>
+                </TableCell> */}
+                <TableCell>
+                  <Link to={`/admin/jobs/${job._id}/applications`}>
+                    <Button size="sm" variant="outline">
+                      View ({job.applications?.length || 0})
+                    </Button>
+                  </Link>
                 </TableCell>
-                <TableCell>{job.applicants}</TableCell>
 
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-3">
                     <Link to={`/admin/jobs/edit/${job.id}`}>
-                      <Button size="sm" variant="outline" className="flex gap-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex gap-1"
+                      >
                         <Edit size={16} />
                         Edit
                       </Button>
@@ -116,6 +147,7 @@ const  {allAdminJobs} = useSelector(store=>store.job || {})
                       size="sm"
                       variant="destructive"
                       className="flex gap-1"
+                      onClick={() => deleteJob(job._id)}
                     >
                       <Trash2 size={16} />
                       Delete
