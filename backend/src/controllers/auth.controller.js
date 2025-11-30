@@ -14,7 +14,7 @@ export const register = async (req, res) => {
     }
 
     const { fullname, email, phoneNumber, password, role } = req.body;
-    const profilePhoto = req.file;            // <-- THE FIX
+    const profilePhoto = req.file; // <-- THE FIX
 
     const result = await registerUser({
       fullname,
@@ -35,23 +35,21 @@ export const register = async (req, res) => {
   }
 };
 
-
 // Login
 
 export const login = async (req, res) => {
   try {
     const { user, token } = await loginUser(req.body);
 
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  path: "/",
-  maxAge: 24 * 60 * 60 * 1000,
-});
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true, // must be HTTPS in production
+      sameSite: "none", // required for cross-domain
+      path: "/",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
-
-   const  safeUser = {
+    const safeUser = {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -70,8 +68,7 @@ res.cookie("token", token, {
     console.log(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-            message: error.message || MESSAGES.SERVER_ERROR,
-
+      message: error.message || MESSAGES.SERVER_ERROR,
     });
   }
 };
@@ -98,8 +95,6 @@ export const logout = async (req, res) => {
     });
   }
 };
-
-
 
 //update profile
 
