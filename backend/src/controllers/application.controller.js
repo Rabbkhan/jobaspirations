@@ -5,6 +5,7 @@ import {
   updateApplicationStatus
 } from "../services/application.service.js";
 import { STATUS } from "../constants/statusCodes.js";
+import { Application } from "../models/application.model.js";
 
 
 // APPLY FOR JOB
@@ -43,17 +44,29 @@ export const getMyApplicationsController = async (req, res) => {
 
 
 
+
 // UPDATE APPLICATION STATUS
 export const updateApplicationStatusController = async (req, res) => {
   try {
-    const result = await updateApplicationStatus({
-      appId: req.params.appId,
-      status: req.body.status,
-      userId: req.user.id
-    });
+    const { status } = req.body;
+    const { appId } = req.params;
 
+    if (!["pending", "accepted", "rejected"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid status value",
+      });
+    }
+
+    const result = await updateApplicationStatus(appId, status);
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    console.error("STATUS UPDATE ERROR:", error);
+
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
   }
 };
+

@@ -91,29 +91,14 @@ export const getMyApplications = async (userId, page = 1, limit = 10) => {
 
 
 
-
-
-
-export const updateApplicationStatus = async ({ appId, status, userId }) => {
-  if (!["pending", "accepted", "rejected"].includes(status)) {
-    const err = new Error("Invalid status");
-    err.status = STATUS.BAD_REQUEST;
-    throw err;
+export const updateApplicationStatus = async (appId, status) => {
+  if (!mongoose.Types.ObjectId.isValid(appId)) {
+    throw { status: 400, message: "Invalid application ID" };
   }
 
-  const application = await Application.findById(appId).populate("job");
-
+  const application = await Application.findById(appId);
   if (!application) {
-    const err = new Error("Application not found");
-    err.status = STATUS.NOT_FOUND;
-    throw err;
-  }
-
-  // Only job owner can update application status
-  if (application.job.created_by.toString() !== userId) {
-    const err = new Error("Unauthorized to update application");
-    err.status = STATUS.FORBIDDEN;
-    throw err;
+    throw { status: 404, message: "Application not found" };
   }
 
   application.status = status;
@@ -121,7 +106,7 @@ export const updateApplicationStatus = async ({ appId, status, userId }) => {
 
   return {
     success: true,
-    message: "Application status updated",
+    message: "Status updated successfully",
     application,
   };
 };

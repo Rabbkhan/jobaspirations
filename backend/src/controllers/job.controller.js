@@ -7,6 +7,7 @@ import {
   updateJob,
   deleteJob,
   getAdminJobs,
+  getJobApplicants,
 } from "../services/job.service.js";
 import { STATUS } from "../constants/statusCodes.js";
 import { MESSAGES } from "../constants/messages.js";
@@ -94,6 +95,22 @@ export const getAdminJobsController = async (req, res) => {
     return res.status(error.status || 500).json({
       success: false,
       message: error.message
+    });
+  }
+};
+
+
+export const getJobApplicantsController = async (req, res) => {
+  try {
+    const { jobId } = req.params;
+
+    const result = await getJobApplicants(jobId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };

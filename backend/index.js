@@ -7,6 +7,8 @@ import companyRoutes from './src/routes/company.routes.js'
 import jobRoutes from './src/routes/job.routes.js'
 import connectDb from "./src/config/db.js";
 import applicationRoutes from './src/routes/application.routes.js'
+import dashboardRoutes from "./src/routes/dashboard.route.js";
+
 dotenv.config({});
 
 const PORT = process.env.PORT || 3000;
@@ -14,8 +16,8 @@ const app = express();
 
 
 const allowedOrigins = [
-  // process.env.FRONTEND_URL_LOCAL,
-  process.env.FRONTEND_URL_LIVE
+  process.env.FRONTEND_URL_LOCAL,
+  // process.env.FRONTEND_URL_LIVE
 ];
 
 app.use(cors({
@@ -44,6 +46,8 @@ app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/job", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
+app.use("/api/v1/dashboard", dashboardRoutes);
+
 
 // http://localhost:8000/api/v1/auth/register
 

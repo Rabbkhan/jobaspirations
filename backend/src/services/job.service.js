@@ -139,7 +139,33 @@ export const getAdminJobs = async (userId) => {
   return { success: true, jobs };
 };
 
+// =============================
+// Applied applicants details
+// =============================
 
+export const getJobApplicants = async (jobId) => {
+  if (!mongoose.Types.ObjectId.isValid(jobId)) {
+    throw new Error("Invalid Job ID");
+  }
+
+  const job = await Job.findById(jobId).populate({
+    path: "applications",
+    populate: {
+      path: "applicant",
+      select: "fullname email phoneNumber profile",
+    },
+  });
+
+  if (!job) {
+    throw new Error("Job not found");
+  }
+
+  return {
+    success: true,
+    jobTitle: job.title,
+    applicants: job.applications,
+  };
+};
 
 
 // =============================

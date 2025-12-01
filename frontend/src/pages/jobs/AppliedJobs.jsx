@@ -80,7 +80,7 @@ const AppliedJobs = () => {
           </Select>
         </CardHeader>
         <CardContent>
-<Table className="w-full">
+          <Table className="w-full">
             <TableHeader>
               <TableRow>
                 <TableHead>Job Title</TableHead>
@@ -90,49 +90,46 @@ const AppliedJobs = () => {
                 <TableHead>Applied On</TableHead>
               </TableRow>
             </TableHeader>
-    <TableBody>
-  <AnimatePresence mode="wait">
-    {filteredJobs?.map((item) => (
-      <motion.tr
-        key={item._id}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
-        transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="border-b"
-      >
-        <TableCell>{item?.job?.title}</TableCell>
+            <TableBody>
+              <AnimatePresence mode="wait">
+                {filteredJobs?.map((item) => (
+                  <motion.tr
+                    key={item._id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="border-b"
+                  >
+                    <TableCell>{item?.job?.title}</TableCell>
 
-        <TableCell>
-          {item?.job?.company?.companyname || "N/A"}
-        </TableCell>
+                    <TableCell>
+                      {item?.job?.company?.companyname || "N/A"}
+                    </TableCell>
 
-        <TableCell>{item?.job?.jobType}</TableCell>
+                    <TableCell>{item?.job?.jobType}</TableCell>
 
-        <TableCell>
-          <Badge
-            className={
-              item.status === "pending"
-                ? "bg-yellow-500/10 text-yellow-500"
-                : item.status === "accepted"
-                ? "bg-green-500/10 text-green-500"
-                : "bg-red-500/10 text-red-500"
-            }
-          >
-            {item?.status}
-          </Badge>
-        </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={
+                          item.status === "pending"
+                            ? "bg-yellow-500/10 text-yellow-500"
+                            : item.status === "accepted"
+                            ? "bg-green-500/10 text-green-500"
+                            : "bg-red-500/10 text-red-500"
+                        }
+                      >
+                        {item?.status}
+                      </Badge>
+                    </TableCell>
 
-        <TableCell>
-          {new Date(item?.createdAt).toLocaleDateString("en-IN")}
-        </TableCell>
-      </motion.tr>
-    ))}
-  </AnimatePresence>
-</TableBody>
-
-
-
+                    <TableCell>
+                      {new Date(item?.createdAt).toLocaleDateString("en-IN")}
+                    </TableCell>
+                  </motion.tr>
+                ))}
+              </AnimatePresence>
+            </TableBody>
           </Table>
         </CardContent>
 

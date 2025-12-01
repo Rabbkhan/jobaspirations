@@ -25,6 +25,7 @@ import Jobcreate from "./pages/jobs/Jobcreate";
 import Unauthorized from "./pages/Unauthorized";
 import StudentRoute from "./pages/auth/StudentRoute";
 import GuestOrStudentRoute from "./pages/auth/GuestOrStudentRoute";
+import JobApplicants from "./pages/jobs/JobApplicants";
 
 const AppRoutes = () => {
   return (
@@ -141,6 +142,8 @@ const AppRoutes = () => {
         <Route path="/admin/companies" element={<CompanyList />} />
         <Route path="/admin/companies/create" element={<Companycreate />} />
         <Route path="/admin/companies/:id" element={<CompanyDetails />} />
+        <Route path="/admin/jobs/:jobId/applications" element={<JobApplicants />} />
+
         <Route path="/admin/jobs" element={<Adminjobs />} />
         <Route path="/admin/jobs/create" element={<Jobcreate />} />
       </Route>
