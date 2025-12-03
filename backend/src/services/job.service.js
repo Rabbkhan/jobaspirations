@@ -69,7 +69,7 @@ export const getJobById = async (id) => {
   }
 
   const job = await Job.findById(id)
-    .populate("company", "name location")
+    .populate("company", "companyname location")
     .populate("created_by", "fullname email")
     .populate({
       path: "applications",

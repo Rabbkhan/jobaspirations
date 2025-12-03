@@ -1,40 +1,47 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, Briefcase, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import axios from "axios";
+import { DASHBOARD_API_END_POINT } from "../../utils/constants";
 
 const AdminDashboard = () => {
-  // ✅ Dummy Data
-  const stats = {
-    totalJobs: 12,
-    totalApplicants: 138,
-    activeCompanies: 6,
-  };
+  const [stats, setStats] = useState({
+    totalJobs: 0,
+    totalApplicants: 0,
+    activeCompanies: 0,
+  });
 
-  const recentApplicants = [
-    {
-      id: 1,
-      name: "Aarav Sharma",
-      job: "Frontend Developer",
-      date: "02 Feb 2025",
-      status: "pending",
-    },
-    {
-      id: 2,
-      name: "Priya Verma",
-      job: "UI/UX Designer",
-      date: "01 Feb 2025",
-      status: "accepted",
-    },
-    {
-      id: 3,
-      name: "Rahul Mehta",
-      job: "Backend Developer",
-      date: "30 Jan 2025",
-      status: "rejected",
-    },
-  ];
+  const [recentApplicants, setRecentApplicants] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      setLoading(true)
+      try {
+        const res = await axios.get(
+          `${DASHBOARD_API_END_POINT}/recruiter`,
+          { withCredentials: true }
+        );
+
+        if (res.data.success) {
+          setStats(res.data.stats);
+          setRecentApplicants(res.data.recentApplicants);
+        }
+      } catch (error) {
+        console.error("Dashboard fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) {
+    return <div className="p-6 text-center text-sm">Loading dashboard...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background p-6 space-y-6">
@@ -93,26 +100,43 @@ const AdminDashboard = () => {
             </thead>
 
             <tbody>
-              {recentApplicants.map((app) => (
-                <tr key={app.id} className="border-b hover:bg-muted">
-                  <td className="py-2 px-3">{app.name}</td>
-                  <td className="py-2 px-3">{app.job}</td>
-                  <td className="py-2 px-3">{app.date}</td>
-                  <td className="py-2 px-3">
-                    <Badge
-                      className={
-                        app.status === "pending"
-                          ? "bg-yellow-500/10 text-yellow-500"
-                          : app.status === "accepted"
-                          ? "bg-green-500/10 text-green-500"
-                          : "bg-red-500/10 text-red-500"
-                      }
-                    >
-                      {app.status}
-                    </Badge>
+              {recentApplicants.length === 0 ? (
+                <tr>
+                  <td colSpan="4" className="text-center py-4 text-muted-foreground">
+                    No recent applicants found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                recentApplicants.map((app) => (
+                  <tr key={app._id} className="border-b hover:bg-muted">
+                    <td className="py-2 px-3">
+                      {app.applicant?.fullname}
+                    </td>
+
+                    <td className="py-2 px-3">
+                      {app.job?.title}
+                    </td>
+
+                    <td className="py-2 px-3">
+                      {new Date(app.createdAt).toLocaleDateString("en-IN")}
+                    </td>
+
+                    <td className="py-2 px-3">
+                      <Badge
+                        className={
+                          app.status === "pending"
+                            ? "bg-yellow-500/10 text-yellow-500"
+                            : app.status === "accepted"
+                            ? "bg-green-500/10 text-green-500"
+                            : "bg-red-500/10 text-red-500"
+                        }
+                      >
+                        {app.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </CardContent>

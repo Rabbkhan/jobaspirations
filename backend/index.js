@@ -15,10 +15,10 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL_LOCAL,
-  // process.env.FRONTEND_URL_LIVE
-];
+// const allowedOrigins = [
+//   process.env.FRONTEND_URL_LOCAL,
+//   // process.env.FRONTEND_URL_LIVE
+// ];
 
 app.use(cors({
   origin: "http://localhost:5173",  // ✅ ONLY frontend

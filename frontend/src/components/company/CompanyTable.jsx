@@ -65,7 +65,7 @@ const CompanyTable = ({ data, loading }) => {
                 <TableCell>{company?.location}</TableCell>
 
                 <TableCell className="text-right">
-                  <Link to={`/admin/company/${company.id}`}>
+                  <Link to={`/admin/companies/edit/${company._id}`}>
                     <Button variant="outline" size="sm" className="flex gap-2 ml-auto">
                       <Edit size={16} />
                       Edit

@@ -40,15 +40,13 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { user, token } = await loginUser(req.body);
-
-res.cookie("token", token, {
-  httpOnly: true,   // ✅ secure
-  secure: false,    // ✅ localhost only
-  sameSite: "lax",  // ✅ localhost
-  path: "/",
-  maxAge: 24 * 60 * 60 * 1000,
-});
-
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // ✅ true on server, false on localhost
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      path: "/",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     const safeUser = {
       _id: user._id,

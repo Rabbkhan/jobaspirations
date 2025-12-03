@@ -132,7 +132,7 @@ const AdminJobs = () => {
 
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-3">
-                    <Link to={`/admin/jobs/edit/${job.id}`}>
+                    <Link to={`/admin/jobs/edit/${job._id}`}>
                       <Button
                         size="sm"
                         variant="outline"

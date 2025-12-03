@@ -20,7 +20,7 @@ const router = express.Router();
 router.post(
   "/create",
   authenticate, // Must be logged in
-   authorizeRoles("recruiter"),  // Only recruiters & admins allowed
+  authorizeRoles("recruiter"), // Only recruiters & admins allowed
   upload.single("logo"),
   companyValidation, // Validate fields
 
@@ -30,12 +30,22 @@ router.post(
 // ===============================
 // 📌 GET ALL COMPANIES
 // ===============================
-router.get("/", authenticate, authorizeRoles("recruiter"),  getAllCompaniesController);
+router.get(
+  "/",
+  authenticate,
+  authorizeRoles("recruiter"),
+  getAllCompaniesController
+);
 
 // ===============================
 // 📌 GET SINGLE COMPANY BY ID
 // ===============================
-router.get("/:id", authenticate, authorizeRoles("recruiter"),  getCompanyByIdController);
+router.get(
+  "/:id",
+  authenticate,
+  authorizeRoles("recruiter"),
+  getCompanyByIdController
+);
 
 // ===============================
 // 📌 UPDATE COMPANY (Only owner / recruiter)
@@ -43,7 +53,9 @@ router.get("/:id", authenticate, authorizeRoles("recruiter"),  getCompanyByIdCon
 router.put(
   "/:id",
   authenticate,
-   authorizeRoles("recruiter"), 
+  authorizeRoles("recruiter"),
+  upload.single("logo"),
+
   companyValidation, // optional: only if you want validation on update
   updateCompanyController
 );
@@ -51,6 +63,11 @@ router.put(
 // ===============================
 // ❌ DELETE COMPANY (Only owner / recruiter)
 // ===============================
-router.delete("/:id", authenticate, authorizeRoles("recruiter"),  deleteCompanyController);
+router.delete(
+  "/:id/status",
+  authenticate,
+  authorizeRoles("recruiter"),
+  deleteCompanyController
+);
 
 export default router;

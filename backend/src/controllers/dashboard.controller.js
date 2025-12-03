@@ -4,7 +4,11 @@ export const getRecruiterDashboardController = async (req, res) => {
   try {
     const recruiterId = req.user.id;
 
+    // console.log("DASHBOARD recruiterId:", recruiterId);
+
     const result = await getRecruiterDashboardStats(recruiterId);
+
+    // console.log("DASHBOARD DATA:", result);
 
     return res.status(200).json(result);
   } catch (error) {

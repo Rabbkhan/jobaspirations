@@ -23,6 +23,10 @@ const companySchema = new mongoose.Schema(
     logo: {
       type: String, // URL to company logo
     },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

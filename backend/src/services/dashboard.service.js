@@ -1,25 +1,26 @@
 import { Job } from "../models/job.model.js";
 import { Application } from "../models/application.model.js";
-import { User } from "../models/user.model.js";
 
 export const getRecruiterDashboardStats = async (recruiterId) => {
-  // 1️⃣ Total Jobs Posted by Recruiter
-  const totalJobs = await Job.countDocuments({ recruiter: recruiterId });
 
-  // 2️⃣ Total Applicants For Recruiter's Jobs
-  const recruiterJobs = await Job.find({ recruiter: recruiterId }).select("_id");
+  // ✅ 1. Total Jobs by recruiter
+  const totalJobs = await Job.countDocuments({ created_by: recruiterId });
+
+  // ✅ 2. Get recruiter job IDs
+  const recruiterJobs = await Job.find({ created_by: recruiterId }).select("_id");
   const jobIds = recruiterJobs.map(job => job._id);
 
+  // ✅ 3. Total Applicants
   const totalApplicants = await Application.countDocuments({
     job: { $in: jobIds }
   });
 
-  // 3️⃣ Active Companies (unique companies from recruiter jobs)
+  // ✅ 4. Active Companies
   const activeCompanies = await Job.distinct("company", {
-    recruiter: recruiterId
+    created_by: recruiterId
   });
 
-  // 4️⃣ Recent Applications (last 5)
+  // ✅ 5. Recent Applicants
   const recentApplicants = await Application.find({
     job: { $in: jobIds }
   })
@@ -35,6 +36,6 @@ export const getRecruiterDashboardStats = async (recruiterId) => {
       totalApplicants,
       activeCompanies: activeCompanies.length,
     },
-    recentApplicants
+    recentApplicants,
   };
 };

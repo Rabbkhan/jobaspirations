@@ -81,8 +81,11 @@ export const updateCompany = async (id, data, userId) => {
   return { success: true, message: MESSAGES.COMPANY_UPDATED, company };
 };
 
+
+
 export const deleteCompany = async (id, userId) => {
   const company = await Company.findById(id);
+
   if (!company) {
     const err = new Error(MESSAGES.COMPANY_NOT_FOUND);
     err.status = STATUS.NOT_FOUND;
@@ -95,6 +98,8 @@ export const deleteCompany = async (id, userId) => {
     throw err;
   }
 
-  await company.deleteOne();
+  company.isDeleted = true;
+  await company.save();
+
   return { success: true, message: MESSAGES.COMPANY_DELETED };
 };
