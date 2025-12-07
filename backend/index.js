@@ -21,8 +21,13 @@ const app = express();
 // ];
 
 app.use(cors({
-  origin: "http://localhost:5173",  // ✅ ONLY frontend
-  credentials: true                // ✅ MUST be true
+  origin:
+  [
+     "http://localhost:5173",
+    "https://jobaspirations.in",
+    "https://www.jobaspirations.in"
+  ],
+  credentials: true
 }));
 
 
