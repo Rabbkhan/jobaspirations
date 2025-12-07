@@ -92,7 +92,7 @@ const Companycreate = () => {
         <CardHeader>
           <CardTitle className="text-2xl font-bold">Create Company</CardTitle>
           <p className="text-muted-foreground text-sm">
-            Fill out the details to add a new company to the system.
+            Fill out the details to add a new company to the systems.
           </p>
         </CardHeader>
 
