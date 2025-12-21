@@ -61,6 +61,9 @@ const AppliedJobs = () => {
 
   return (
     <>
+    
+  <div className="min-h-screen w-full bg-muted/20 py-10">
+    <div className="max-w-6xl mx-auto px-4">
       <Card className="shadow-xl border">
         <CardHeader className="flex items-center justify-between">
           <h2 className="text-xl font-bold">Applied Jobs</h2>
@@ -162,6 +165,7 @@ const AppliedJobs = () => {
           </motion.div>
         </div>
       </Card>
+      </div></div>
     </>
   );
 };

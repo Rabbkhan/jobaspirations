@@ -7,16 +7,24 @@ const jobSlice = createSlice({
     allAdminJobs: [],
     singleJob: null,
     searchJobByText: "",
-    jobapplied:[]
+    jobapplied: [],
   },
 
   reducers: {
+    // Used when page = 1 or filters change
     setAllJobs: (state, action) => {
       state.allJobs = action.payload;
     },
+
+    // Used for infinite scroll (page > 1)
+    appendJobs: (state, action) => {
+      state.allJobs = [...state.allJobs, ...action.payload];
+    },
+
     setSingleJob: (state, action) => {
       state.singleJob = action.payload;
     },
+
     setAdminJob: (state, action) => {
       state.allAdminJobs = action.payload;
     },
@@ -24,17 +32,27 @@ const jobSlice = createSlice({
     setSearchJobByText: (state, action) => {
       state.searchJobByText = action.payload;
     },
+
     removeAdminJob: (state, action) => {
       state.allAdminJobs = state.allAdminJobs.filter(
         (job) => job._id !== action.payload
       );
     },
-     setJobapplied: (state, action) => {
-      state.jobapplied = action.payload
+
+    setJobapplied: (state, action) => {
+      state.jobapplied = action.payload;
     },
   },
 });
-export const { setAllJobs, setSingleJob, setAdminJob, setSearchJobByText,removeAdminJob,setJobapplied } =
-  jobSlice.actions;
+
+export const {
+  setAllJobs,
+  appendJobs,          // ← DO NOT FORGET THIS EXPORT
+  setSingleJob,
+  setAdminJob,
+  setSearchJobByText,
+  removeAdminJob,
+  setJobapplied,
+} = jobSlice.actions;
 
 export default jobSlice.reducer;

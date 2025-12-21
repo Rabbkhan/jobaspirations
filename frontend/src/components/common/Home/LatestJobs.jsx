@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // const jobs = [
 //   {
@@ -66,7 +67,7 @@ const LatestJobs = () => {
 
   const {allJobs} = useSelector(store=>store.job);
 const latestSixJobs = allJobs.slice(-6).reverse();
-
+const navigate = useNavigate();
 const timeAgo = (timestamp) => {
   const now = new Date();
   const created = new Date(timestamp);
@@ -139,7 +140,7 @@ const formatExperience = (exp) => {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{timeAgo(job.createdAt)}</span>
 
-                <button className="flex items-center gap-1 font-medium text-primary hover:underline">
+                <button onClick={()=> navigate(`/jobs/${job._id}`)} className="flex items-center gap-1 font-medium text-primary hover:underline">
                   View Details <ArrowRight size={16} />
                 </button>
               </div>

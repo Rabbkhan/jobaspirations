@@ -49,12 +49,66 @@ export const createJob = async ({ data, userId }) => {
 // =============================
 // GET ALL JOBS
 // =============================
-export const getAllJobs = async () => {
-  const jobs = await Job.find()
-    .populate("company", "name location")
-    .populate("created_by", "fullname email");
+export const getAllJobs = async (query) => {
+  const {
+    page = 1,
+    limit = 9,
+    location,
+    industry,
+    salary,
+  } = query;
 
-  return { success: true, jobs };
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const filter = {};
+
+  if (location) filter.location = location;
+  if (industry) filter.industry = industry;
+
+  if (salary) {
+    const [min, max] = salary.split("-").map(Number);
+    if (!isNaN(min) && !isNaN(max)) {
+      filter.salary = { $gte: min, $lte: max };
+    }
+  }
+
+  const jobs = await Job.find(filter)
+    .populate("company", "name location")
+    .populate("created_by", "fullname email")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNumber);
+
+  const total = await Job.countDocuments(filter);
+
+  return {
+    success: true,
+    jobs,
+    hasMore: skip + jobs.length < total,
+    total,
+  };
+};
+
+
+// services/job.service.js
+export const getJobFilters = async () => {
+  const locations = await Job.distinct("location");
+  const industries = await Job.distinct("industry");
+
+  return {
+    success: true,
+    filters: {
+      locations,
+      industries,
+      salaries: [
+        { label: "₹0 - ₹50,000", value: "0-50000" },
+        { label: "₹50,001 - ₹80,000", value: "50001-80000" },
+        { label: "₹80,001 - ₹1,20,000", value: "80001-120000" },
+      ],
+    },
+  };
 };
 
 

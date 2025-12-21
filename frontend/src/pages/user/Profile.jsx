@@ -5,13 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Loader2, PencilIcon, XIcon } from "lucide-react";
-
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { USER_API_END_POINT } from "../../utils/constants";
 import { setLoading, setUser } from "../../features/authSlice";
 import { toast } from "sonner";
-import AppliedJobs from "../jobs/AppliedJobs";
 
 const EditableField = ({ label, children }) => (
   <div className="space-y-1">
@@ -25,63 +23,59 @@ const Profile = () => {
   const { user, loading } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
 
-  // -----------------------------
-  // INITIALIZE CLEAN INPUT STATE
-  // -----------------------------
   const [input, setInput] = useState({
     fullname: user?.fullname || "",
     email: user?.email || "",
     phoneNumber: user?.phoneNumber || "",
     bio: user?.profile?.bio || "",
     skills: Array.isArray(user?.profile?.skills) ? user.profile.skills : [],
-
     resume: user?.profile?.resume || null,
     profilePhoto: user?.profile?.profilePhoto || null,
-
-    resumeFile: null, // uploaded resume
-    profilePhotoFile: null, // uploaded photo
+    resumeFile: null,
+    profilePhotoFile: null,
   });
 
   const [editing, setEditing] = useState(false);
 
-  // -----------------------------
-  // GENERIC INPUT HANDLER
-  // -----------------------------
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setInput({ ...input, [e.target.name]: e.target.value });
-  };
 
-  // FILE HANDLERS
-  const handleResumeUpload = (e) => {
+  const handleResumeUpload = (e) =>
     setInput({ ...input, resumeFile: e.target.files[0] });
-  };
 
-  const handlePhotoUpload = (e) => {
+  const handlePhotoUpload = (e) =>
     setInput({ ...input, profilePhotoFile: e.target.files[0] });
+
+  if (!user) return <div>Loading profile...</div>;
+
+  // ---------------- PROFILE COMPLETION LOGIC ----------------
+  const calculateCompletion = () => {
+    let score = 0;
+    if (input.fullname) score += 10;
+    if (input.phoneNumber) score += 10;
+    if (input.bio) score += 15;
+    if (input.skills?.length > 0) score += 20;
+    if (input.resume || input.resumeFile) score += 25;
+    if (input.profilePhoto || input.profilePhotoFile) score += 20;
+    return score;
   };
+  const completion = calculateCompletion();
 
-
-  if (!user) {
-  return <div>Loading profile...</div>;
-}
-
-  // -----------------------------
-  // SUBMIT HANDLER
-  // -----------------------------
+  // ---------------- SUBMIT ----------------
   const submitHandler = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
 
     formData.append("fullname", input.fullname);
     formData.append("email", input.email);
     formData.append("phoneNumber", input.phoneNumber);
     formData.append("bio", input.bio);
-    formData.append("skills", input.skills.join(",")); // backend expects string
+    formData.append("skills", input.skills.join(","));
 
     if (input.resumeFile) formData.append("resume", input.resumeFile);
     if (input.profilePhotoFile)
       formData.append("profilePhoto", input.profilePhotoFile);
+
     try {
       dispatch(setLoading(true));
       const res = await axios.put(
@@ -94,7 +88,7 @@ const Profile = () => {
       );
 
       if (res.data.success) {
-        dispatch(setUser(res.data.data)); // backend returns "data"
+        dispatch(setUser(res.data.data));
         toast.success("Profile updated successfully!");
         setEditing(false);
       }
@@ -105,13 +99,11 @@ const Profile = () => {
     }
   };
 
-  // -----------------------------
-  // UI RENDER
-  // -----------------------------
   return (
-    <div className="max-w-5xl mx-auto mt-10 px-4 space-y-8">
+    <div className="max-w-6xl mx-auto my-10 px-4 space-y-10">
+
+      {/* -------- PROFILE CARD -------- */}
       <Card className="shadow-xl border relative">
-        {/* EDIT BUTTON */}
         <Button
           variant="ghost"
           size="sm"
@@ -126,44 +118,60 @@ const Profile = () => {
         </Button>
 
         <form onSubmit={submitHandler}>
-          <CardHeader className="flex items-center gap-6">
-            <Avatar className="h-20 w-20">
-              <AvatarImage
-                src={
-                  input.profilePhotoFile
-                    ? URL.createObjectURL(input.profilePhotoFile)
-                    : input.profilePhoto ||
-                      "https://avatar.iran.liara.run/public/25"
-                }
-              />
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
+          <CardHeader className="flex flex-col gap-6">
+            <div className="flex gap-6 items-center">
+              <Avatar className="h-20 w-20">
+                <AvatarImage
+                  src={
+                    input.profilePhotoFile
+                      ? URL.createObjectURL(input.profilePhotoFile)
+                      : input.profilePhoto ||
+                        "https://avatar.iran.liara.run/public/25"
+                  }
+                />
+                <AvatarFallback>U</AvatarFallback>
+              </Avatar>
 
-            <div className="flex-1 space-y-2">
-              <EditableField label="Full Name">
-                {editing ? (
-                  <input
-                    name="fullname"
-                    type="text"
-                    value={input.fullname}
-                    onChange={handleChange}
-                    className="w-full border rounded-md p-2 text-sm"
-                  />
-                ) : (
-                  <p>{input.fullname}</p>
-                )}
-              </EditableField>
-              <Badge className="mt-2">Student</Badge>
+              <div className="flex-1 space-y-2">
+                <EditableField label="Full Name">
+                  {editing ? (
+                    <input
+                      name="fullname"
+                      type="text"
+                      value={input.fullname}
+                      onChange={handleChange}
+                      className="w-full border rounded-md p-2 text-sm"
+                    />
+                  ) : (
+                    <p>{input.fullname}</p>
+                  )}
+                </EditableField>
+
+                <Badge>Student</Badge>
+              </div>
+            </div>
+
+            {/* -------- PROFILE COMPLETION BAR -------- */}
+            <div className="w-full">
+              <p className="text-sm font-medium">
+                Profile Completion: {completion}%
+              </p>
+              <div className="w-full h-3 bg-muted rounded-full">
+                <div
+                  className="h-1 rounded-full bg-primary transition-all"
+                  style={{ width: `${completion}%` }}
+                />
+              </div>
             </div>
           </CardHeader>
 
           <CardContent className="space-y-6">
+
             {/* EMAIL */}
             <EditableField label="Email">
               {editing ? (
                 <input
                   name="email"
-                  type="email"
                   value={input.email}
                   onChange={handleChange}
                   className="w-full border rounded-md p-2 text-sm"
@@ -178,13 +186,12 @@ const Profile = () => {
               {editing ? (
                 <input
                   name="phoneNumber"
-                  type="text"
                   value={input.phoneNumber}
                   onChange={handleChange}
                   className="w-full border rounded-md p-2 text-sm"
                 />
               ) : (
-                <p>{input.phoneNumber}</p>
+                <p>{input.phoneNumber || "Not added"}</p>
               )}
             </EditableField>
 
@@ -204,27 +211,49 @@ const Profile = () => {
             </EditableField>
 
             {/* SKILLS */}
-            <EditableField label="Skills" className="my-5">
-              {editing ? (
-                <input
-                  type="text"
-                  value={input.skills.join(", ")}
-                  onChange={(e) =>
-                    setInput({
-                      ...input,
-                      skills: e.target.value.split(",").map((s) => s.trim()), // always array
-                    })
-                  }
-                  className="w-full border rounded-md p-2 text-sm"
-                  // placeholder="HTML, CSS, JS"
-                />
-              ) : (
-                <div className="flex flex-wrap items-center gap-2">
-                  {input.skills.map((skill, i) => (
-                    <Badge key={i}>{skill}</Badge>
-                  ))}
-                </div>
-              )}
+            <EditableField label="Skills">
+              <div className="w-full border rounded-md p-2 min-h-[44px] flex flex-wrap gap-2 items-center">
+                {input.skills.map((skill, i) => (
+                  <Badge key={i} variant="secondary" className="flex gap-1">
+                    {skill}
+                    {editing && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setInput({
+                            ...input,
+                            skills: input.skills.filter(
+                              (_, idx) => idx !== i
+                            ),
+                          })
+                        }
+                      >
+                        ×
+                      </button>
+                    )}
+                  </Badge>
+                ))}
+
+                {editing && (
+                  <input
+                    type="text"
+                    placeholder="Add skill"
+                    className="flex-1 outline-none text-sm bg-transparent"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === ",") {
+                        e.preventDefault();
+                        const value = e.currentTarget.value.trim();
+                        if (!value) return;
+                        setInput({
+                          ...input,
+                          skills: [...input.skills, value],
+                        });
+                        e.currentTarget.value = "";
+                      }
+                    }}
+                  />
+                )}
+              </div>
             </EditableField>
 
             {/* RESUME */}
@@ -237,12 +266,11 @@ const Profile = () => {
                 />
               ) : user?.profile?.resume ? (
                 <a
-                  href={user?.profile?.resume}
+                  href={user.profile.resume}
                   target="_blank"
-                  rel="noopener noreferrer"
                   className="text-blue-600 underline"
                 >
-                  {user?.profile?.resumeOriginalName || "View Resume"}
+                  View Resume
                 </a>
               ) : (
                 <p>No resume uploaded</p>
@@ -252,39 +280,43 @@ const Profile = () => {
             {/* PROFILE PHOTO */}
             <EditableField label="Profile Photo">
               {editing ? (
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoUpload}
-                />
+                <input type="file" accept="image/*" onChange={handlePhotoUpload} />
               ) : (
                 <p>
-                  {input.profilePhoto ? "Photo uploaded" : "Default photo used"}
+                  {input.profilePhoto
+                    ? "Photo uploaded"
+                    : "Default photo in use"}
                 </p>
               )}
             </EditableField>
 
-            {/* SAVE BUTTON */}
-            {editing && (
-              <>
-                {loading ? (
-                  <Button className="w-full my-4">
-                    {" "}
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
-                    wait{" "}
-                  </Button>
-                ) : (
-                  <Button type="submit" className="w-full my-4">
-                    Save Changes
-                  </Button>
-                )}
-              </>
-            )}
+            {editing &&
+              (loading ? (
+                <Button className="w-full my-4">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                </Button>
+              ) : (
+                <Button type="submit" className="w-full my-4">
+                  Save Changes
+                </Button>
+              ))}
           </CardContent>
         </form>
       </Card>
 
-      <AppliedJobs />
+      {/* -------- SAVED JOBS SECTION -------- */}
+      <Card className="shadow-lg border">
+        <CardHeader>
+          <h2 className="text-xl font-bold">Saved Jobs</h2>
+        </CardHeader>
+        <CardContent>
+          {/* Replace later with API data */}
+          <p className="text-muted-foreground">
+            You have no saved jobs yet.
+          </p>
+        </CardContent>
+      </Card>
+
     </div>
   );
 };

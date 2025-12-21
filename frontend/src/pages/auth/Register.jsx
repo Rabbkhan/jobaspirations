@@ -34,6 +34,18 @@ const { loading } = useSelector((store) => store.auth);
   };
 
 const changeFileHandler = (e) => {
+
+  const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+if (!allowedTypes.includes(file.type)) {
+  return toast.error("Only JPG, PNG, and WEBP images are allowed");
+}
+
+if (file.size > MAX_SIZE) {
+  return toast.error("Image must be under 2MB");
+}
+
   const file = e.target.files?.[0];
   if (!file) return;
   setInput((prev) => ({ ...prev, profilePhotoFile: file }));

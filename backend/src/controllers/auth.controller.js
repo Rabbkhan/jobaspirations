@@ -3,6 +3,8 @@ import { STATUS } from "../constants/statusCodes.js";
 import { loginUser, registerUser } from "../services/auth.service.js";
 import { validationResult } from "express-validator";
 import { updateProfile } from "../services/user.service.js";
+// import crypto from "crypto";
+// import { User } from "../models/user.model.js";
 
 // Register
 
@@ -38,12 +40,16 @@ export const register = async (req, res) => {
 // Login
 
 export const login = async (req, res) => {
+
+  const isProduction = process.env.NODE_ENV === "production";
+  
+
   try {
     const { user, token } = await loginUser(req.body);
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅ true on server, false on localhost
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: isProduction , // ✅ true on server, false on localhost
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
       maxAge: 24 * 60 * 60 * 1000,
     });
@@ -121,3 +127,47 @@ export const updateProfileController = async (req, res) => {
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+
+
+
+
+// export const verifyEmail = async (req, res) => {
+//   try {
+//     const { token } = req.query;
+
+//     const hashedToken = crypto
+//       .createHash("sha256")
+//       .update(token)
+//       .digest("hex");
+
+//     const user = await User.findOne({
+//       emailVerificationToken: hashedToken,
+//       emailVerificationExpires: { $gt: Date.now() },
+//     });
+
+//     if (!user) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid or expired verification token",
+//       });
+//     }
+
+//     user.isEmailVerified = true;
+//     user.emailVerificationToken = undefined;
+//     user.emailVerificationExpires = undefined;
+
+//     await user.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Email verified successfully. You can now log in.",
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Email verification failed",
+//     });
+//   }
+// };

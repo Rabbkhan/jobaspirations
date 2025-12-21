@@ -67,7 +67,7 @@ export const loginUser = async ({ email, password,role }) => {
 
   const isMatch = await comparePassword(password, user.password);
   if (!isMatch) {
-    const err = new Error("Invalid credentials");
+    const err = new Error(MESSAGES.INVALID_CREDENTIALS);
     err.status = 401;
     throw err;
   }
@@ -83,13 +83,13 @@ export const loginUser = async ({ email, password,role }) => {
 
 
 
-  // if(role !== user.role){
-  //   const err = STATUS.BAD_REQUEST;
-  //   return err.status().json({
-  //     message:,
-  //     success:false
-  //   })
-  // };
+//   if(role !== user.role){
+//     const err = STATUS.BAD_REQUEST;
+//     return err.status().json({
+//     message: MESSAGES.ROLE_MISMATCH,
+//       success:false
+//     })
+//   };
 
   
     const token = generateToken(user);

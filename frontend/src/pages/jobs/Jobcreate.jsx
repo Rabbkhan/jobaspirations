@@ -33,6 +33,7 @@ const Jobcreate = () => {
     location: "",
     salary: "",
     type: "",
+    industry: "",
     experience: "",
     description: "",
     skills: "",
@@ -83,6 +84,7 @@ const Jobcreate = () => {
         salary: Number(formData.salary), // ✅ NUMBER
         experienceLevel: Number(formData.experience), // ✅ NUMBER
         location: formData.location,
+        industry: formData.industry, // 🔥 REQUIRED
         jobType: formData.type,
         position: 1, // ✅ you can make this dynamic later
         company: formData.company, // ✅ ObjectId from Select
@@ -102,155 +104,211 @@ const Jobcreate = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Create Job</h1>
-
-        <Link to="/admin/jobs">
-          <Button variant="outline" className="flex gap-2">
-            <ArrowLeft size={18} />
-            Back
-          </Button>
-        </Link>
-      </div>
-
-      {/* Form Card */}
-      <Card className="p-6 space-y-6 shadow-sm border rounded-xl">
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {/* Job Title */}
-          <div className="space-y-2">
-            <Label>Job Title</Label>
-            <Input
-              placeholder="e.g. Frontend Developer"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          {/* Grid Section */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Company */}
-            <div className="space-y-2">
-              <Label>Company</Label>
-
-              <Select onValueChange={(value) => handleSelect("company", value)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a company" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {loading ? (
-                    <div className="p-3 text-sm text-muted-foreground text-center">
-                      Loading companies...
-                    </div>
-                  ) : allCompany?.length === 0 ? (
-                    <div className="p-3 text-sm text-muted-foreground text-center">
-                      No companies found
-                    </div>
-                  ) : (
-                    allCompany?.map((company) => (
-                      <SelectItem key={company._id} value={company._id}>
-                        {company.companyname}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Job Location */}
-            <div className="space-y-2">
-              <Label>Location</Label>
-              <Input
-                placeholder="Mumbai, India"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {/* Salary */}
-            <div className="space-y-2">
-              <Label>Salary</Label>
-              <Input
-                placeholder="₹ 8,00,000 / year"
-                name="salary"
-                value={formData.salary}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            {/* Job Type */}
-            <div className="space-y-2">
-              <Label>Job Type</Label>
-              <Select onValueChange={(v) => handleSelect("type", v)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectContent>
-                    <SelectItem value="Full-Time">Full-Time</SelectItem>
-                    <SelectItem value="Part-Time">Part-Time</SelectItem>
-                    <SelectItem value="Internship">Internship</SelectItem>
-                    <SelectItem value="Contract">Contract</SelectItem>
-                  </SelectContent>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Experience */}
-            <div className="space-y-2 md:col-span-2">
-              <Label>Experience Required</Label>
-              <Input
-                placeholder="e.g. 2+ years"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          {/* Skills */}
-          <div className="space-y-2">
-            <Label>Required Skills</Label>
-            <Input
-              placeholder="React, Node.js, MongoDB"
-              name="skills"
-              value={formData.skills}
-              onChange={handleChange}
-              required
-            />
-            <p className="text-sm text-muted-foreground">
-              Separate multiple skills with commas.
+    <div className="min-h-screen bg-muted/30 py-10">
+      <div className="max-w-5xl mx-auto px-4 space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              Create Job
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Fill in the details below to publish a new job listing
             </p>
           </div>
 
-          {/* Job Description */}
-          <div className="space-y-2">
-            <Label>Job Description</Label>
-            <Textarea
-              placeholder="Describe the job role, responsibilities, and requirements..."
-              rows={5}
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <Link to="/admin/jobs">
+            <Button variant="outline" className="gap-2">
+              <ArrowLeft size={16} />
+              Back
+            </Button>
+          </Link>
+        </div>
 
-          {/* Submit */}
-          <Button type="submit" className="w-full md:w-auto flex gap-2">
-            <PlusCircle size={18} />
-            Create Job
-          </Button>
-        </form>
-      </Card>
+        {/* Card */}
+        <Card className="border shadow-sm rounded-2xl">
+          <form onSubmit={handleSubmit}>
+            {/* SECTION: BASIC INFO */}
+            <div className="p-6 border-b space-y-6">
+              <h2 className="text-lg font-medium">Basic Information</h2>
+
+              <div className="space-y-2">
+                <Label>Job Title</Label>
+                <Input
+                  placeholder="Frontend Developer"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
+                {/* Company */}
+                <div className="space-y-2 w-full">
+                  <Label>Company</Label>
+
+                  <Select
+                    value={formData.company}
+                    onValueChange={(value) => handleSelect("company", value)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select company" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      {loading ? (
+                        <div className="p-3 text-sm text-muted-foreground text-center">
+                          Loading companies...
+                        </div>
+                      ) : allCompany?.length === 0 ? (
+                        <div className="p-3 text-sm text-muted-foreground text-center">
+                          No companies found
+                        </div>
+                      ) : (
+                        allCompany.map((company) => (
+                          <SelectItem key={company._id} value={company._id}>
+                            {company.companyname}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Job Type */}
+                <div className="space-y-2 w-full">
+                  <Label>Job Type</Label>
+
+                  <Select
+                    value={formData.type}
+                    onValueChange={(v) => handleSelect("type", v)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select job type" />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="Full-Time">Full-Time</SelectItem>
+                      <SelectItem value="Part-Time">Part-Time</SelectItem>
+                      <SelectItem value="Internship">Internship</SelectItem>
+                      <SelectItem value="Contract">Contract</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION: DETAILS */}
+            <div className="p-6 border-b space-y-6">
+              <h2 className="text-lg font-medium">Job Details</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Location */}
+                <div className="w-full">
+                  <Label>Location</Label>
+                  <Select
+                    value={formData.location}
+                    onValueChange={(v) => handleSelect("location", v)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select location" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Bangalore">Bangalore</SelectItem>
+                      <SelectItem value="Hyderabad">Hyderabad</SelectItem>
+                      <SelectItem value="Remote">Remote</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Industry */}
+                <div className="w-full">
+                  <Label>Industry</Label>
+                  <Select
+                    value={formData.industry}
+                    onValueChange={(v) => handleSelect("industry", v)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="IT">IT</SelectItem>
+                      <SelectItem value="Finance">Finance</SelectItem>
+                      <SelectItem value="Healthcare">Healthcare</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Salary */}
+                <div className="space-y-2">
+                  <Label>Annual Salary</Label>
+                  <Input
+                    placeholder="800000"
+                    name="salary"
+                    value={formData.salary}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                {/* Experience */}
+                <div className="space-y-2">
+                  <Label>Experience (Years)</Label>
+                  <Input
+                    placeholder="2"
+                    name="experience"
+                    value={formData.experience}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION: DESCRIPTION */}
+            <div className="p-6 space-y-6">
+              <h2 className="text-lg font-medium">
+                Description & Requirements
+              </h2>
+
+              <div className="space-y-2">
+                <Label>Required Skills</Label>
+                <Input
+                  placeholder="React, Node.js, MongoDB"
+                  name="skills"
+                  value={formData.skills}
+                  onChange={handleChange}
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  Separate skills with commas
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Job Description</Label>
+                <Textarea
+                  rows={6}
+                  placeholder="Describe responsibilities, expectations, and benefits..."
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* FOOTER */}
+            <div className="p-6 border-t flex justify-end">
+              <Button size="lg" className="gap-2">
+                <PlusCircle size={18} />
+                Create Job
+              </Button>
+            </div>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 };

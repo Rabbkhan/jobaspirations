@@ -123,7 +123,7 @@ const Login = () => {
                   wait....
                 </Button>
               ) : (
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                <Button className="w-full cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground">
                   Login
                 </Button>
               )}

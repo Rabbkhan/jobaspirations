@@ -15,20 +15,27 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 
-// const allowedOrigins = [
-//   process.env.FRONTEND_URL_LOCAL,
-//   // process.env.FRONTEND_URL_LIVE
-// ];
+const allowedOrigins = [
+  process.env.FRONTEND_URL_LOCAL,
+  process.env.FRONTEND_URL_LIVE,
+  process.env.FRONTEND_URL_LIVE_WWW,
+];
 
-app.use(cors({
-  origin:
-  [
-     "http://localhost:5173",
-    "https://jobaspirations.in",
-    "https://www.jobaspirations.in"
-  ],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow server-to-server, Postman, etc.
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 
 app.get("/", (req, res) => {

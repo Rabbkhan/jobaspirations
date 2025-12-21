@@ -8,6 +8,7 @@ import {
   deleteJob,
   getAdminJobs,
   getJobApplicants,
+  getJobFilters,
 } from "../services/job.service.js";
 import { STATUS } from "../constants/statusCodes.js";
 import { MESSAGES } from "../constants/messages.js";
@@ -42,15 +43,26 @@ export const createJobController = async (req, res) => {
 
 
 // GET ALL JOBS
-export const getAllJobsController = async (_req, res) => {
+export const getAllJobsController = async (req, res) => {
   try {
-    const result = await getAllJobs();
+       const result = await getAllJobs(req.query);
     return res.status(200).json(result);
   } catch (error) {
     return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 
+export const getJobFiltersController = async (req, res) => {
+  try {
+    const result = await getJobFilters();
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch job filters",
+    });
+  }
+};
 
 // GET JOB BY ID
 export const getJobByIdController = async (req, res) => {

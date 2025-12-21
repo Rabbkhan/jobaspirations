@@ -1,159 +1,71 @@
-import React, { useState } from 'react';
-import JobCard from '../../components/job/Jobcard';
-import Filtercard from '../../components/job/Filtercard';
-import { useSelector } from 'react-redux';
-import useGetAllJobs from '../../hooks/useGetAllJobs';
+import React, { useState, useRef, useEffect } from "react";
+import JobCard from "../../components/job/Jobcard";
+import Filtercard from "../../components/job/Filtercard";
+import { useSelector } from "react-redux";
+import useGetAllJobs from "../../hooks/useGetAllJobs";
 
 const JobList = () => {
-  // const [jobs, setJobs] = useState([
-  //   {
-  //     title: "Frontend Developer",
-  //     company: "Tech Solutions Pvt Ltd",
-  //     location: "Bangalore, India",
-  //     type: "Full-time",
-  //     salary: "₹50,000 - ₹70,000",
-  //     posted: "2d ago",
-  //     isSaved: false,
-  //   },
-  //   {
-  //     title: "Backend Engineer",
-  //     company: "Innovatech",
-  //     location: "Hyderabad, India",
-  //     type: "Part-time",
-  //     salary: "₹40,000 - ₹60,000",
-  //     posted: "5d ago",
-  //     isSaved: true,
-  //   },
-  //   {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   },
-  //    {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   },
-  //    {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   }, {
-  //     title: "Full Stack Developer",
-  //     company: "NextGen Labs",
-  //     location: "Remote",
-  //     type: "Contract",
-  //     salary: "₹70,000 - ₹90,000",
-  //     posted: "1d ago",
-  //     isSaved: false,
-  //   },
-  // ]);
+  const [filters, setFilters] = useState({
+    location: "",
+    industry: "",
+    salary: "",
+  });
 
-  // Example: you can filter jobs based on search or filter selections
-  // const filteredJobs = jobs; // replace this with actual filtered array  
-  
-  
-    useGetAllJobs();   // <-- REQUIRED
+  const { allJobs } = useSelector((store) => store.job);
 
-  const {allJobs} = useSelector(store=>store.job);
+  const { setPage, hasMore, loading } = useGetAllJobs(filters);
 
+  // Infinite scroll trigger
+  const observerRef = useRef();
 
-// console.log(allJobs);
+useEffect(() => {
+  if (!observerRef.current) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      if (entry.isIntersecting && hasMore && !loading) {
+        setPage((prev) => prev + 1);
+      }
+    },
+    { threshold: 1 }
+  );
+
+  observer.observe(observerRef.current);
+
+  return () => observer.disconnect();
+}, [hasMore, loading, setPage]);
+
 
   return (
     <div className="container px-4 py-6">
       <div className="flex flex-col lg:flex-row gap-6">
 
-        {/* Left Side - Filters */}
+        {/* Filters */}
         <div className="lg:w-1/4 w-full">
-          <Filtercard />
+          <Filtercard filters={filters} setFilters={setFilters} />
         </div>
 
-        {/* Right Side - Job Cards */}
+        {/* Jobs */}
         <div className="lg:w-3/4 w-full">
-          {/* Show results count */}
           <p className="mb-4 text-gray-700 font-medium">
-            {allJobs.length} job{allJobs.length !== 1 ? 's' : ''} found
+            {allJobs.length} job{allJobs.length !== 1 ? "s" : ""} found
           </p>
 
-          {/* Job Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {allJobs.length < 0? <span>No job Avaliable</span>:allJobs.map((job) => (
+            {allJobs.map((job) => (
               <JobCard key={job._id} job={job} />
             ))}
           </div>
 
+          {/* Infinite scroll sentinel */}
+          <div ref={observerRef} className="h-10" />
 
-{/* <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-  {allJobs.map((job) => (
-    <JobCard key={job._id} job={job} />
-  ))}
-</div> */}
-
-
-
+          {!hasMore && (
+            <p className="text-center text-gray-500 mt-4">
+              No more jobs available
+            </p>
+          )}
         </div>
-
       </div>
     </div>
   );

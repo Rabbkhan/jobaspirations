@@ -1,46 +1,106 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { CheckCircle } from "lucide-react";
 
 const Hero = () => {
-  return (
-    <section className="w-full bg-background border-b">
-      <div className="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+  const navigate = useNavigate();
 
-        {/* LEFT */}
-        <div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Find Your <span className="text-primary">Dream Job</span> Today
+  return (
+    <section className="relative overflow-hidden bg-background border-b">
+      <div className="max-w-7xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+
+        {/* LEFT — MESSAGE */}
+        <div className="space-y-10">
+          <span className="inline-flex items-center gap-2 text-sm font-medium text-primary bg-primary/10 px-4 py-1 rounded-full">
+            Career Consulting & Hiring Platform
+          </span>
+
+          <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
+            We don’t just find jobs. <br />
+            <span className="text-primary">We build careers.</span>
           </h1>
 
-          <p className="mt-4 text-muted-foreground text-lg max-w-xl">
-            Discover opportunities that align with your skills and passion.  
-            Search from thousands of latest tech jobs.
+          <p className="text-lg text-muted-foreground max-w-xl">
+            From career guidance and resume reviews to direct hiring and
+            recruiter access — we support you at every step of your journey.
           </p>
 
-          {/* Search Bar */}
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 w-full max-w-xl">
-            <div className="relative flex-1">
-              <Search className="w-5 h-5 absolute left-3 top-3 text-muted-foreground" />
-              <Input
-                placeholder="Search job titles or skills..."
-                className="pl-10 py-6 text-base border-border bg-card"
-              />
-            </div>
-
-            <Button className="px-8 py-6 text-base bg-primary hover:bg-primary/90 text-primary-foreground">
-              Search
+          <div className="flex flex-wrap gap-4 pt-2">
+            <Button size="lg" onClick={() => navigate("/jobs")}>
+              Explore Opportunities
             </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => navigate("/consulting")}
+            >
+              Get Career Guidance
+            </Button>
+          </div>
+
+          {/* Trust & Value */}
+          <div className="grid sm:grid-cols-3 gap-6 pt-8 text-sm text-muted-foreground">
+            {[
+              "Personal career mentoring",
+              "Verified recruiter network",
+              "Skill-based job matching",
+            ].map((item) => (
+              <div key={item} className="flex gap-2 items-start">
+                <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
+                {item}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* RIGHT ILLUSTRATION */}
-        <div className="hidden md:flex justify-center">
-          <img
-            src="https://illustrations.popsy.co/amber/remote-work.svg"
-            alt="Job search illustration"
-            className="w-[360px] opacity-95"
-          />
+        {/* RIGHT — PROCESS VISUAL */}
+        <div className="relative">
+          <div className="absolute -inset-6 bg-primary/20 blur-3xl rounded-full" />
+
+          <div className="relative bg-card border rounded-2xl shadow-xl p-8 space-y-8">
+            <h3 className="text-lg font-semibold">
+              How we help you succeed
+            </h3>
+
+            {[
+              {
+                step: "01",
+                title: "Career Assessment",
+                desc: "Understand your strengths and goals",
+              },
+              {
+                step: "02",
+                title: "Expert Guidance",
+                desc: "Resume review, skill gap analysis",
+              },
+              {
+                step: "03",
+                title: "Direct Hiring",
+                desc: "Connect with verified recruiters",
+              },
+            ].map((item) => (
+              <div key={item.step} className="flex gap-4">
+                <div className="text-primary font-semibold text-lg">
+                  {item.step}
+                </div>
+                <div>
+                  <p className="font-medium">{item.title}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+
+            <Button
+              variant="secondary"
+              className="w-full"
+              onClick={() => navigate("/hire")}
+            >
+              For Recruiters & Companies
+            </Button>
+          </div>
         </div>
 
       </div>

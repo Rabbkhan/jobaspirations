@@ -18,6 +18,7 @@ router.post(
   registerValidation,
   register
 );
+
 router.post("/login", loginValidation, login);
 router.get("/logout", logout);
 router.put(
