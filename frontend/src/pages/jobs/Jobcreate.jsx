@@ -25,6 +25,11 @@ import { toast } from "sonner";
 const Jobcreate = () => {
   // const [companies, setCompanies] = useState([]);
   const { loading, allCompany } = useSelector((store) => store.company);
+  const [filters, setFilters] = useState({
+    industries: [],
+    locations: [],
+  });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -103,6 +108,19 @@ const Jobcreate = () => {
     }
   };
 
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/filters`);
+        setFilters(res.data.filters);
+      } catch (err) {
+        toast.error("Failed to load filters");
+      }
+    };
+
+    fetchFilters();
+  }, []);
+
   return (
     <div className="min-h-screen bg-muted/30 py-10">
       <div className="max-w-5xl mx-auto px-4 space-y-8">
@@ -117,7 +135,7 @@ const Jobcreate = () => {
             </p>
           </div>
 
-          <Link to="/admin/jobs">
+          <Link to="/recruiter/jobs">
             <Button variant="outline" className="gap-2">
               <ArrowLeft size={16} />
               Back
@@ -214,10 +232,13 @@ const Jobcreate = () => {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select location" />
                     </SelectTrigger>
+
                     <SelectContent>
-                      <SelectItem value="Bangalore">Bangalore</SelectItem>
-                      <SelectItem value="Hyderabad">Hyderabad</SelectItem>
-                      <SelectItem value="Remote">Remote</SelectItem>
+                      {filters.locations.map((loc) => (
+                        <SelectItem key={loc} value={loc}>
+                          {loc}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -232,10 +253,13 @@ const Jobcreate = () => {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select industry" />
                     </SelectTrigger>
+
                     <SelectContent>
-                      <SelectItem value="IT">IT</SelectItem>
-                      <SelectItem value="Finance">Finance</SelectItem>
-                      <SelectItem value="Healthcare">Healthcare</SelectItem>
+                      {filters.industries.map((ind) => (
+                        <SelectItem key={ind} value={ind}>
+                          {ind}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

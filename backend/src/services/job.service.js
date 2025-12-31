@@ -6,13 +6,14 @@ import { Job } from "../models/job.model.js";
 import { Company } from "../models/company.model.js";
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
+import { ALLOWED_INDUSTRIES, ALLOWED_LOCATIONS } from "../constants/job.constants.js";
 
 
 // =============================
 // CREATE JOB
 // =============================
 export const createJob = async ({ data, userId }) => {
-  const { company } = data;
+  const { company, location, industry } = data;
 
   if (!mongoose.Types.ObjectId.isValid(company)) {
     const err = new Error(MESSAGES.INVALID_ID);
@@ -33,6 +34,20 @@ export const createJob = async ({ data, userId }) => {
     throw err;
   }
 
+
+  if (!ALLOWED_LOCATIONS.includes(location)) {
+    const err = new Error("Invalid location");
+    err.status = STATUS.BAD_REQUEST;
+    throw err;
+  }
+
+  if (!ALLOWED_INDUSTRIES.includes(industry)) {
+    const err = new Error("Invalid industry");
+    err.status = STATUS.BAD_REQUEST;
+    throw err;
+  }
+
+  
   const job = await Job.create({
     ...data,
     created_by: userId,
@@ -94,14 +109,11 @@ export const getAllJobs = async (query) => {
 
 // services/job.service.js
 export const getJobFilters = async () => {
-  const locations = await Job.distinct("location");
-  const industries = await Job.distinct("industry");
-
   return {
     success: true,
     filters: {
-      locations,
-      industries,
+      locations: ALLOWED_LOCATIONS,
+      industries: ALLOWED_INDUSTRIES,
       salaries: [
         { label: "₹0 - ₹50,000", value: "0-50000" },
         { label: "₹50,001 - ₹80,000", value: "50001-80000" },
@@ -110,7 +122,6 @@ export const getJobFilters = async () => {
     },
   };
 };
-
 
 // =============================
 // GET JOB BY ID
@@ -149,6 +160,18 @@ export const getJobById = async (id) => {
 export const updateJob = async ({ jobId, data, userId }) => {
   if (!mongoose.Types.ObjectId.isValid(jobId)) {
     const err = new Error("Invalid job ID");
+    err.status = STATUS.BAD_REQUEST;
+    throw err;
+  }
+
+   if (data.location && !ALLOWED_LOCATIONS.includes(data.location)) {
+    const err = new Error("Invalid location");
+    err.status = STATUS.BAD_REQUEST;
+    throw err;
+  }
+
+  if (data.industry && !ALLOWED_INDUSTRIES.includes(data.industry)) {
+    const err = new Error("Invalid industry");
     err.status = STATUS.BAD_REQUEST;
     throw err;
   }

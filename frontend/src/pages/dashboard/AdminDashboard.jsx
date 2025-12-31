@@ -1,147 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Users, Briefcase, Building2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import axios from "axios";
-import { DASHBOARD_API_END_POINT } from "../../utils/constants";
+import React, { useState } from "react";
+
+const dummyUsers = [
+  {
+    _id: "1",
+    name: "John Doe",
+    email: "john@company.com",
+    role: "recruiter",
+    companyName: "Tech Corp",
+  },
+  {
+    _id: "2",
+    name: "Alice Smith",
+    email: "alice@company.com",
+    role: "company",
+    companyName: "Design Studio",
+  },
+  {
+    _id: "3",
+    name: "Bob Johnson",
+    email: "bob@startup.com",
+    role: "recruiter",
+    companyName: "StartupX",
+  },
+];
 
 const AdminDashboard = () => {
-  const [stats, setStats] = useState({
-    totalJobs: 0,
-    totalApplicants: 0,
-    activeCompanies: 0,
-  });
+  const [users, setUsers] = useState(dummyUsers);
 
-  const [recentApplicants, setRecentApplicants] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const handleApprove = (id) => {
+    // Dummy approve action
+    setUsers(users.filter((user) => user._id !== id));
+    alert("User approved successfully!");
+  };
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      setLoading(true)
-      try {
-        const res = await axios.get(
-          `${DASHBOARD_API_END_POINT}/recruiter`,
-          { withCredentials: true }
-        );
-
-        if (res.data.success) {
-          setStats(res.data.stats);
-          setRecentApplicants(res.data.recentApplicants);
-        }
-      } catch (error) {
-        console.error("Dashboard fetch error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboard();
-  }, []);
-
-  if (loading) {
-    return <div className="p-6 text-center text-sm">Loading dashboard...</div>;
-  }
+  const handleReject = (id) => {
+    // Dummy reject action
+    setUsers(users.filter((user) => user._id !== id));
+    alert("User rejected!");
+  };
 
   return (
-    <div className="min-h-screen bg-background p-6 space-y-6">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
 
-      {/* ✅ TOP STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="flex justify-between items-center">
-            <CardTitle>Total Jobs</CardTitle>
-            <Briefcase className="w-6 h-6 text-primary" />
-          </CardHeader>
-          <CardContent className="text-3xl font-bold">
-            {stats.totalJobs}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex justify-between items-center">
-            <CardTitle>Total Applicants</CardTitle>
-            <Users className="w-6 h-6 text-primary" />
-          </CardHeader>
-          <CardContent className="text-3xl font-bold">
-            {stats.totalApplicants}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex justify-between items-center">
-            <CardTitle>Active Companies</CardTitle>
-            <Building2 className="w-6 h-6 text-primary" />
-          </CardHeader>
-          <CardContent className="text-3xl font-bold">
-            {stats.activeCompanies}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ✅ RECENT APPLICANTS TABLE */}
-      <Card className="mt-6">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle>Recent Applicants</CardTitle>
-            <Button variant="outline" size="sm">View All</Button>
-          </div>
-        </CardHeader>
-
-        <CardContent>
-          <table className="w-full text-sm border">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-2 px-3">Name</th>
-                <th className="text-left py-2 px-3">Job</th>
-                <th className="text-left py-2 px-3">Applied On</th>
-                <th className="text-left py-2 px-3">Status</th>
+      <div className="bg-white shadow rounded p-4">
+        <h2 className="text-xl font-semibold mb-4">Pending Users</h2>
+        <table className="min-w-full table-auto border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="border px-4 py-2">Name</th>
+              <th className="border px-4 py-2">Email</th>
+              <th className="border px-4 py-2">Role</th>
+              <th className="border px-4 py-2">Company</th>
+              <th className="border px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="text-center py-4">
+                  No pending users
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {recentApplicants.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="text-center py-4 text-muted-foreground">
-                    No recent applicants found
+            ) : (
+              users.map((user) => (
+                <tr key={user._id} className="hover:bg-gray-50">
+                  <td className="border px-4 py-2">{user.name}</td>
+                  <td className="border px-4 py-2">{user.email}</td>
+                  <td className="border px-4 py-2 capitalize">{user.role}</td>
+                  <td className="border px-4 py-2">{user.companyName || "-"}</td>
+                  <td className="border px-4 py-2 flex gap-2">
+                    <button
+                      onClick={() => handleApprove(user._id)}
+                      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleReject(user._id)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                    >
+                      Reject
+                    </button>
                   </td>
                 </tr>
-              ) : (
-                recentApplicants.map((app) => (
-                  <tr key={app._id} className="border-b hover:bg-muted">
-                    <td className="py-2 px-3">
-                      {app.applicant?.fullname}
-                    </td>
-
-                    <td className="py-2 px-3">
-                      {app.job?.title}
-                    </td>
-
-                    <td className="py-2 px-3">
-                      {new Date(app.createdAt).toLocaleDateString("en-IN")}
-                    </td>
-
-                    <td className="py-2 px-3">
-                      <Badge
-                        className={
-                          app.status === "pending"
-                            ? "bg-yellow-500/10 text-yellow-500"
-                            : app.status === "accepted"
-                            ? "bg-green-500/10 text-green-500"
-                            : "bg-red-500/10 text-red-500"
-                        }
-                      >
-                        {app.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
-
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

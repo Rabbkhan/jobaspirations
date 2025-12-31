@@ -1,90 +1,53 @@
 import mongoose from "mongoose";
-const userSchema = mongoose.Schema(
+
+const userSchema = new mongoose.Schema(
   {
-    fullname: {
-      type: String,
-      required: true,
-    },
+    fullname: { type: String, required: true },
+
     email: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
-    phoneNumber: {
-      type: String,
-      required: true,
-    },
-    // password: {
-    //   type: String,
-    //   required: function () {
-    //     return this.authProvider === "local";
-    //   },
-    //   select: false, // ✅ prevents accidental exposure
-    // },
 
-     password: {
-      type: String,
-      required: true, 
+    phoneNumber: String,
 
-     },
+    password: { type: String, required: true },
 
     role: {
       type: String,
-      enum: ["student", "recruiter"],
-      required: true,
+      enum: ["student", "recruiter", "admin"],
+      default: "student",
     },
-    // isEmailVerified: {
-    //   type: Boolean,
-    //   default: false,
-    // },
-    // emailVerificationToken: {
-    //   type: String,
-    //   select: false,
-    // },
+  isFirstLogin: { type: Boolean, default: true },
 
-    // emailVerificationExpires: {
-    //   type: Date,
-    //   select: false,
-    // },
+    isEmailVerified: { type: Boolean, default: false },
 
-    // // ✅ PASSWORD RESET
-    // passwordResetToken: {
-    //   type: String,
-    //   select: false,
-    // },
+    verificationCode: String, // hashed
+    emailVerificationExpires: Date,
+    verificationAttempts: { type: Number, default: 0 },
 
-    // passwordResetExpires: {
-    //   type: Date,
-    //   select: false,
-    // },
-    // authProvider: {
-    //   type: String,
-    //   enum: ["local", "google", "github", "facebook"],
-    //   default: "local",
-    // },
-
-    // providerId: {
-    //   type: String,
-    // },
+    isPhoneVerified: { type: Boolean, default: false },
 
     profile: {
       bio: { type: String, trim: true },
       skills: [{ type: String, trim: true }],
-      resume: { type: String }, //url to resume file
-      resumeOriginalName: { type: String },
-      company: { type: mongoose.Schema.Types.ObjectId, ref: "company" },
-      profilePhoto: {
-        type: String,
-        default: "",
-      },
+      resume: String,
+      resumeOriginalName: String,
+      profilePhoto: { type: String, default: "" },
     },
+
+    savedJobs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-// userSchema.index(
-//   { authProvider: 1, providerId: 1 },
-//   { unique: true, sparse: true }
-// );
 
 export const User = mongoose.model("User", userSchema);

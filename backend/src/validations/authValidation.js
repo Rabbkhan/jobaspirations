@@ -7,20 +7,17 @@ export const registerValidation = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
-  body("role").optional().isIn(["student", "recruiter"]).withMessage("Invalid role")
+  // ❌ role removed from register
 ];
-
 
 export const loginValidation = [
   body("email").isEmail().withMessage("Valid email is required"),
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
-  body("role").optional().isIn(["student", "recruiter"]).withMessage("Invalid role")
+  // keep optional if backend supports role-based login
+  // body("role").optional().isIn(["student", "recruiter"]).withMessage("Invalid role")
 ];
-
-
-
 
 
 export const updateUserValidation = [

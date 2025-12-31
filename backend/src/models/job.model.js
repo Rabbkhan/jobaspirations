@@ -13,8 +13,7 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
-    requirements: [{ type: String }],
-
+    requirements: [{ type: String, trim: true }],
     salary: {
       type: Number,
       required: true,
@@ -26,17 +25,16 @@ const jobSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
-
     location: {
       type: String,
       required: true,
-      enum: ["Bangalore", "Hyderabad", "Remote"],
+      trim: true,
     },
 
     industry: {
       type: String,
       required: true,
-      enum: ["IT", "Finance", "Healthcare"],
+      trim: true,
     },
 
     jobType: {
@@ -70,6 +68,12 @@ const jobSchema = new mongoose.Schema(
         default: [],
       },
     ],
+
+    status: {
+      type: String,
+      enum: ["Active", "Closed"],
+      default: "Active",
+    },
   },
   { timestamps: true }
 );

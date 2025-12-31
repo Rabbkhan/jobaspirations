@@ -54,7 +54,7 @@ const AdminJobs = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Manage Jobs</h1>
 
-        <Link to="/admin/jobs/create">
+        <Link to="/recruiter/jobs/create">
           <Button className="flex gap-2">
             <Plus size={18} /> Create Job
           </Button>
@@ -123,7 +123,7 @@ const AdminJobs = () => {
                   </Badge>
                 </TableCell> */}
                 <TableCell>
-                  <Link to={`/admin/jobs/${job._id}/applications`}>
+                  <Link to={`/recruiter/jobs/${job._id}/applications`}>
                     <Button size="sm" variant="outline">
                       View ({job.applications?.length || 0})
                     </Button>
@@ -132,7 +132,7 @@ const AdminJobs = () => {
 
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-3">
-                    <Link to={`/admin/jobs/edit/${job._id}`}>
+                    <Link to={`/recruiter/jobs/edit/${job._id}`}>
                       <Button
                         size="sm"
                         variant="outline"

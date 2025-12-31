@@ -54,15 +54,15 @@ const Sidebar = () => {
 
       {/* Navigation */}
       <nav className="flex flex-col gap-2">
-        <Link to="/admin" className={linkClass("/admin")}>
+        <Link to="/recruiter" className={linkClass("/recruiter")}>
           <LayoutDashboard size={18} /> Dashboard
         </Link>
 
-        <Link to="/admin/companies" className={linkClass("/admin/companies")}>
+        <Link to="/recruiter/companies" className={linkClass("/recruiter/companies")}>
           <Building2 size={18} /> Companies
         </Link>
 
-        <Link to="/admin/jobs" className={linkClass("/admin/jobs")}>
+        <Link to="/recruiter/jobs" className={linkClass("/recruiter/jobs")}>
           <Briefcase size={18} /> Jobs
         </Link>
       </nav>

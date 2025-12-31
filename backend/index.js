@@ -1,7 +1,14 @@
+import dotenv from "dotenv";
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development";
+
+dotenv.config({ path: envFile });
+
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import dotenv from "dotenv";
 import userRoutes from './src/routes/user.routes.js'
 import companyRoutes from './src/routes/company.routes.js'
 import jobRoutes from './src/routes/job.routes.js'
@@ -9,7 +16,6 @@ import connectDb from "./src/config/db.js";
 import applicationRoutes from './src/routes/application.routes.js'
 import dashboardRoutes from "./src/routes/dashboard.route.js";
 
-dotenv.config({});
 
 const PORT = process.env.PORT || 3000;
 const app = express();

@@ -1,8 +1,17 @@
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
-import { loginUser, registerUser } from "../services/auth.service.js";
+import {
+  loginUser,
+  registerUser,
+  requestVerificationCodeService,
+} from "../services/auth.service.js";
 import { validationResult } from "express-validator";
 import { updateProfile } from "../services/user.service.js";
+import { verifyEmailService } from "../services/auth.service.js";
+import { transporter } from "../middlewares/email.config.middleware.js";
+import { welcomeEmailTemplate } from "../libs/Emailtemplates.js";
+import { User } from "../models/user.model.js";
+import { generateEmailVerification } from "../utils/generateEmailVerification.js";
 // import crypto from "crypto";
 // import { User } from "../models/user.model.js";
 
@@ -37,25 +46,77 @@ export const register = async (req, res) => {
   }
 };
 
+export const verifyEmail = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    const result = await verifyEmailService(email, code);
+
+    return res.status(result.status).json({
+      success: result.success,
+      message: result.message,
+    });
+  } catch (error) {
+    console.error("Verify Email Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error verifying email",
+    });
+  }
+};
+
+export const requestVerificationCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email)
+      return res.status(400).json({
+        success: false,
+        message: "Email required",
+      });
+
+    const result = await requestVerificationCodeService(email);
+
+    return res.status(result.status).json({
+      success: result.success,
+      message: result.message,
+    });
+  } catch (error) {
+    console.error("Request Verification Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while generating verification code",
+    });
+  }
+};
+
 // Login
 
 export const login = async (req, res) => {
-
   const isProduction = process.env.NODE_ENV === "production";
-  
 
   try {
-    const { user, token } = await loginUser(req.body);
+    const result = await loginUser(req.body);
+
+    if (!result || !result.user) {
+      return res.status(STATUS.UNAUTHORIZED).json({
+        success: false,
+        message: "Login failed. User not found or credentials invalid.",
+      });
+    }
+
+    const { user, token } = result;
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: isProduction , // ✅ true on server, false on localhost
+      secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
       path: "/",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
     const safeUser = {
-      _id: user._id,
+      _id: user._id.toString(),  // safe access
       fullname: user.fullname,
       email: user.email,
       phoneNumber: user.phoneNumber,
@@ -66,17 +127,17 @@ export const login = async (req, res) => {
     res.status(STATUS.OK).json({
       success: true,
       safeUser,
-      message: MESSAGES.LOGIN_SUCCESS,
+      message: "Login successful",
     });
   } catch (error) {
     console.error("Login Error:", error.message);
-    console.log(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({
+    res.status(error.status || STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: error.message || MESSAGES.SERVER_ERROR,
+      message: error.message || "Server error",
     });
   }
 };
+
 
 // logout
 
@@ -127,10 +188,6 @@ export const updateProfileController = async (req, res) => {
     res.status(400).json({ success: false, message: err.message });
   }
 };
-
-
-
-
 
 // export const verifyEmail = async (req, res) => {
 //   try {

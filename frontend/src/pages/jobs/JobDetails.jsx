@@ -35,28 +35,28 @@ const JobDetails = () => {
 
   const [isApplied, setIsApplied] = useState(isIntiallyApplied);
 
-useEffect(() => {
-  const fetchSingleJob = async () => {
-    try {
-      const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, {
-        withCredentials: true,
-      });
+  useEffect(() => {
+    const fetchSingleJob = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, {
+          withCredentials: true,
+        });
 
-      if (res.data.success) {
-        disptach(setSingleJob(res.data.job));
+        if (res.data.success) {
+          disptach(setSingleJob(res.data.job));
 
-        setIsApplied(
-          res.data.job.applications.some(
-            (app) => app?.applicant?._id === user?._id
-          )
-        );
+          setIsApplied(
+            res.data.job.applications.some(
+              (app) => app?.applicant?._id === user?._id
+            )
+          );
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  fetchSingleJob();
-}, [jobId, disptach, user?._id]);
+    };
+    fetchSingleJob();
+  }, [jobId, disptach, user?._id]);
 
   const applyJobHandler = async () => {
     try {
@@ -85,144 +85,99 @@ useEffect(() => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Side - Job Details */}
-        <div className="lg:w-2/3 w-full">
-          <Card className="shadow-lg border border-border rounded-xl">
-            <CardHeader className="space-y-2">
-              {/* Title */}
-              <CardTitle className="text-2xl font-bold text-foreground">
-                {singleJob?.title}
-              </CardTitle>
+      <div className="max-w-4xl mx-auto">
+        <Card className="shadow-lg border border-border rounded-xl">
+          <CardHeader className="space-y-2">
+            {/* Title */}
+            <CardTitle className="text-2xl font-bold text-foreground">
+              {singleJob?.title}
+            </CardTitle>
 
-              {/* Meta Info */}
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                {/* Job Type */}
-                <span className="flex items-center gap-1">
-                  <BriefcaseIcon className="w-4 h-4" />
-                  {singleJob?.jobType}
-                </span>
+            {/* Meta Info */}
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              {/* Job Type */}
+              <span className="flex items-center gap-1">
+                <BriefcaseIcon className="w-4 h-4" />
+                {singleJob?.jobType}
+              </span>
 
-                {/* Location */}
-                <span className="flex items-center gap-1">
-                  <MapPinIcon className="w-4 h-4" />
-                  {singleJob?.location}
-                </span>
+              {/* Location */}
+              <span className="flex items-center gap-1">
+                <MapPinIcon className="w-4 h-4" />
+                {singleJob?.location}
+              </span>
 
-                {/* Posted Date */}
-                <span className="flex items-center gap-1">
-                  <CalendarIcon className="w-4 h-4" />
-                  Posted: {new Date(singleJob?.createdAt).toLocaleDateString()}
-                </span>
+              {/* Posted Date */}
+              <span className="flex items-center gap-1">
+                <CalendarIcon className="w-4 h-4" />
+                Posted: {new Date(singleJob?.createdAt).toLocaleDateString()}
+              </span>
 
-                {/* Applicants */}
-                <span className="flex items-center gap-1">
-                  <UsersIcon className="w-4 h-4" />
-                  {singleJob?.applications?.length || 0}
-                </span>
-                {/* Open positions */}
-                <span className="flex items-center gap-1">
-                  <LayersIcon className="w-4 h-4" />
-                  {singleJob?.position} Opening(s)
-                </span>
+              {/* Applicants */}
+              <span className="flex items-center gap-1">
+                <UsersIcon className="w-4 h-4" />
+                {singleJob?.applications?.length || 0}
+              </span>
+              {/* Open positions */}
+              <span className="flex items-center gap-1">
+                <LayersIcon className="w-4 h-4" />
+                {singleJob?.position} Opening(s)
+              </span>
 
-                {/* Experience */}
-                <span className="flex items-center gap-1">
-                  <ClockIcon className="w-4 h-4" />
-                  {singleJob?.experienceLevel === 0
-                    ? "Fresher"
-                    : `${singleJob?.experienceLevel} year(s)`}
-                </span>
-              </div>
-            </CardHeader>
+              {/* Experience */}
+              <span className="flex items-center gap-1">
+                <ClockIcon className="w-4 h-4" />
+                {singleJob?.experienceLevel === 0
+                  ? "Fresher"
+                  : `${singleJob?.experienceLevel} year(s)`}
+              </span>
+            </div>
+          </CardHeader>
 
-            <CardContent className="space-y-6">
-              <Separator />
+          <CardContent className="space-y-6">
+            <Separator />
 
-              {/* Description */}
-              <div className="space-y-4 text-sm text-muted-foreground">
-                <h3 className="text-lg font-semibold text-foreground">
-                  Job Description
-                </h3>
-                <p>{singleJob?.description}</p>
+            {/* Description */}
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <h3 className="text-lg font-semibold text-foreground">
+                Job Description
+              </h3>
+              <p>{singleJob?.description}</p>
 
-                <h3 className="text-lg font-semibold text-foreground">
-                  Requirements
-                </h3>
-                <ul className="list-disc list-inside space-y-1">
-                  {singleJob?.requirements?.map((req, idx) => (
-                    <li key={idx}>{req}</li>
-                  ))}
-                </ul>
-              </div>
+              <h3 className="text-lg font-semibold text-foreground">
+                Requirements
+              </h3>
+              <ul className="list-disc list-inside space-y-1">
+                {singleJob?.requirements?.map((req, idx) => (
+                  <li key={idx}>{req}</li>
+                ))}
+              </ul>
+            </div>
 
-              <Separator />
+            <Separator />
 
-              {/* Salary & Apply */}
-              <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
-                <span className="text-lg font-semibold text-foreground">
-                  Salary: ₹{singleJob?.salary}
-                </span>
+            {/* Salary & Apply */}
+            <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
+              <span className="text-lg font-semibold text-foreground">
+                Salary: ₹{singleJob?.salary}
+              </span>
 
-                <Button
-                  size="lg"
-                  onClick={isApplied ? null : applyJobHandler}
-                  disabled={isApplied}
-                  className={`w-full md:w-auto text-primary-foreground cursor-pointer rounded-lg
+              <Button
+                size="lg"
+                onClick={isApplied ? null : applyJobHandler}
+                disabled={isApplied}
+                className={`w-full md:w-auto text-primary-foreground cursor-pointer rounded-lg
     ${
       isApplied
         ? "bg-gray-600 cursor-not-allowed"
         : "bg-[#7209b7] hover:bg-[#5f32ad]"
     }`}
-                >
-                  {isApplied ? "Already Applied" : "Apply Now"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Side - Company Details */}
-        {/* <div className="lg:w-1/3 w-full">
-          <Card className="shadow-lg border border-border rounded-xl space-y-4">
-            <CardContent className="space-y-4">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <img
-                  src={job.company.logo}
-                  alt="Company Logo"
-                  className="w-20 h-20 rounded-full object-cover"
-                />
-                <h3 className="text-lg font-bold text-foreground">
-                  {job.company.name}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {job.company.description}
-                </p>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-2 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <UsersIcon className="w-4 h-4" />
-                  <span>{job.company.employees} Employees</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <GlobeIcon className="w-4 h-4" />
-                  <span>{job.company.website}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPinIcon className="w-4 h-4" />
-                  <span>{job.company.location}</span>
-                </div>
-              </div>
-
-               <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 mt-4">
-                Follow Company
-              </Button> *
-            </CardContent>
-          </Card>
-        </div> */}
+              >
+                {isApplied ? "Already Applied" : "Apply Now"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

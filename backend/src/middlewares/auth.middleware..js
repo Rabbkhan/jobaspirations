@@ -34,6 +34,7 @@ export const authenticate = (req, res, next) => {
     req.user = {
       id: decoded.userId,
       role: decoded.role,
+
     };
 
     next();

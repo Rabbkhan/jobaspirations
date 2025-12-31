@@ -8,6 +8,7 @@ import {
 } from "../controllers/application.controller.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
 import { authenticate } from "../middlewares/auth.middleware..js";
+// import { requireEmailVerified } from "../middlewares/emailverify.middleware.js";
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.post(
   "/apply/:jobId",
   authenticate,
   authorizeRoles("student"),
+  // requireEmailVerified,
   applyForJobController
 );
 

@@ -31,15 +31,14 @@ import Unauthorized from "./pages/Unauthorized";
 import Privacypolicy from "./pages/Privacypolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import HireTalent from "./pages/hire/HireTalent";
-import BecomeRecruiter from "./pages/BecomeRecruiter";
 
 /* Recruiter flow */
-import RecruiterApply from "./pages/RecruiterApply";
-import RecruiterPending from "./pages/RecruiterPending";
 import BlogComingSoon from "./pages/BlogComingSoon";
 import AppliedJobs from "./pages/jobs/AppliedJobs";
 import CareerGuidance from "./pages/CareerGuidance";
 import ConsultancyCommingSoon from "./pages/ConsultancyCommingSoon";
+import RecruiterDashboard from "./pages/dashboard/RecruiterDashboard";
+import VerifyEmail from "./pages/auth/VerifyEmail";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +48,8 @@ const AppRoutes = () => {
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+
       </Route>
 
       {/* ================= PUBLIC / STUDENT ================= */}
@@ -103,30 +104,16 @@ const AppRoutes = () => {
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/blog" element={<BlogComingSoon />} />
         <Route path="/consulting" element={<ConsultancyCommingSoon />} />
+            <Route path="/admin" element={<AdminDashboard />} />
 
 
         {/* Hiring */}
         <Route path="/hire" element={<HireTalent />} />
-        <Route path="/become-recruiter" element={<BecomeRecruiter />} />
 
         {/* Recruiter apply flow */}
-        <Route
-          path="/recruiter/apply"
-          element={
-            <ProtectedRoute>
-              <RecruiterApply />
-            </ProtectedRoute>
-          }
-        />
+      
 
-        <Route
-          path="/recruiter/pending"
-          element={
-            <ProtectedRoute>
-              <RecruiterPending />
-            </ProtectedRoute>
-          }
-        />
+        
       </Route>
 
       {/* ================= ADMIN / RECRUITER DASHBOARD ================= */}
@@ -137,17 +124,18 @@ const AppRoutes = () => {
           </AdminRoute>
         }
       >
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/admin/companies" element={<CompanyList />} />
-        <Route path="/admin/companies/create" element={<Companycreate />} />
-        <Route path="/admin/companies/:id" element={<CompanyDetails />} />
-        <Route path="/admin/companies/edit/:id" element={<CompanyEdit />} />
 
-        <Route path="/admin/jobs" element={<Adminjobs />} />
-        <Route path="/admin/jobs/create" element={<Jobcreate />} />
-        <Route path="/admin/jobs/edit/:id" element={<AdminJobEdit />} />
+        <Route path="/recruiter" element={<RecruiterDashboard />} />
+        <Route path="/recruiter/companies" element={<CompanyList />} />
+        <Route path="/recruiter/companies/create" element={<Companycreate />} />
+        <Route path="/recruiter/companies/:id" element={<CompanyDetails />} />
+        <Route path="/recruiter/companies/edit/:id" element={<CompanyEdit />} />
+
+        <Route path="/recruiter/jobs" element={<Adminjobs />} />
+        <Route path="/recruiter/jobs/create" element={<Jobcreate />} />
+        <Route path="/recruiter/jobs/edit/:id" element={<AdminJobEdit />} />
         <Route
-          path="/admin/jobs/:jobId/applications"
+          path="/recruiter/jobs/:jobId/applications"
           element={<JobApplicants />}
         />
       </Route>

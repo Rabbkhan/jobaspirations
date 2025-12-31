@@ -10,10 +10,11 @@ import axios from "axios";
 import { USER_API_END_POINT } from "../../utils/constants";
 import { setLoading, setUser } from "../../features/authSlice";
 import { toast } from "sonner";
+import Savedjob from "../../components/job/Savedjob";
 
 const EditableField = ({ label, children }) => (
   <div className="space-y-1">
-    <h2 className="text-lg font-semibold">{label}</h2>
+    <p className="text-lg font-semibold">{label}</p>
     {children}
     <Separator />
   </div>
@@ -101,7 +102,6 @@ const Profile = () => {
 
   return (
     <div className="max-w-6xl mx-auto my-10 px-4 space-y-10">
-
       {/* -------- PROFILE CARD -------- */}
       <Card className="shadow-xl border relative">
         <Button
@@ -166,7 +166,6 @@ const Profile = () => {
           </CardHeader>
 
           <CardContent className="space-y-6">
-
             {/* EMAIL */}
             <EditableField label="Email">
               {editing ? (
@@ -222,9 +221,7 @@ const Profile = () => {
                         onClick={() =>
                           setInput({
                             ...input,
-                            skills: input.skills.filter(
-                              (_, idx) => idx !== i
-                            ),
+                            skills: input.skills.filter((_, idx) => idx !== i),
                           })
                         }
                       >
@@ -280,7 +277,11 @@ const Profile = () => {
             {/* PROFILE PHOTO */}
             <EditableField label="Profile Photo">
               {editing ? (
-                <input type="file" accept="image/*" onChange={handlePhotoUpload} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                />
               ) : (
                 <p>
                   {input.profilePhoto
@@ -307,16 +308,15 @@ const Profile = () => {
       {/* -------- SAVED JOBS SECTION -------- */}
       <Card className="shadow-lg border">
         <CardHeader>
-          <h2 className="text-xl font-bold">Saved Jobs</h2>
+          <h1 className="text-xl font-bold">Saved Jobs</h1>
         </CardHeader>
         <CardContent>
           {/* Replace later with API data */}
-          <p className="text-muted-foreground">
-            You have no saved jobs yet.
-          </p>
+          <div className="text-muted-foreground">
+            <Savedjob />
+          </div>
         </CardContent>
       </Card>
-
     </div>
   );
 };

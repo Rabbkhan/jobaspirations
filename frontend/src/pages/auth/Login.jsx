@@ -9,7 +9,7 @@ import axios from "axios";
 import { USER_API_END_POINT } from "../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "../../features/authSlice";
-import {  Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [input, setInput] = useState({
@@ -42,20 +42,22 @@ const Login = () => {
         // Redirect based on role
         if (role === "student") {
           navigate("/profile");
-          toast.success(res.data.message)
+          toast.success(res.data.message);
         } else if (role === "recruiter") {
-          navigate("/admin");
+          navigate("/recruiter");
         }
-        dispatch(setUser(res.data.safeUser))
-
+        dispatch(setUser(res.data.safeUser));
       }
     } catch (error) {
-      console.log(error);
-      toast.error(
-        error.response?.data?.message ||
-          error.response?.data?.errors?.[0]?.msg ||
-          "Something went wrong"
-      );
+      const msg = error.response?.data?.message;
+
+      if (msg === "Please verify your email before logging in") {
+        toast.info(msg);
+        navigate(`/verify-email?email=${input.email}`);
+        return;
+      }
+
+      toast.error(msg || "Something went wrong");
     } finally {
       dispatch(setLoading(false));
     }

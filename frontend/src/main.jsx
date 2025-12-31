@@ -9,7 +9,11 @@ import { store, persistor } from "./store/store";
 import { PersistGate } from "redux-persist/integration/react";
 import DashboardLoading from "./components/common/loading/DashboardLoading";
 
+
 createRoot(document.getElementById("root")).render(
+
+  
+
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={<DashboardLoading />} persistor={persistor}>

@@ -1,14 +1,16 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware..js";
-import { updateProfileController } from "../controllers/auth.controller.js";
+import { requestVerificationCode, updateProfileController, verifyEmail } from "../controllers/auth.controller.js";
 import { updateUserValidation } from "../validations/authValidation.js";
 import { upload } from "../middlewares/multer.js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
 
 import { login, logout, register } from "../controllers/auth.controller.js";
 import {
   loginValidation,
   registerValidation,
 } from "../validations/authValidation.js";
+import { approveUser, getPendingUsers } from "../controllers/admin.controller.js";
 
 const router = express.Router();
 
@@ -30,5 +32,10 @@ router.put(
   ]),updateUserValidation,
   updateProfileController
 );
+router.post("/verifyemail", verifyEmail)
+router.post("/verifyemail/request", requestVerificationCode)
+
+router.get("/adminDashboard", authenticate, authorizeRoles("admin"), getPendingUsers);
+router.patch("/approve/:userId", authenticate, authorizeRoles("admin"), approveUser);
 
 export default router;
