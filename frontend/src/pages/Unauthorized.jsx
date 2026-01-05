@@ -16,8 +16,8 @@ const Unauthorized = () => {
 
   useEffect(() => {
     // 2. Recruiter/Admin trying to access student pages (like /profile)
-    if (user.role === "recruiter" || user.role === "admin") {
-      navigate("/admin", { replace: true });
+    if (user.role === "recruiter") {
+      navigate("/recruiter", { replace: true });
       return;
     }
 
