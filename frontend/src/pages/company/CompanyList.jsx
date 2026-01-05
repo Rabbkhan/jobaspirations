@@ -41,10 +41,10 @@ const CompanyList = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Companies</h1>
 
-        <Link to="/admin/companies/create">
+        <Link to="/recruiter/companies/create">
           <Button
-            className="flex items-center gap-2"
-            onClick={() => navigate("/admin/companies/create")}
+            className="flex items-center cursor-pointer gap-2"
+            onClick={() => navigate("/recruiter/companies/create")}
           >
             <Plus size={18} />
             Add Company

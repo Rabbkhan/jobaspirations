@@ -16,10 +16,10 @@ const MainLayout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+<div className="min-h-screen w-full overflow-x-hidden">
+  <Outlet />
+</div>
 
-      <div className="min-h-[80vh]">
-        <Outlet />
-      </div>
 
       <Footer />
     </div>

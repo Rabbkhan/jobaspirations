@@ -69,7 +69,7 @@ const Companycreate = () => {
     if (res?.data?.success) {
       dispatch(setSingleCompany(res?.data?.company));
       toast.success(res?.data?.message);
-      navigate(`/admin/companies`);
+      navigate(`/recruiter/companies`);
     }
   } catch (error) {
     console.error("Create company error:", error.response?.data || error);
@@ -90,7 +90,7 @@ const Companycreate = () => {
     <div className="p-6 flex justify-center">
       <Card className="w-full max-w-4xl rounded-xl border border-border shadow-sm bg-card">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Create Company</CardTitle>
+          <CardTitle className="text-2xl font-bold cursor-pointer">Create Company</CardTitle>
           <p className="text-muted-foreground text-sm">
             Fill out the details to add a new company to the system.
           </p>

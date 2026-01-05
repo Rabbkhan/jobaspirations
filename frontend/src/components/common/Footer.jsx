@@ -1,5 +1,6 @@
-import React from "react";
-import { Facebook, Instagram, Linkedin, Github } from "lucide-react";
+import { Facebook, Linkedin, Instagram, Github } from "lucide-react";
+
+
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -23,12 +24,31 @@ const Footer = () => {
             </p>
 
             {/* Social Icons */}
-            <div className="flex gap-4 mt-4">
-              <Facebook className="w-5 h-5 cursor-pointer hover:text-white transition" />
-              <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition" />
-              <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition" />
-              <Github className="w-5 h-5 cursor-pointer hover:text-white transition" />
-            </div>
+           {/* Social Icons */}
+<div className="flex gap-4 mt-4">
+  <a
+    href="https://www.facebook.com/people/Job-Aspirations/61585803661844/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Facebook"
+  >
+    <Facebook className="w-5 h-5 cursor-pointer hover:text-white transition" />
+  </a>
+
+  <a
+    href="https://www.linkedin.com/in/job-aspirations-1b28993a3/"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="LinkedIn"
+  >
+    <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition" />
+  </a>
+
+  <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition" />
+</div>
+
+
+
           </div>
 
           {/* Links */}

@@ -7,7 +7,7 @@ const Hero = () => {
 
   return (
     <section className="relative overflow-hidden bg-background border-b">
-      <div className="max-w-7xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+      <div className="max-w-7xl mx-auto px-6 py-28 grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
 
         {/* LEFT — MESSAGE */}
         <div className="space-y-10">
@@ -16,35 +16,39 @@ const Hero = () => {
           </span>
 
           <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
-            We don’t just find jobs. <br />
-            <span className="text-primary">We build careers.</span>
+            Build Your Career. <br />
+            <span className="text-primary">
+              Pay Only After You Get Hired.
+            </span>
           </h1>
 
           <p className="text-lg text-muted-foreground max-w-xl">
-            From career guidance and resume reviews to direct hiring and
-            recruiter access — we support you at every step of your journey.
+            Career guidance, curated job opportunities, and direct recruiter
+            access — with <strong>no upfront fees</strong> and a
+            success-based model.
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-2">
-            <Button size="lg" onClick={() => navigate("/jobs")}>
-              Explore Opportunities
+          {/* CTAs */}
+          <div className="flex flex-wrap gap-4 pt-2 ">
+            <Button size="lg" onClick={() => navigate("/jobs")} className="cursor-pointer">
+              Get Started Free
             </Button>
 
-            <Button
+            {/* <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate("/consulting")}
+              onClick={() => navigate("/how-it-works")}className="cursor-pointer"
             >
-              Get Career Guidance
-            </Button>
+              How It Works
+            </Button> */}
           </div>
 
-          {/* Trust & Value */}
+          {/* TRUST POINTS */}
           <div className="grid sm:grid-cols-3 gap-6 pt-8 text-sm text-muted-foreground">
             {[
-              "Personal career mentoring",
-              "Verified recruiter network",
-              "Skill-based job matching",
+              "No upfront fees",
+              "Career guidance + hiring support",
+              "Pay only after successful placement",
             ].map((item) => (
               <div key={item} className="flex gap-2 items-start">
                 <CheckCircle className="w-4 h-4 text-primary mt-0.5" />
@@ -54,7 +58,7 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* RIGHT — PROCESS VISUAL */}
+        {/* RIGHT — PROCESS */}
         <div className="relative">
           <div className="absolute -inset-6 bg-primary/20 blur-3xl rounded-full" />
 
@@ -67,17 +71,17 @@ const Hero = () => {
               {
                 step: "01",
                 title: "Career Assessment",
-                desc: "Understand your strengths and goals",
+                desc: "Clarity on role, skills, and career direction",
               },
               {
                 step: "02",
                 title: "Expert Guidance",
-                desc: "Resume review, skill gap analysis",
+                desc: "Resume review, interview prep, skill gap analysis",
               },
               {
                 step: "03",
-                title: "Direct Hiring",
-                desc: "Connect with verified recruiters",
+                title: "Direct Hiring Access",
+                desc: "Opportunities from verified recruiters",
               },
             ].map((item) => (
               <div key={item.step} className="flex gap-4">
@@ -93,10 +97,12 @@ const Hero = () => {
               </div>
             ))}
 
+            {/* Recruiter CTA (De-emphasized) */}
             <Button
               variant="secondary"
-              className="w-full"
-              onClick={() => navigate("/hire")}
+              size="sm"
+              className="w-full cursor-pointer"
+              onClick={() => navigate("/hire")} 
             >
               For Recruiters & Companies
             </Button>

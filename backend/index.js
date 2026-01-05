@@ -3,7 +3,6 @@ import path from "path";
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-
 import userRoutes from './src/routes/user.routes.js';
 import companyRoutes from './src/routes/company.routes.js';
 import jobRoutes from './src/routes/job.routes.js';
@@ -25,10 +24,6 @@ const envFile = isProduction
 
 dotenv.config({ path: envFile });
 
-console.log("-------------------------------------------------");
-console.log("Environment:", isProduction ? "production" : "development");
-console.log("MongoDB URI:", process.env.MONGODB_URI ? "Loaded" : "Missing");
-console.log("-------------------------------------------------");
 
 // --------------------
 // Express Setup

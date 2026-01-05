@@ -124,7 +124,7 @@ const AdminJobEdit = () => {
 
       toast.success(res?.data?.message || "Job updated successfully");
 
-      navigate("/admin/jobs");
+      navigate("/recruiter/jobs");
     } catch (error) {
       console.log("Update job error:", error?.response?.data || error);
       toast.error(error?.response?.data?.message || "Failed to update job");
@@ -137,7 +137,7 @@ const AdminJobEdit = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Edit Job</h1>
 
-        <Link to="/admin/jobs">
+        <Link to="/recruiter/jobs">
           <Button variant="outline" className="flex gap-2">
             <ArrowLeft size={18} />
             Back

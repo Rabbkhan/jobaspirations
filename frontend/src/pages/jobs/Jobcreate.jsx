@@ -53,7 +53,7 @@ const Jobcreate = () => {
           withCredentials: true,
         });
 
-        console.log("Companies API:", res.data);
+        // console.log("Companies API:", res.data);
 
         // ✅ IMPORTANT: use correct response key
         dispatch(setAllCompany(res?.data?.companies || []));
@@ -101,7 +101,7 @@ const Jobcreate = () => {
 
       toast.success(res?.data?.message);
 
-      navigate("/admin/jobs");
+      navigate("/recruiter/jobs");
     } catch (error) {
       console.log("Create job error:", error?.response?.data || error);
       toast.error(error?.response?.data?.message || "Failed to create job");
