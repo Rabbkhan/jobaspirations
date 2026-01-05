@@ -22,7 +22,6 @@ import CompanyList from "./pages/company/CompanyList";
 import CompanyDetails from "./pages/company/CompanyDetails";
 import Companycreate from "./pages/company/Companycreate";
 import CompanyEdit from "./pages/company/CompanyEdit";
-import AdminDashboard from "./pages/dashboard/AdminDashboard";
 import Adminjobs from "./pages/jobs/Adminjobs";
 import Jobcreate from "./pages/jobs/Jobcreate";
 import JobApplicants from "./pages/jobs/JobApplicants";
@@ -104,7 +103,7 @@ const AppRoutes = () => {
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/blog" element={<BlogComingSoon />} />
         <Route path="/consulting" element={<ConsultancyCommingSoon />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            {/* <Route path="/admin" element={<AdminDashboard />} /> */}
 
 
         {/* Hiring */}
