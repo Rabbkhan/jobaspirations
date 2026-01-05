@@ -103,7 +103,6 @@ const AppRoutes = () => {
         <Route path="/terms" element={<TermsAndConditions />} />
         <Route path="/blog" element={<BlogComingSoon />} />
         <Route path="/consulting" element={<ConsultancyCommingSoon />} />
-            {/* <Route path="/admin" element={<AdminDashboard />} /> */}
 
 
         {/* Hiring */}
