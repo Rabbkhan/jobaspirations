@@ -118,6 +118,15 @@ const Login = () => {
                 />
               </div>
 
+<p className="text-right text-sm">
+  <Link
+    to="/forgot-password"
+    className="text-primary hover:underline"
+  >
+    Forgot password?
+  </Link>
+</p>
+
               {/* Button */}
               {loading ? (
                 <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">

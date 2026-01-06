@@ -14,14 +14,24 @@ const userSchema = new mongoose.Schema(
 
     phoneNumber: String,
 
-    password: { type: String, required: true },
+    password: {
+      type: String,
+      required: true    },
 
+    // models/User.model.js
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+    passwordResetAttempts: {
+      type: Number,
+      default: 0,
+    },
+    passwordChangedAt: Date,
     role: {
       type: String,
       enum: ["student", "recruiter", "admin"],
       default: "student",
     },
-  isFirstLogin: { type: Boolean, default: true },
+    isFirstLogin: { type: Boolean, default: true },
 
     isEmailVerified: { type: Boolean, default: false },
 
@@ -48,6 +58,5 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
 
 export const User = mongoose.model("User", userSchema);

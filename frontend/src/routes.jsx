@@ -38,6 +38,8 @@ import CareerGuidance from "./pages/CareerGuidance";
 import ConsultancyCommingSoon from "./pages/ConsultancyCommingSoon";
 import RecruiterDashboard from "./pages/dashboard/RecruiterDashboard";
 import VerifyEmail from "./pages/auth/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const AppRoutes = () => {
   return (
@@ -48,6 +50,9 @@ const AppRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password/:token" element={<ResetPassword />} />
+
 
       </Route>
 

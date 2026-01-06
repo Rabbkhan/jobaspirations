@@ -1,6 +1,6 @@
 import express from "express";
 import { authenticate } from "../middlewares/auth.middleware..js";
-import { requestVerificationCode, updateProfileController, verifyEmail } from "../controllers/auth.controller.js";
+import { forgotPasswordController, requestVerificationCode, resetPasswordController, updateProfileController, verifyEmail } from "../controllers/auth.controller.js";
 import { updateUserValidation } from "../validations/authValidation.js";
 import { upload } from "../middlewares/multer.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
@@ -34,7 +34,8 @@ router.put(
 );
 router.post("/verifyemail", verifyEmail)
 router.post("/verifyemail/request", requestVerificationCode)
-
+router.post("/forgot-password", forgotPasswordController);
+router.post("/reset-password/:token", resetPasswordController);
 router.get("/adminDashboard", authenticate, authorizeRoles("admin"), getPendingUsers);
 router.patch("/approve/:userId", authenticate, authorizeRoles("admin"), approveUser);
 

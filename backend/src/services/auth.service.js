@@ -1,12 +1,13 @@
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
-import { sendVerificationCode, sendWelcomeEmail } from "../middlewares/Email.js";
+import { sendPasswordResetEmail, sendVerificationCode, sendWelcomeEmail } from "../middlewares/Email.js";
 import { User } from "../models/user.model.js";
 import { comparePassword, hashPassword } from "../utils/hash.js";
 import { generateToken } from "../utils/token.js";
 import { uploadToCloud } from "../utils/uploadToCloud.js";
 import { generateEmailVerification } from "../utils/generateEmailVerification.js";
 import crypto from "crypto";
+import { FRONTEND_URL } from "../config/env.js";
 
 
 export const registerUser = async ({ fullname, email, password, phoneNumber, role, profilePhoto }) => {
@@ -191,5 +192,66 @@ export const loginUser = async ({ email, password, role }) => {
   }
 
   return { user, token };
+};
+
+//fogrogt password  logic
+
+export const forgotPasswordService = async (email) => {
+  const user = await User.findOne({ email });
+
+  if (!user) return;
+
+  // Prevent abuse
+  if (user.passwordResetAttempts >= 25) {
+    throw new Error("Too many reset attempts. Try later.");
+  }
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  user.passwordResetToken = hashedToken;
+  user.passwordResetExpires = Date.now() + 15 * 60 * 1000;
+  user.passwordResetAttempts += 1;
+
+  await user.save({ validateBeforeSave: false });
+
+const resetLink = `${FRONTEND_URL}/reset-password/${resetToken}`;
+  // LOCAL TESTING
+  console.log("RESET URL:", resetLink);
+ await sendPasswordResetEmail({
+    to: user.email,
+    resetLink,
+    userName: user.name,
+  });
+};
+
+
+export const resetPasswordService = async (token, newPassword) => {
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  }).select("+password");
+
+  if (!user) {
+    throw new Error("Invalid or expired token");
+  }
+
+  user.password = await hashPassword(newPassword);
+
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  user.passwordResetAttempts = 0;
+  user.passwordChangedAt = Date.now();
+
+  await user.save();
 };
 

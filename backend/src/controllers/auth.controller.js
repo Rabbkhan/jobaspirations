@@ -1,9 +1,11 @@
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
 import {
+  forgotPasswordService,
   loginUser,
   registerUser,
   requestVerificationCodeService,
+  resetPasswordService,
 } from "../services/auth.service.js";
 import { validationResult } from "express-validator";
 import { updateProfile } from "../services/user.service.js";
@@ -228,3 +230,26 @@ export const updateProfileController = async (req, res) => {
 //     });
 //   }
 // };
+
+
+
+
+export const forgotPasswordController = async (req, res, next) => {
+  try {
+    await forgotPasswordService(req.body.email);
+    res.status(200).json({
+      message: "If the email exists, a reset link has been sent.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    await resetPasswordService(req.params.token, req.body.password);
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    next(error);
+  }
+};

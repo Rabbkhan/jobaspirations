@@ -131,3 +131,79 @@ export const welcomeEmailTemplate = (userName) => `
 </body>
 </html>
 `;
+
+
+export const passwordResetEmailTemplate = (userName, resetUrl) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Password Reset</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="margin:0; padding:0; background:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" style="padding:30px 10px;">
+        
+        <table width="600" cellspacing="0" cellpadding="0" style="background:#ffffff; border-radius:8px; padding:25px;">
+          
+          <tr>
+            <td align="center">
+              <h2 style="color:#333; margin-bottom:5px;">Reset Your Password</h2>
+              <p style="color:#555; font-size:14px; margin-top:0;">
+                Hello <strong>${userName || "User"}</strong>,<br/>
+                We received a request to reset your password for 
+                <strong>Job Aspirations</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:20px 0;">
+              <a href="${resetUrl}" target="_blank" rel="noopener noreferrer"
+                 style="
+                   background:#dc3545;
+                   color:#ffffff;
+                   padding:12px 24px;
+                   text-decoration:none;
+                   border-radius:5px;
+                   font-size:14px;
+                   display:inline-block;
+                 ">
+                Reset Password
+              </a>
+              <p style="color:#777; font-size:13px; margin-top:12px;">
+                This link will expire in <strong>15 minutes</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <hr style="border:none; border-top:1px solid #eee;">
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center">
+              <p style="font-size:12px; color:#999;">
+                If you did not request a password reset, you can safely ignore this email.
+                Your account will remain secure.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+
+        <p style="font-size:11px; color:#999; margin-top:10px;">
+          © Job Aspirations — All Rights Reserved
+        </p>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;

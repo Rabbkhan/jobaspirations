@@ -9,6 +9,7 @@ import jobRoutes from './src/routes/job.routes.js';
 import applicationRoutes from './src/routes/application.routes.js';
 import dashboardRoutes from "./src/routes/dashboard.route.js";
 import connectDb from "./src/config/db.js";
+import { FRONTEND_ALLOWED_ORIGINS } from "./src/config/env.js";
 
 // --------------------
 // Environment Setup
@@ -34,22 +35,17 @@ const app = express();
 // --------------------
 // CORS Setup
 // --------------------
-const allowedOrigins = [
-  process.env.FRONTEND_URL_LOCAL,
-  process.env.FRONTEND_URL_LIVE,
-  process.env.FRONTEND_URL_LIVE_WWW,
-];
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // Postman, server-to-server
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      if (FRONTEND_ALLOWED_ORIGINS.includes(origin)) {
+        return callback(null, true);
       }
+
+      callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
   })
