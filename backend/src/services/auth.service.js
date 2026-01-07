@@ -221,7 +221,6 @@ export const forgotPasswordService = async (email) => {
 
 const resetLink = `${FRONTEND_URL}/reset-password/${resetToken}`;
   // LOCAL TESTING
-  console.log("RESET URL:", resetLink);
  await sendPasswordResetEmail({
     to: user.email,
     resetLink,

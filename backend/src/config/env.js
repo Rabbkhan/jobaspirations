@@ -1,25 +1,29 @@
+// src/config/env.js
+
 const isProduction =
   process.env.NODE_ENV === "production" ||
   process.env.FORCE_PROD === "true";
 
-let FRONTEND_URL;
+let FRONTEND_URL = null;
 let FRONTEND_ALLOWED_ORIGINS = [];
 
 if (isProduction) {
-  FRONTEND_URL = process.env.FRONTEND_URL_LIVE;
+  FRONTEND_URL = process.env.FRONTEND_URL_LIVE || null;
 
   FRONTEND_ALLOWED_ORIGINS = [
     process.env.FRONTEND_URL_LIVE,
     process.env.FRONTEND_URL_LIVE_WWW,
-  ];
+  ].filter(Boolean); // remove undefined values
 } else {
-  FRONTEND_URL = process.env.FRONTEND_URL_LOCAL;
+  FRONTEND_URL = process.env.FRONTEND_URL_LOCAL || null;
 
-  FRONTEND_ALLOWED_ORIGINS = [process.env.FRONTEND_URL_LOCAL];
+  FRONTEND_ALLOWED_ORIGINS = [
+    process.env.FRONTEND_URL_LOCAL,
+  ].filter(Boolean);
 }
 
-if (!FRONTEND_URL) {
-  throw new Error("Primary FRONTEND_URL is not defined");
-}
-
-export { FRONTEND_URL, FRONTEND_ALLOWED_ORIGINS };
+export {
+  isProduction,
+  FRONTEND_URL,
+  FRONTEND_ALLOWED_ORIGINS,
+};

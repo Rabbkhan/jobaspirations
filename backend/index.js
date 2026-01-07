@@ -1,100 +1,195 @@
+/**
+ * index.js
+ * Production-safe bootstrap
+ * Zero side-effects, deterministic startup
+ */
+
+/* ===========================
+   1. LOAD ENV — FIRST, ALWAYS
+   =========================== */
+
 import dotenv from "dotenv";
 import path from "path";
+
+// Decide environment BEFORE reading any env values
+const isProduction =
+  process.env.NODE_ENV === "production" ||
+  process.env.FORCE_PROD === "true";
+
+// Load correct env file
+dotenv.config({
+  path: isProduction
+    ? path.resolve("./.env.production")
+    : path.resolve("./.env.development"),
+});
+
+/* ===========================
+   2. IMPORTS (SAFE NOW)
+   =========================== */
+
 import express from "express";
-import cookieParser from "cookie-parser";
 import cors from "cors";
-import userRoutes from './src/routes/user.routes.js';
-import companyRoutes from './src/routes/company.routes.js';
-import jobRoutes from './src/routes/job.routes.js';
-import applicationRoutes from './src/routes/application.routes.js';
+import cookieParser from "cookie-parser";
+
+// Routes
+import userRoutes from "./src/routes/user.routes.js";
+import companyRoutes from "./src/routes/company.routes.js";
+import jobRoutes from "./src/routes/job.routes.js";
+import applicationRoutes from "./src/routes/application.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.route.js";
+
+// Infrastructure
 import connectDb from "./src/config/db.js";
-import { FRONTEND_ALLOWED_ORIGINS } from "./src/config/env.js";
+import {
+  FRONTEND_URL,
+  FRONTEND_ALLOWED_ORIGINS,
+} from "./src/config/env.js";
 
-// --------------------
-// Environment Setup
-// --------------------
+/* ===========================
+   3. HARD ENV VALIDATION
+   =========================== */
 
-// Force production flag for safety (VPS can set FORCE_PROD=true)
-const isProduction = process.env.NODE_ENV === "production" || process.env.FORCE_PROD === "true";
+const PORT = Number(process.env.PORT);
 
-// Load the correct .env file
-const envFile = isProduction
-  ? path.resolve("./.env.production")
-  : path.resolve("./.env.development");
+if (!PORT) {
+  console.error("❌ FATAL: PORT is not defined");
+  process.exit(1);
+}
 
-dotenv.config({ path: envFile });
+if (!FRONTEND_URL) {
+  console.error("❌ FATAL: FRONTEND_URL is not defined");
+  process.exit(1);
+}
 
+if (!Array.isArray(FRONTEND_ALLOWED_ORIGINS) || FRONTEND_ALLOWED_ORIGINS.length === 0) {
+  console.error("❌ FATAL: FRONTEND_ALLOWED_ORIGINS is empty");
+  process.exit(1);
+}
 
-// --------------------
-// Express Setup
-// --------------------
-const PORT = process.env.PORT || 3000;
+// Log boot config ONCE (do not remove)
+if (process.env.NODE_ENV !== "production") {
+  console.log("🧪 Boot configuration (dev):", {
+    NODE_ENV: process.env.NODE_ENV,
+    FORCE_PROD: process.env.FORCE_PROD,
+    PORT,
+    FRONTEND_ALLOWED_ORIGINS,
+  });
+} else {
+  console.log("🚀 Server starting in production mode");
+}
+
+/* ===========================
+   4. EXPRESS APP
+   =========================== */
+
 const app = express();
 
-// --------------------
-// CORS Setup
-// --------------------
+/* ===========================
+   5. CORS — SAFE, NON-CRASHING
+   =========================== */
 
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow curl, server-to-server, health checks
       if (!origin) return callback(null, true);
 
       if (FRONTEND_ALLOWED_ORIGINS.includes(origin)) {
         return callback(null, true);
       }
 
-      callback(new Error("Not allowed by CORS"));
+      // Reject cleanly — DO NOT THROW
+      return callback(null, false);
     },
     credentials: true,
   })
 );
 
-// --------------------
-// Middlewares
-// --------------------
-app.use(express.json());
+/* ===========================
+   6. MIDDLEWARES
+   =========================== */
+
+app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// --------------------
-// Routes
-// --------------------
+/* ===========================
+   7. HEALTH CHECK (NGINX SAFE)
+   =========================== */
+
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok",
+    uptime: process.uptime(),
+  });
+});
+
+/* ===========================
+   8. ROUTES
+   =========================== */
+
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/job", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 
+// Root sanity check
 app.get("/", (req, res) => {
-  return res.status(200).json({
-    message: "Backend is running!",
+  res.status(200).json({
     success: true,
+    message: "Backend is running",
   });
 });
 
-// --------------------
-// Global Error Handler
-// --------------------
+/* ===========================
+   9. GLOBAL ERROR HANDLER
+   =========================== */
+
 app.use((err, req, res, next) => {
-  console.error("Error:", err.message);
-  res.status(500).json({ success: false, message: "Internal Server Error" });
+  console.error("❌ Unhandled error:", err);
+
+  if (res.headersSent) {
+    return next(err);
+  }
+
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
 });
 
-// --------------------
-// Start Server after DB Connection
-// --------------------
+/* ===========================
+   10. START SERVER (DB FIRST)
+   =========================== */
+
 const startServer = async () => {
   try {
-    await connectDb(); // db.js should throw if MONGODB_URI is missing
-    app.listen(PORT, () => {
-      console.log(`✅ Server running at port ${PORT}`);
+    await connectDb();
+
+    app.listen(PORT, "127.0.0.1", () => {
+      console.log(`✅ Server listening on http://127.0.0.1:${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Database connection failed:", error.message);
+    console.error("❌ Startup failure:", error);
     process.exit(1);
   }
 };
 
 startServer();
+
+/* ===========================
+   11. PROCESS SAFETY NETS
+   =========================== */
+
+// Crash fast — PM2 should restart
+process.on("unhandledRejection", (reason) => {
+  console.error("❌ Unhandled Rejection:", reason);
+  process.exit(1);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Exception:", error);
+  process.exit(1);
+});
