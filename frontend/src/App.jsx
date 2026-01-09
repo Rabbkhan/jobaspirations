@@ -1,17 +1,16 @@
 
 import { useDispatch } from "react-redux";
 import AppRoutes from "./routes";
-import { loadSavedJobs } from "../thunk/SavedJobThunk";
+import { loadSavedJobs } from "./thunk/SavedJobThunk";
 import { useEffect } from "react";
 
 
 function App() {
+const dispatch = useDispatch()
+useEffect(() => {
+  dispatch(loadSavedJobs());
+}, []);
 
-const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadSavedJobs());
-  }, [dispatch]);
   return (
     <div className="bg-background min-h-screen">
       <AppRoutes/>

@@ -1,7 +1,6 @@
-// routes/job.routes.js
-import express, { Router } from "express";
-
+import express from "express";
 import { authenticate } from "../middlewares/auth.middleware..js";
+import { authorizeRoles } from "../middlewares/role.middleware.js";
 
 import {
   createJobController,
@@ -13,12 +12,45 @@ import {
   getJobApplicantsController,
   getJobFiltersController,
 } from "../controllers/job.controller.js";
+
+import {
+  getSavedJobsController,
+  saveJobController,
+  unsaveJobController,
+} from "../controllers/savedJobs.controller.js";
+
 import { jobValidation } from "../validations/jobValidation.js";
-import { authorizeRoles } from "../middlewares/role.middleware.js";
-import { getSavedJobs, saveJob, unsaveJob } from "../services/savedJob.service.js";
-import { getSavedJobsController, saveJobController, unsaveJobController } from "../controllers/savedJobs.controller.js";
 
 const router = express.Router();
+
+/* ===================== SAVED JOBS (MUST BE FIRST) ===================== */
+
+router.get(
+  "/saved",
+  authenticate,
+  authorizeRoles("student"),
+  getSavedJobsController
+);
+
+router.post(
+  "/save/:jobId",
+  authenticate,
+  authorizeRoles("student"),
+  saveJobController
+);
+
+router.delete(
+  "/unsave/:jobId",
+  authenticate,
+  authorizeRoles("student"),
+  unsaveJobController
+);
+
+/* ===================== OTHER STATIC ROUTES ===================== */
+
+router.get("/filters", getJobFiltersController);
+
+router.get("/", getAllJobsController);
 
 router.post(
   "/create",
@@ -27,8 +59,6 @@ router.post(
   jobValidation,
   createJobController
 );
-router.get("/", getAllJobsController);
-router.get("/filters", getJobFiltersController);
 
 router.get(
   "/getadminJobs",
@@ -36,7 +66,7 @@ router.get(
   authorizeRoles("recruiter"),
   getAdminJobsController
 );
-// routes/job.routes.js
+
 router.get(
   "/:jobId/applications",
   authenticate,
@@ -44,7 +74,10 @@ router.get(
   getJobApplicantsController
 );
 
+/* ===================== DYNAMIC ROUTES (ALWAYS LAST) ===================== */
+
 router.get("/:id", getJobByIdController);
+
 router.put(
   "/:id",
   authenticate,
@@ -52,18 +85,12 @@ router.put(
   authorizeRoles("recruiter"),
   updateJobController
 );
+
 router.delete(
   "/:id",
   authenticate,
   authorizeRoles("recruiter"),
   deleteJobController
 );
-
-
-router.get("/saved", authenticate, authorizeRoles("student"), getSavedJobsController);
-
-router.post("/save/:jobId", authenticate, authorizeRoles("student"), saveJobController);
-
-router.delete("/unsave/:jobId", authenticate, authorizeRoles("student"), unsaveJobController);
 
 export default router;

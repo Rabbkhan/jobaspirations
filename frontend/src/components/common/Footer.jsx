@@ -1,13 +1,11 @@
 import { Facebook, Linkedin, Instagram, Github } from "lucide-react";
 
-
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Footer = () => {
+  const { user } = useSelector((store) => store.auth);
 
-    const { user } = useSelector((store) => store.auth);
-  
   return (
     <footer className="bg-[#0F0F0F] text-gray-300 py-10 mt-10 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-6">
@@ -24,31 +22,28 @@ const Footer = () => {
             </p>
 
             {/* Social Icons */}
-           {/* Social Icons */}
-<div className="flex gap-4 mt-4">
-  <a
-    href="https://www.facebook.com/people/Job-Aspirations/61585803661844/"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="Facebook"
-  >
-    <Facebook className="w-5 h-5 cursor-pointer hover:text-white transition" />
-  </a>
+            {/* Social Icons */}
+            <div className="flex gap-4 mt-4">
+              <a
+                href="https://www.facebook.com/people/Job-Aspirations/61585803661844/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+              >
+                <Facebook className="w-5 h-5 cursor-pointer hover:text-white transition" />
+              </a>
 
-  <a
-    href="https://www.linkedin.com/in/job-aspirations-1b28993a3/"
-    target="_blank"
-    rel="noopener noreferrer"
-    aria-label="LinkedIn"
-  >
-    <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition" />
-  </a>
+              <a
+                href="https://www.linkedin.com/in/job-aspirations-1b28993a3/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+              >
+                <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition" />
+              </a>
 
-  <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition" />
-</div>
-
-
-
+              <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition" />
+            </div>
           </div>
 
           {/* Links */}
@@ -56,18 +51,16 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white mb-4">Platform</h3>
             <ul className="space-y-2">
               <li className="hover:text-white transition cursor-pointer">
-            <Link
-                  to="/jobs" >    Find Jobs</Link>
+                <Link to="/jobs"> Find Jobs</Link>
               </li>
               {user?.role !== "student" && (
-
-              <li className="hover:text-white transition cursor-pointer">
-              <Link
-                  to="/hire"
-                  className="hover:text-white transition"
-                >   Hire Talent </Link>
-              </li>
-)}
+                <li className="hover:text-white transition cursor-pointer">
+                  <Link to="/hire" className="hover:text-white transition">
+                    {" "}
+                    Hire Talent{" "}
+                  </Link>
+                </li>
+              )}
               <li className="hover:text-white transition cursor-pointer"></li>{" "}
               <li>
                 {" "}

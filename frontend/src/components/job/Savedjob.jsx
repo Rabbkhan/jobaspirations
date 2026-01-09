@@ -1,12 +1,15 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { unsaveJobThunk } from "../../thunk/SavedJobThunk";
 
 const Savedjob = () => {
   const savedJobs = useSelector((state) => state.job.savedJobs);
-const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   if (!savedJobs || savedJobs.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-20">
@@ -16,13 +19,16 @@ const navigate = useNavigate()
     );
   }
 
+  const handleRemove = (jobId) => {
+    dispatch(unsaveJobThunk(jobId));
+  };
+
   return (
     <div className="space-y-4">
       {savedJobs.map((job) => (
         <Card key={job._id} className="border shadow-sm">
           <CardContent className="p-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              
               {/* Job Info */}
               <div>
                 <h3 className="text-lg font-semibold">{job.title}</h3>
@@ -32,17 +38,30 @@ const navigate = useNavigate()
                 </p>
 
                 <div className="flex gap-2 mt-2">
-                  <Badge variant="secondary">{job.jobType || "Full Time"}</Badge>
+                  <Badge variant="secondary">
+                    {job.jobType || "Full Time"}
+                  </Badge>
                   <Badge>{job.category || "General"}</Badge>
                 </div>
               </div>
 
               {/* Actions */}
               <div className="flex gap-2">
-                <Button variant="outline"  onClick={() => navigate(`/jobs/${job._id}`)}>View</Button>
-                <Button variant="destructive">Remove</Button>
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() => navigate(`/jobs/${job._id}`)}
+                >
+                  View
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="cursor-pointer"
+                  onClick={() => handleRemove(job._id)}
+                >
+                  Remove
+                </Button>
               </div>
-
             </div>
           </CardContent>
         </Card>

@@ -172,7 +172,7 @@ export const updateProfileController = async (req, res) => {
     const profilePhotoFile = req.files?.profilePhoto?.[0] || null;
 
     const updatedUser = await updateProfile({
-      userId: req.user.id,
+      userId: req.user._id,
       fullname: req.body.fullname,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,

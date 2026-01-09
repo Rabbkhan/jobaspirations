@@ -1,43 +1,61 @@
-// controllers/savedJob.controller.js
-import { getSavedJobs, saveJob, unsaveJob } from "../services/savedJob.service.js";
+import {
+  getSavedJobsService,
+  saveJobService,
+  unsaveJobService,
+} from "../services/savedJob.service.js";
 import { STATUS } from "../constants/statusCodes.js";
 
 export const getSavedJobsController = async (req, res) => {
   try {
-    const userId = req.user?.id;
-    if (!userId) return res.status(STATUS.UNAUTHORIZED).json({ success: false, message: "User not authenticated" });
+    const userId = req.user._id;
+    const result = await getSavedJobsService(userId);
 
-    const savedJobs = await getSavedJobs(userId);
-    res.status(STATUS.OK).json({ success: true, savedJobs });
+    res.status(STATUS.OK).json({
+      success: true,
+      savedJobs: result.savedJobs,
+    });
   } catch (err) {
-    res.status(err.status || 500).json({ success: false, message: err.message || "Failed to fetch saved jobs" });
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
 export const saveJobController = async (req, res) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user._id;
     const { jobId } = req.params;
-    if (!userId) return res.status(STATUS.UNAUTHORIZED).json({ success: false, message: "User not authenticated" });
-    if (!jobId) return res.status(STATUS.BAD_REQUEST).json({ success: false, message: "Job ID required" });
 
-    const savedJobs = await saveJob({ userId, jobId });
-    res.status(STATUS.OK).json({ success: true, savedJobs });
+    const result = await saveJobService({ userId, jobId });
+
+    res.status(STATUS.OK).json({
+      success: true,
+      savedJobs: result.savedJobs,
+    });
   } catch (err) {
-    res.status(err.status || 500).json({ success: false, message: err.message || "Failed to save job" });
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };
 
 export const unsaveJobController = async (req, res) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user._id;
     const { jobId } = req.params;
-    if (!userId) return res.status(STATUS.UNAUTHORIZED).json({ success: false, message: "User not authenticated" });
-    if (!jobId) return res.status(STATUS.BAD_REQUEST).json({ success: false, message: "Job ID required" });
 
-    const savedJobs = await unsaveJob({ userId, jobId });
-    res.status(STATUS.OK).json({ success: true, savedJobs });
+    const result = await unsaveJobService({ userId, jobId });
+
+    res.status(STATUS.OK).json({
+      success: true,
+      savedJobs: result.savedJobs,
+    });
   } catch (err) {
-    res.status(err.status || 500).json({ success: false, message: err.message || "Failed to unsave job" });
+    res.status(err.status || 500).json({
+      success: false,
+      message: err.message,
+    });
   }
 };

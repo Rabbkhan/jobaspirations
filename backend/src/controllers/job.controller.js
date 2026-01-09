@@ -29,7 +29,7 @@ export const createJobController = async (req, res) => {
 //       .replace("-", "-");
 // }
 
-    const userId = req.user?.id;
+    const userId = req.user?._id;
     if (!userId)
       return res.status(STATUS.UNAUTHORIZED).json({ success: false, message: MESSAGES.UNAUTHORIZED });
 
@@ -81,7 +81,7 @@ export const updateJobController = async (req, res) => {
     const result = await updateJob({
       jobId: req.params.id,
       data: req.body,
-      userId: req.user.id,
+      userId: req.user._id,
     });
 
     return res.status(200).json(result);
@@ -94,7 +94,7 @@ export const updateJobController = async (req, res) => {
 
 export const getAdminJobsController = async (req, res) => {
   try {
-    const userId = req.user.id; // Coming from auth middleware
+    const userId = req.user._id; // Coming from auth middleware
 
     const data = await getAdminJobs(userId);
 
@@ -134,7 +134,7 @@ export const deleteJobController = async (req, res) => {
   try {
     const result = await deleteJob({
       jobId: req.params.id,
-      userId: req.user.id,
+      userId: req.user?._id,
     });
 
     return res.status(200).json(result);

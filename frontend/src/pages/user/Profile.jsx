@@ -297,7 +297,7 @@ const Profile = () => {
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
                 </Button>
               ) : (
-                <Button type="submit" className="w-full my-4">
+                <Button type="submit" className="w-full cursor-pointer my-4">
                   Save Changes
                 </Button>
               ))}

@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import JobCard from "../../components/job/Jobcard";
 import HeaderFilterBar from "../../components/job/HeaderFilterBar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useGetAllJobs from "../../hooks/useGetAllJobs";
 import { Loader2 } from "lucide-react";
+import { saveJobThunk, unsaveJobThunk } from "../../thunk/SavedJobThunk";
+
 
 const JobList = () => {
   const [filters, setFilters] = useState({
@@ -12,10 +14,17 @@ const JobList = () => {
     salary: "",
   });
 
-  const { allJobs } = useSelector((store) => store.job);
+  const { allJobs,savedJobs } = useSelector((store) => store.job);
+
+  const savedJobIds = useMemo(() => {
+  return new Set(savedJobs.map((job) => job._id));
+}, [savedJobs]);
+
+const isSaved = (jobId) => savedJobIds.has(jobId);
 
   const { setPage, hasMore, loading } = useGetAllJobs(filters);
 
+  const dispatch = useDispatch();
   // Infinite scroll trigger
   const observerRef = useRef();
 
@@ -36,6 +45,18 @@ const JobList = () => {
     return () => observer.disconnect();
   }, [hasMore, loading, setPage]);
 
+
+
+  const handleSaveToggle = (jobId) => {
+    if (isSaved(jobId)) {
+      dispatch(unsaveJobThunk(jobId));
+    } else {
+      dispatch(saveJobThunk(jobId));
+    }
+  };
+
+
+
   return (
 <div className="max-w-6xl mx-auto px-4 py-6">
 
@@ -53,7 +74,13 @@ const JobList = () => {
 <div className="w-full flex justify-center mt-2">
   <div className="w-full md:w-11/12 max-w-5xl mx-auto flex flex-col gap-4">
     {allJobs.map((job) => (
-      <JobCard key={job._id} job={job} />
+<JobCard
+  key={job._id}
+  job={job}
+  isSaved={isSaved(job._id)}
+  onToggleSave={() => handleSaveToggle(job._id)}
+/>
+
     ))}
   </div>
 </div>

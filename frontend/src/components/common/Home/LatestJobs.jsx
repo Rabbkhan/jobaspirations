@@ -17,15 +17,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toggleSavedJob } from "../../../features/jobSlice";
 
-import { saveJob, unsaveJob } from "../../../../thunk/SavedJobThunk";
+import { saveJobThunk, unsaveJobThunk } from "../../../thunk/SavedJobThunk";
 
 const LatestJobs = () => {
   const { allJobs, savedJobs } = useSelector((store) => store.job);
   const latestSixJobs = allJobs.slice(-6).reverse();
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const timeAgo = (timestamp) => {
     const now = new Date();
     const created = new Date(timestamp);
@@ -44,16 +43,17 @@ const LatestJobs = () => {
     return `${exp} ${exp > 1 ? "years" : "year"}`;
   };
 
- const handleSaveToggle = (jobId) => {
-  if (savedJobs.includes(jobId)) {
-    dispatch(unsaveJob(jobId));
-  } else {
-    dispatch(saveJob(jobId));
-  }
-};
+  const isSaved = (jobId) => savedJobs.some((job) => job._id === jobId);
 
+  const handleSaveToggle = (jobId) => {
+    if (isSaved(jobId)) {
+      dispatch(unsaveJobThunk(jobId));
+    } else {
+      dispatch(saveJobThunk(jobId));
+    }
+  };
 
-  // console.log(savedJobs);
+  console.log(savedJobs);
 
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
@@ -81,7 +81,7 @@ const LatestJobs = () => {
                 <Bookmark
                   size={22}
                   className="cursor-pointer"
-                  fill={savedJobs.includes(job._id) ? "currentColor" : "none"}
+                  fill={isSaved(job._id) ? "currentColor" : "none"}
                 />
               </button>
 
@@ -126,7 +126,7 @@ const LatestJobs = () => {
 
                   <button
                     onClick={() => navigate(`/jobs/${job._id}`)}
-                    className="flex items-center gap-1 font-medium text-primary hover:underline"
+                    className="flex items-center gap-1 cursor-pointer font-medium text-primary hover:underline"
                   >
                     View Details <ArrowRight size={16} />
                   </button>

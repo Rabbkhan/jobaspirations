@@ -1,24 +1,11 @@
 import axios from "axios";
 import { JOB_API_END_POINT } from "../utils/constants";
 
-export const saveJobApi = async (jobId) => {
-  return axios.post(
-    `${JOB_API_END_POINT}/save/${jobId}`,
-    {},
-    { withCredentials: true }
-  );
-};
+const API = axios.create({
+  baseURL: JOB_API_END_POINT,
+  withCredentials: true,
+});
 
-export const unsaveJobApi = async (jobId) => {
-  return axios.delete(
-    `${JOB_API_END_POINT}/unsave/${jobId}`,
-    { withCredentials: true }
-  );
-};
-
-export const getSavedJobsApi = async () => {
-  return axios.get(
-    `${JOB_API_END_POINT}/saved`,
-    { withCredentials: true }
-  );
-};
+export const getSavedJobsApi = () => API.get("/saved");
+export const saveJobApi = (jobId) => API.post(`/save/${jobId}`);
+export const unsaveJobApi = (jobId) => API.delete(`/unsave/${jobId}`);

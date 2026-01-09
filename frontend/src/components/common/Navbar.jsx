@@ -110,7 +110,13 @@ const NAV_LINKS = user?.role === "student"
                     </Avatar>
                     <div>
                       <div className="font-semibold text-foreground">{user?.fullname}</div>
-                      <div className="text-sm text-muted-foreground">{user?.profile?.bio}</div>
+<div
+  className="text-sm text-muted-foreground line-clamp-2"
+  title={user?.profile?.bio}
+>
+  {user?.profile?.bio}
+</div>
+
                     </div>
                   </div>
 

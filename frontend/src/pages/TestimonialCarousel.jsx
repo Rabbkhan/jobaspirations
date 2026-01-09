@@ -19,23 +19,49 @@ const testimonials = [
   {
     feedback:
       "The team helped me understand what roles fit my skills and how to improve my resume. The guidance gave me a lot of clarity.",
-    tag: "Final-year student",
+    tag: "Rahul pattanayak",
   },
   {
     feedback:
       "I was confused about my career direction. After speaking with the Job Aspirations team, I had a clear plan and learning roadmap.",
-    tag: "Fresher (Non-IT background)",
+    tag: "Pritam sao",
   },
   {
     feedback:
       "Their interview preparation tips and resume suggestions were practical and easy to apply.",
-    tag: "Job seeker",
+    tag: "sudip guchaiate",
   },
   {
     feedback:
       "I appreciated the honest feedback on my skills and what I should focus on instead of false promises.",
-    tag: "Career switcher",
+    tag: "Bijoy samanto",
   },
+  {
+  feedback:
+    "The session helped me identify my strengths and gaps clearly. I now know exactly what skills I need to work on.",
+  tag: "Amit Kumar",
+},
+{
+  feedback:
+    "The resume review was detailed and actionable. I was able to improve my profile significantly in a short time.",
+  tag: "Sneha Sharma",
+},
+{
+  feedback:
+    "I got realistic career advice instead of generic motivation. The roadmap they shared was very practical.",
+  tag: "Rohit Verma",
+},
+{
+  feedback:
+    "Their guidance on switching roles gave me confidence and a clear learning path aligned with my goals.",
+  tag: "Neha Singh",
+},
+{
+  feedback:
+    "Mock interview feedback helped me understand where I was going wrong and how to communicate better.",
+  tag: "Ankit Mishra",
+},
+
 ];
 
 

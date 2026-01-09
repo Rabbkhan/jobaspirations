@@ -32,14 +32,12 @@ export const authenticate = (req, res, next) => {
 
     // ✅ ATTACH USER
     req.user = {
-      id: decoded.userId,
+      _id: decoded.userId, // Mongo convention
       role: decoded.role,
-
     };
 
     next();
   } catch (error) {
-
     // ✅ TOKEN EXPIRED
     if (error.name === "TokenExpiredError") {
       return res.status(STATUS.UNAUTHORIZED).json({
