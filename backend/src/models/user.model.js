@@ -16,7 +16,8 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      required: true    },
+      required: true,
+    },
 
     // models/User.model.js
     passwordResetToken: String,
@@ -31,6 +32,8 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "recruiter", "admin"],
       default: "student",
     },
+    isApproved: Boolean,
+
     isFirstLogin: { type: Boolean, default: true },
 
     isEmailVerified: { type: Boolean, default: false },

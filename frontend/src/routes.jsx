@@ -7,7 +7,6 @@ import DashboardLayout from "./layouts/DashboardLayout";
 
 /* Route Guards */
 import ProtectedRoute from "./pages/auth/ProtectedRoute";
-import AdminRoute from "./pages/auth/AdminRoute";
 import StudentRoute from "./pages/auth/StudentRoute";
 import GuestOrStudentRoute from "./pages/auth/GuestOrStudentRoute";
 
@@ -40,20 +39,29 @@ import RecruiterDashboard from "./pages/dashboard/RecruiterDashboard";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import BlogPanel from "./admin/Blogpanel";
+import Blogs from "./admin/pages/Blogs";
+import Recruiters from "./admin/pages/Recruiter";
+import Dashboard from "./admin/pages/Dashboard";
+import Jobs from "./admin/pages/Jobs";
+import Users from "./admin/pages/Users";
+import Settings from "./admin/pages/Settings";
+import AdminLogin from "./admin/pages/Adminlogin";
+import RecruiterRoute from "./pages/auth/RecruiterRoute ";
+import AdminRoute from "./pages/auth/AdminRoute";
+import AdminLayout from "./layouts/AdminLayout";
 
 const AppRoutes = () => {
   return (
     <Routes>
-
       {/* ================= AUTH (NO NAV / SIDEBAR) ================= */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password/:token" element={<ResetPassword />} />
-
-
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Route>
 
       {/* ================= PUBLIC / STUDENT ================= */}
@@ -94,7 +102,7 @@ const AppRoutes = () => {
           }
         />
 
-         <Route
+        <Route
           path="/applied_jobs"
           element={
             <StudentRoute>
@@ -109,25 +117,20 @@ const AppRoutes = () => {
         <Route path="/blog" element={<BlogComingSoon />} />
         <Route path="/consulting" element={<ConsultancyCommingSoon />} />
 
-
         {/* Hiring */}
         <Route path="/hire" element={<HireTalent />} />
 
         {/* Recruiter apply flow */}
-      
-
-        
       </Route>
 
       {/* ================= ADMIN / RECRUITER DASHBOARD ================= */}
       <Route
         element={
-          <AdminRoute>
+          <RecruiterRoute>
             <DashboardLayout />
-          </AdminRoute>
+          </RecruiterRoute>
         }
       >
-
         <Route path="/recruiter" element={<RecruiterDashboard />} />
         <Route path="/recruiter/companies" element={<CompanyList />} />
         <Route path="/recruiter/companies/create" element={<Companycreate />} />
@@ -145,6 +148,26 @@ const AppRoutes = () => {
 
       {/* ================= FALLBACK ================= */}
       <Route path="/unauthorized" element={<Unauthorized />} />
+
+      {/* ================= ADMIN BLOG PANEL ================= */}
+      <Route
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route path="/admin/dashboard" element={<Dashboard />} />
+
+        <Route path="/admin/blogs" element={<Blogs />} />
+        <Route path="/admin/jobs" element={<Jobs />} />
+        <Route path="/admin/users" element={<Users />} />
+        <Route path="/admin/settings" element={<Settings />} />
+        <Route path="/admin/recruiters" element={<Recruiters />} />
+
+        {/* <Route path="/admin/blogs/create" element={<Blogs />} />
+  <Route path="/admin/blogs/edit/:id" element={<Blogs />} />  */}
+      </Route>
     </Routes>
   );
 };

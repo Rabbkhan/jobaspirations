@@ -15,7 +15,7 @@ export const createCompanyController = async (req, res) => {
     }
 
     // JWT middleware should inject req.user
-    const userId = req.user?.id;
+    const userId = req.user?._id;
     if (!userId) {
       return res.status(STATUS.UNAUTHORIZED).json({
         success: false,
@@ -44,7 +44,7 @@ const result = await createCompany(req.body, userId, req.file);
 // ========================
 export const getAllCompaniesController = async (req, res) => {
   try {
-        const userId = req.user.id;  
+        const userId = req.user._id;  
 
     const result = await getAllCompanies(userId);
     return res.status(200).json(result);
@@ -80,7 +80,7 @@ export const getCompanyByIdController = async (req, res) => {
 export const updateCompanyController = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
     const result = await updateCompany(id, req.body, userId);
     return res.status(200).json(result);
   } catch (error) {
@@ -98,7 +98,7 @@ export const updateCompanyController = async (req, res) => {
 export const deleteCompanyController = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
     const result = await deleteCompany(id, userId);
     return res.status(200).json(result);
   } catch (error) {

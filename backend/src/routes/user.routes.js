@@ -10,7 +10,8 @@ import {
   loginValidation,
   registerValidation,
 } from "../validations/authValidation.js";
-import { approveUser, getPendingUsers } from "../controllers/admin.controller.js";
+import { adminLoginController, adminMeController, approveUser, getPendingUsers } from "../controllers/admin.controller.js";
+import authenticateAdmin from "../middlewares/authenticateAdmin.js";
 
 const router = express.Router();
 
@@ -36,6 +37,27 @@ router.post("/verifyemail", verifyEmail)
 router.post("/verifyemail/request", requestVerificationCode)
 router.post("/forgot-password", forgotPasswordController);
 router.post("/reset-password/:token", resetPasswordController);
+
+router.post("/admin/login",  adminLoginController);
+router.get(
+  "/admin/me",
+  authenticateAdmin,
+  authorizeRoles("admin"),
+  (req, res) => {
+    res.status(200).json({
+      success: true,
+      role: "admin",
+      id: req.admin.id,
+    });
+  }
+);
+
+router.post("/admin/logout", (req, res) => {
+  res.clearCookie("admin_token");
+  res.json({ success: true });
+});
+
+
 router.get("/adminDashboard", authenticate, authorizeRoles("admin"), getPendingUsers);
 router.patch("/approve/:userId", authenticate, authorizeRoles("admin"), approveUser);
 

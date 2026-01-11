@@ -1,17 +1,21 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import axios from "axios";
+import { USER_API_END_POINT } from "../../utils/constants";
+const AdminRoute = () => {
+  const [loading, setLoading] = useState(true);
+  const [allowed, setAllowed] = useState(false);
 
-const AdminRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
+  useEffect(() => {
+    axios
+      .get(`${USER_API_END_POINT}/admin/me`, { withCredentials: true })
+      .then(() => setAllowed(true))
+      .catch(() => setAllowed(false))
+      .finally(() => setLoading(false));
+  }, []);
 
-  if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== "recruiter") return <Navigate to="/unauthorized" replace />;
-
-  return children ? children : <Outlet />;
+  if (loading) return null;
+  return allowed ? <Outlet /> : <Navigate to="/admin/login" replace />;
 };
 
 export default AdminRoute;
-
-
-
