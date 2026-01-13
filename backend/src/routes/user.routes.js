@@ -10,8 +10,8 @@ import {
   loginValidation,
   registerValidation,
 } from "../validations/authValidation.js";
-import { adminLoginController, adminMeController, approveUser, getPendingUsers } from "../controllers/admin.controller.js";
-import authenticateAdmin from "../middlewares/authenticateAdmin.js";
+import { adminLoginController, adminLogoutController, adminMeController, approveUser, getPendingUsers } from "../controllers/admin.controller.js";
+import { adminAuthenticate } from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
 
@@ -39,26 +39,12 @@ router.post("/forgot-password", forgotPasswordController);
 router.post("/reset-password/:token", resetPasswordController);
 
 router.post("/admin/login",  adminLoginController);
-router.get(
-  "/admin/me",
-  authenticateAdmin,
-  authorizeRoles("admin"),
-  (req, res) => {
-    res.status(200).json({
-      success: true,
-      role: "admin",
-      id: req.admin.id,
-    });
-  }
-);
-
-router.post("/admin/logout", (req, res) => {
-  res.clearCookie("admin_token");
-  res.json({ success: true });
-});
+router.get("/admin/me", adminAuthenticate, authorizeRoles("admin"), adminMeController);
+router.post("/admin/logout", adminLogoutController);
 
 
-router.get("/adminDashboard", authenticate, authorizeRoles("admin"), getPendingUsers);
-router.patch("/approve/:userId", authenticate, authorizeRoles("admin"), approveUser);
+router.get("/adminDashboard", adminAuthenticate, authorizeRoles("admin"), getPendingUsers);
+router.patch("/approve/:userId", adminAuthenticate, authorizeRoles("admin"), approveUser);
 
 export default router;
+

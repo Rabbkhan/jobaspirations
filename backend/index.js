@@ -37,7 +37,9 @@ import companyRoutes from "./src/routes/company.routes.js";
 import jobRoutes from "./src/routes/job.routes.js";
 import applicationRoutes from "./src/routes/application.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.route.js";
-import blogRoutes from "./src/routes/blog.routes.js"
+import adminblogRoutes from "./src/routes/admin.blog.routes.js"
+import BlogcategoryRoutes from "./src/routes/category.routes.js"
+import publicblogRoutes from "./src/routes/blog.routes.js"
 // Infrastructure
 import connectDb from "./src/config/db.js";
 import {
@@ -134,7 +136,9 @@ app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/job", jobRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
-app.use("/api/v1/blog", blogRoutes);
+app.use("/api/v1/adminblog", adminblogRoutes);
+app.use("/api/v1/blogcategory", BlogcategoryRoutes);
+app.use("/api/v1/blog", publicblogRoutes);
 
 
 // Root sanity check

@@ -1,18 +1,26 @@
 import express from "express";
-import { authenticate } from "../middlewares/auth.middleware..js";
-import { authorizeRoles } from "../middlewares/role.middleware.js";
 import {
-  createBlogController,
-  deleteBlogController,
-  getAllBlogsController,
-  updateBlogController
-} from "../controllers/blog..controller.js";  // <== fixed filename
+  getBlogCategoriesController,
+  getLatestBlogsController,
+  getPublicBlogsController,
+  getRelatedBlogsController,
+} from "../controllers/getPublicBlogsController.js";
+import {
+  getPublicBlogBySlugController,
+} from "../controllers/getPublicBlogBySlugController.js";
+import { incrementBlogViewController } from "../controllers/incrementBlogViewController.js";
 
 const router = express.Router();
 
-router.get("/", getAllBlogsController);
-router.post("/", authenticate, authorizeRoles("admin"), createBlogController);
-router.put("/:id", authenticate, authorizeRoles("admin"), updateBlogController);
-router.delete("/:id", authenticate, authorizeRoles("admin"), deleteBlogController);
+/* PUBLIC BLOGS */
+// PUBLIC
+router.get("/categories", getBlogCategoriesController);
+router.get("/", getPublicBlogsController);
+router.get("/latest", getLatestBlogsController);
+
+
+router.get("/related/:slug", getRelatedBlogsController);
+router.get("/:slug", getPublicBlogBySlugController);
+router.post("/:slug/increment-views", incrementBlogViewController);
 
 export default router;

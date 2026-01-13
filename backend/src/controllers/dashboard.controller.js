@@ -2,7 +2,7 @@ import { getRecruiterDashboardStats } from "../services/dashboard.service.js";
 
 export const getRecruiterDashboardController = async (req, res) => {
   try {
-    const recruiterId = req.user.id;
+    const recruiterId = req.user._id;
 
     // console.log("DASHBOARD recruiterId:", recruiterId);
 

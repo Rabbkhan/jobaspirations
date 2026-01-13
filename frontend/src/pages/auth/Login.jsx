@@ -39,14 +39,24 @@ const Login = () => {
       if (res.data.success) {
         const role = res.data.safeUser.role;
 
-        // Redirect based on role
+        // 🚫 ABSOLUTE BLOCK: ADMINS DO NOT LOG IN HERE
+        if (role === "admin") {
+          toast.error("Admins are not allowed to log in from this portal");
+          return;
+        }
+
+        // ✅ ALLOWED ROLES ONLY
         if (role === "student") {
           navigate("/profile");
-          toast.success(res.data.message);
         } else if (role === "recruiter") {
           navigate("/recruiter");
+        } else {
+          toast.error("Unauthorized role");
+          return;
         }
+
         dispatch(setUser(res.data.safeUser));
+        toast.success(res.data.message);
       }
     } catch (error) {
       const msg = error.response?.data?.message;
@@ -118,14 +128,14 @@ const Login = () => {
                 />
               </div>
 
-<p className="text-right text-sm">
-  <Link
-    to="/forgot-password"
-    className="text-primary hover:underline"
-  >
-    Forgot password?
-  </Link>
-</p>
+              <p className="text-right text-sm">
+                <Link
+                  to="/forgot-password"
+                  className="text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </p>
 
               {/* Button */}
               {loading ? (

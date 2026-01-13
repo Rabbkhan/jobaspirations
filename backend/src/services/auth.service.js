@@ -20,7 +20,7 @@ export const registerUser = async ({ fullname, email, password, phoneNumber, rol
 
   const hashed = await hashPassword(password);
 
-  const allowedRoles = ["student", "recruiter", "admin"];
+  const allowedRoles = ["student", "recruiter"];
   const userRole = allowedRoles.includes(role) ? role : "student";
 
   let profilePhotoURL = "";
@@ -182,6 +182,10 @@ export const loginUser = async ({ email, password, role }) => {
     err.status = 403; // or 400 depending on your convention
     throw err;
   }
+
+  // AFTER user is found and password is validated
+
+
 
   const token = generateToken(user);
 

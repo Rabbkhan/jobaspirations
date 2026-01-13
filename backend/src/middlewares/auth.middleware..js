@@ -55,8 +55,3 @@ export const authenticate = (req, res, next) => {
 };
 
 
-// Only admin access
-export const authorizeAdmin = (req, res, next) => {
-  if (req.user?.role !== "admin") return res.status(403).json({ message: "Forbidden" });
-  next();
-};

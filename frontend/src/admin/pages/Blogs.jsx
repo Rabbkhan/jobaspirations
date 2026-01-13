@@ -1,59 +1,60 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-
-const blogsMock = [
-  { _id: 1, title: "First Blog", content: "This is the content of the first blog...", published: true },
-  { _id: 2, title: "Second Blog", content: "Second blog content goes here...", published: false },
-];
+import { toast } from "sonner";
+import { useFetchBlogs } from "../hooks/useFetchBlogs";
 
 const Blogs = () => {
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { blogs = [], deleteBlog } = useFetchBlogs();
+
+  const handleDelete = async (id) => {
+    if (!confirm("Are you sure?")) return;
+    try {
+      await deleteBlog(id);
+      toast.success("Blog deleted");
+    } catch {
+      toast.error("Delete failed");
+    }
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Blog Management</h2>
-        <Button onClick={() => setDialogOpen(true)}>Create Blog</Button>
+
+        {/* CREATE → PAGE */}
+        <Button asChild>
+          <Link to="/admin/blogs/new">Create Blog</Link>
+        </Button>
       </div>
 
-      {blogsMock.map((blog) => (
+      {blogs.map((blog) => (
         <Card key={blog._id}>
           <CardHeader className="flex justify-between items-center">
             <h3 className="font-semibold">{blog.title}</h3>
-            <div className="flex gap-2">
-              <Button size="sm">Edit</Button>
-              <Button size="sm" variant="destructive">Delete</Button>
-            </div>
+            <span>{blog.published ? "Published" : "Draft"}</span>
           </CardHeader>
-          <CardContent>
-            <p>{blog.content.slice(0, 100)}{blog.content.length > 100 ? "..." : ""}</p>
-            <p className="text-sm text-muted-foreground">Published: {blog.published ? "Yes" : "No"}</p>
+
+          <CardContent className="flex justify-between items-center">
+            <p>{blog.content.slice(0, 120)}...</p>
+
+            <div className="flex gap-2">
+              {/* EDIT → PAGE */}
+              <Button size="sm" asChild>
+                <Link to={`/admin/blogs/${blog._id}/edit`}>Edit</Link>
+              </Button>
+
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => handleDelete(blog._id)}
+              >
+                Delete
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ))}
-
-      {/* Dialog for Create/Edit */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create / Edit Blog</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-3 mt-2">
-            <Input placeholder="Title" />
-            <Textarea placeholder="Content" />
-            <label className="flex items-center gap-2">
-              <input type="checkbox" /> Published
-            </label>
-          </div>
-          <DialogFooter>
-            <Button>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

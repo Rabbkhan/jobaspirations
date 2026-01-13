@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
 
-
 export const adminLoginController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -17,16 +16,20 @@ export const adminLoginController = async (req, res) => {
     });
 
     if (!admin) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid credentials" });
     }
 
     const token = jwt.sign(
-      { id: admin._id, role: admin.role },
+      { id: admin.id, role: admin.role },
       process.env.SECRET_KEY,
       { expiresIn: "1d" }
     );
@@ -41,8 +44,9 @@ export const adminLoginController = async (req, res) => {
     return res.status(200).json({
       success: true,
       safeUser: {
-        _id: admin._id.toString(),
+        _id: admin.id.toString(),
         email: admin.email,
+        fullname: admin.fullname,
         role: admin.role,
       },
     });
@@ -53,22 +57,43 @@ export const adminLoginController = async (req, res) => {
 };
 
 
+export const adminMeController = async (req, res) => {
+  const admin = await User.findById(req.user.id).select(
+    "_id email fullname role"
+  );
 
+  if (!admin) {
+    return res.status(401).json({ success: false });
+  }
 
-export const adminMeController = (req, res) => {
   res.status(200).json({
     success: true,
-    role: "admin",
-    email: req.user.email,
+    safeUser: {
+      _id: admin.id.toString(),
+      email: admin.email,
+      fullname: admin.fullname,
+      role: admin.role,
+    },
   });
 };
 
 
+
+
 // Logout: clear cookie
+
 export const adminLogoutController = (req, res) => {
-  res.clearCookie("admin_token");
-  res.json({ success: true, message: "Logged out" });
+  res.clearCookie("admin_token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+  });
+
+  res.status(200).json({ success: true });
 };
+
+
+
 
 // 1️⃣ Get all pending recruiters/companies
 export const getPendingUsers = async (req, res) => {

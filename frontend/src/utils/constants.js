@@ -5,4 +5,6 @@ export const JOB_API_END_POINT = `${BASE_URL}/api/v1/job`;
 export const APPLICATIONS_API_END_POINT = `${BASE_URL}/api/v1/applications`;
 export const COMPANY_API_END_POINT = `${BASE_URL}/api/v1/company`;
 export const DASHBOARD_API_END_POINT = `${BASE_URL}/api/v1/dashboard`;
-export const BLOG_API_END_POINT = `${BASE_URL}/api/v1/blog`;
+export const BLOG_API_END_POINT = `${BASE_URL}/api/v1/adminblog`;
+export const PUBLIC_BLOG_API_END_POINT = `${BASE_URL}/api/v1/blog`;
+export const CATEGORY_API_END_POINT = `${BASE_URL}/api/v1/blogcategory`;

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 /* Layouts */
 import MainLayout from "./layouts/MainLayout";
@@ -31,7 +31,6 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import HireTalent from "./pages/hire/HireTalent";
 
 /* Recruiter flow */
-import BlogComingSoon from "./pages/BlogComingSoon";
 import AppliedJobs from "./pages/jobs/AppliedJobs";
 import CareerGuidance from "./pages/CareerGuidance";
 import ConsultancyCommingSoon from "./pages/ConsultancyCommingSoon";
@@ -39,7 +38,6 @@ import RecruiterDashboard from "./pages/dashboard/RecruiterDashboard";
 import VerifyEmail from "./pages/auth/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import BlogPanel from "./admin/Blogpanel";
 import Blogs from "./admin/pages/Blogs";
 import Recruiters from "./admin/pages/Recruiter";
 import Dashboard from "./admin/pages/Dashboard";
@@ -50,15 +48,17 @@ import AdminLogin from "./admin/pages/Adminlogin";
 import RecruiterRoute from "./pages/auth/RecruiterRoute ";
 import AdminRoute from "./pages/auth/AdminRoute";
 import AdminLayout from "./layouts/AdminLayout";
-
+import BlogCategories from "./admin/pages/Blogcategories";
+import BlogEditorPage from "./admin/pages/BlogEditorPage";
+import Blogpage from "./pages/BlogsPage";
+import BlogDetailsPage from "./pages/BlogDetailsPage";
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ================= AUTH (NO NAV / SIDEBAR) ================= */}
+      {/* ================= AUTH ================= */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -75,7 +75,7 @@ const AppRoutes = () => {
           }
         />
 
-        <Route
+           <Route
           path="/jobs"
           element={
             <GuestOrStudentRoute>
@@ -110,64 +110,46 @@ const AppRoutes = () => {
             </StudentRoute>
           }
         />
-
-        {/* Static pages */}
-        <Route path="/privacy-policy" element={<Privacypolicy />} />
-        <Route path="/terms" element={<TermsAndConditions />} />
-        <Route path="/blog" element={<BlogComingSoon />} />
-        <Route path="/consulting" element={<ConsultancyCommingSoon />} />
-
-        {/* Hiring */}
-        <Route path="/hire" element={<HireTalent />} />
-
-        {/* Recruiter apply flow */}
+        {/* ... other public/student routes */}
+        <Route path="/blogs" element={<Blogpage />} />
+        <Route path="/blog/:slug" element={<BlogDetailsPage />} />
       </Route>
 
-      {/* ================= ADMIN / RECRUITER DASHBOARD ================= */}
-      <Route
-        element={
-          <RecruiterRoute>
-            <DashboardLayout />
-          </RecruiterRoute>
-        }
-      >
-        <Route path="/recruiter" element={<RecruiterDashboard />} />
-        <Route path="/recruiter/companies" element={<CompanyList />} />
-        <Route path="/recruiter/companies/create" element={<Companycreate />} />
-        <Route path="/recruiter/companies/:id" element={<CompanyDetails />} />
-        <Route path="/recruiter/companies/edit/:id" element={<CompanyEdit />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
+      {/* ================= RECRUITER ================= */}
+      <Route path="/recruiter" element={<RecruiterRoute />}>
+        <Route element={<DashboardLayout />}>
+          <Route index element={<RecruiterDashboard />} />
+          <Route path="companies" element={<CompanyList />} />
+          <Route path="companies/create" element={<Companycreate />} />
+          <Route path="companies/:id" element={<CompanyDetails />} />
+          <Route path="companies/edit/:id" element={<CompanyEdit />} />
+          <Route path="jobs" element={<Adminjobs />} />
+          <Route path="jobs/create" element={<Jobcreate />} />
+          <Route path="jobs/edit/:id" element={<AdminJobEdit />} />
+          <Route path="jobs/:jobId/applications" element={<JobApplicants />} />
+        </Route>
+      </Route>
 
-        <Route path="/recruiter/jobs" element={<Adminjobs />} />
-        <Route path="/recruiter/jobs/create" element={<Jobcreate />} />
-        <Route path="/recruiter/jobs/edit/:id" element={<AdminJobEdit />} />
-        <Route
-          path="/recruiter/jobs/:jobId/applications"
-          element={<JobApplicants />}
-        />
+      {/* ================= ADMIN ================= */}
+      <Route path="/admin" element={<AdminRoute />}>
+        <Route element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="blogs" element={<Blogs />} />
+          <Route path="blog-categories" element={<BlogCategories />} />
+          <Route path="blogs/new" element={<BlogEditorPage />} />
+          <Route path="blogs/:id/edit" element={<BlogEditorPage />} />
+          <Route path="jobs" element={<Jobs />} />
+          <Route path="users" element={<Users />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="recruiters" element={<Recruiters />} />
+        </Route>
       </Route>
 
       {/* ================= FALLBACK ================= */}
       <Route path="/unauthorized" element={<Unauthorized />} />
-
-      {/* ================= ADMIN BLOG PANEL ================= */}
-      <Route
-        element={
-          <AdminRoute>
-            <AdminLayout />
-          </AdminRoute>
-        }
-      >
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-
-        <Route path="/admin/blogs" element={<Blogs />} />
-        <Route path="/admin/jobs" element={<Jobs />} />
-        <Route path="/admin/users" element={<Users />} />
-        <Route path="/admin/settings" element={<Settings />} />
-        <Route path="/admin/recruiters" element={<Recruiters />} />
-
-        {/* <Route path="/admin/blogs/create" element={<Blogs />} />
-  <Route path="/admin/blogs/edit/:id" element={<Blogs />} />  */}
-      </Route>
     </Routes>
   );
 };

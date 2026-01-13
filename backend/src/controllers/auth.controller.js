@@ -100,13 +100,13 @@ export const login = async (req, res) => {
   try {
     const result = await loginUser(req.body);
 
-    if (!result || !result.user) {
+
+  if (!result || !result.user || result.user.role === "admin") {
       return res.status(STATUS.UNAUTHORIZED).json({
         success: false,
-        message: "Login failed. User not found or credentials invalid.",
+        message: "Invalid email or password",
       });
     }
-
     const { user, token } = result;
 
     res.cookie("token", token, {

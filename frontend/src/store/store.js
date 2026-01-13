@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "../features/authSlice";
 import jobSlice from "../features/jobSlice";
+import adminAuthSlice from "../features/adminAuthSlice";
 import companySlice from "../features/companySlice";
 
 import {
@@ -23,11 +24,19 @@ const authPersistConfig = {
   storage,
   whitelist: ["user", "isAuthenticated"], // ✅ persist only what is needed
 };
+const adminPersistConfig = {
+  key: "admin",
+  version: 1,
+  storage,
+  whitelist: ["admin"], // ✅ CORRECT
+};
+
 
 // ✅ ROOT REDUCER
 const rootReducer = combineReducers({
   auth: persistReducer(authPersistConfig, authSlice),
   job: jobSlice,
+  adminAuth: persistReducer(adminPersistConfig, adminAuthSlice),
   company: companySlice,
 });
 
