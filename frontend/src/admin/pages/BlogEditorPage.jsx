@@ -6,9 +6,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useFetchBlogCategories } from "../hooks/useFetchBlogCategories";
 import { useFetchBlogs } from "../hooks/useFetchBlogs";
+import BlogEditor from "../components/BlogEditor";
 
 // Replace Textarea with a real rich text editor later (TipTap / Editor.js)
-import { Textarea } from "@/components/ui/textarea";
 
 const BlogEditorPage = () => {
   const navigate = useNavigate();
@@ -66,10 +66,10 @@ const BlogEditorPage = () => {
       return;
     }
 
-    if (form.content.trim().length < 50) {
-      toast.error("Content must be at least 50 characters");
-      return;
-    }
+  if (!form.content) {
+  toast.error("Content is required");
+  return;
+}
 
     if (!form.category) {
       toast.error("Category is required");
@@ -101,22 +101,23 @@ const BlogEditorPage = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
       {/* Main Editor */}
-      <div className="lg:col-span-3 space-y-4">
-        <Input
-          placeholder="Blog title"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-          className="text-xl font-semibold"
-        />
+     <div className="lg:col-span-3 space-y-4">
+  <Input
+    placeholder="Blog title"
+    value={form.title}
+    onChange={(e) => setForm({ ...form, title: e.target.value })}
+    className="text-xl font-semibold"
+  />
 
-        {/* Replace this Textarea with TipTap */}
-        <Textarea
-          rows={18}
-          placeholder="Write your blog content here..."
-          value={form.content}
-          onChange={(e) => setForm({ ...form, content: e.target.value })}
-        />
-      </div>
+ <BlogEditor
+  value={form.content || ""}
+  onChange={(content) =>
+    setForm((prev) => ({ ...prev, content }))
+  }
+/>
+
+</div>
+
 
       {/* Sidebar */}
       <Card className="h-fit">
@@ -165,7 +166,11 @@ const BlogEditorPage = () => {
 
           {/* Actions */}
           <Button disabled={saving} onClick={handleSave}>
-            {saving ? "Saving..." : existingBlog ? "Update Blog" : "Create Blog"}
+            {saving
+              ? "Saving..."
+              : existingBlog
+              ? "Update Blog"
+              : "Create Blog"}
           </Button>
 
           <Button variant="outline" onClick={() => navigate("/admin/blogs")}>

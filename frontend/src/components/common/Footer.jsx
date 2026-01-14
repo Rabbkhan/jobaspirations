@@ -17,8 +17,7 @@ const Footer = () => {
               Job Aspirations
             </h2>
             <p className="mt-3 text-sm text-gray-400 leading-relaxed">
-              A modern job platform connecting students and recruiters. Build
-              careers. Hire fast. Grow limitless.
+            modern job and recruitment platform with integrated consultancy, connecting students and recruiters to build careers, hire faster, and grow sustainably.
             </p>
 
             {/* Social Icons */}
@@ -41,8 +40,14 @@ const Footer = () => {
               >
                 <Linkedin className="w-5 h-5 cursor-pointer hover:text-white transition" />
               </a>
-
+ <a
+                href="https://www.instagram.com/jobaspirations/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
               <Instagram className="w-5 h-5 cursor-pointer hover:text-white transition" />
+              </a>
             </div>
           </div>
 
@@ -103,8 +108,8 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-2 text-gray-400">
               <li>Email: info@jobaspirations.in</li>
-              <li>Phone: +91 89183 53472</li>
-              <li>Address: westbengal, India</li>
+              <li>Phone: +91 7098037341 | +91 8159932923</li>
+              <li>Address: East Medinipur, Haldia, West Bengal ,India - 721632</li>
             </ul>
           </div>
         </div>
