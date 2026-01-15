@@ -34,7 +34,7 @@ const BlogCard = ({ blog }) => {
 
         {/* Snippet */}
         <p className="text-sm text-gray-600 line-clamp-3">
-          {blog.content.replace(/<[^>]+>/g, "").slice(0, 100)}...
+          {blog.content.replace(/<[^>]+>/g, "").slice(0, 150)}...
         </p>
 
         {/* Footer: Author & Date */}

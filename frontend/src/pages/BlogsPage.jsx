@@ -17,9 +17,14 @@ const BlogsPage = () => {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${PUBLIC_BLOG_API_END_POINT}`, {
-        params: category ? { category } : {},
-      });
+     const { data } = await axios.get(`${PUBLIC_BLOG_API_END_POINT}`, {
+  params: {
+    page: 1,
+    limit: 10,
+    ...(category && { category }),
+  },
+});
+
 
       setBlogs(data.blogs || []);
     } catch (err) {
@@ -51,6 +56,7 @@ const BlogsPage = () => {
   useEffect(() => {
     fetchCategories();
   }, []);
+
 
   return (
     <div className="container mx-auto px-4 py-10 space-y-6">

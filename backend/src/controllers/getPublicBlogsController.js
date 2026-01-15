@@ -17,9 +17,10 @@ export const getPublicBlogsController = async (req, res) => {
       ...result,
     });
   } catch (error) {
+    console.error("Public Blogs Error:", error); // <-- log full error
     res.status(500).json({
       success: false,
-      message: "Failed to fetch blogs",
+      message: error.message || "Failed to fetch blogs",
     });
   }
 };
