@@ -19,7 +19,7 @@ import {
   unsaveJobController,
 } from "../controllers/savedJobs.controller.js";
 
-import { jobValidation } from "../validations/jobValidation.js";
+import { createJobValidation, updateJobValidation } from "../validations/jobValidation.js";
 
 const router = express.Router();
 
@@ -56,7 +56,7 @@ router.post(
   "/create",
   authenticate,
   authorizeRoles("recruiter"),
-  jobValidation,
+  createJobValidation,
   createJobController
 );
 
@@ -81,7 +81,7 @@ router.get("/:id", getJobByIdController);
 router.put(
   "/:id",
   authenticate,
-  jobValidation,
+  updateJobValidation,
   authorizeRoles("recruiter"),
   updateJobController
 );

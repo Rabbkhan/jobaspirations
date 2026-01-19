@@ -9,7 +9,13 @@ import { setSavedJobs } from "../features/jobSlice";
 /**
  * Load saved jobs on app start / refresh
  */
-export const loadSavedJobs = () => async (dispatch) => {
+export const loadSavedJobs = () => async (dispatch,getState) => {
+
+    const { user } = getState().auth;
+
+  // 🚫 Not logged in → do nothing
+  if (!user) return;
+
   try {
     const { data } = await getSavedJobsApi();
 
@@ -24,7 +30,11 @@ export const loadSavedJobs = () => async (dispatch) => {
 /**
  * Save a job
  */
-export const saveJobThunk = (jobId) => async (dispatch) => {
+export const saveJobThunk = (jobId) => async (dispatch, getState) => {
+
+    const { user } = getState().auth;
+  if (!user) return;
+
   try {
     const { data } = await saveJobApi(jobId);
 

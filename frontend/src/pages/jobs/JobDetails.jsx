@@ -83,8 +83,38 @@ const JobDetails = () => {
     }
   };
 
+  const formatSalary = (salary) => {
+    if (!salary) return "Not disclosed";
 
+    const format = (n) => `${(n / 100000).toFixed(1)} LPA`;
 
+    if (salary.min === salary.max) {
+      return format(salary.min);
+    }
+
+    return `${format(salary.min)} – ${format(salary.max)}`;
+  };
+ const formatExperience = (exp) => {
+  if (!exp) return "Not specified";
+
+  const { min, max } = exp; // <-- FIX HERE
+
+  const toYearsMonths = (months) => {
+    const y = Math.floor(months / 12);
+    const m = months % 12;
+    if (y && m) return `${y}y ${m}m`;
+    if (y) return `${y}y`;
+    return `${m}m`;
+  };
+
+  if (min === 0 && max === 0) return "Fresher";
+
+  if (min === max) return toYearsMonths(min);
+
+  return `${toYearsMonths(min)} – ${toYearsMonths(max)}`;
+};
+
+ 
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -130,9 +160,7 @@ const JobDetails = () => {
               {/* Experience */}
               <span className="flex items-center gap-1">
                 <ClockIcon className="w-4 h-4" />
-                {singleJob?.experienceLevel === 0
-                  ? "Fresher"
-                  : `${singleJob?.experienceLevel} year(s)`}
+                {formatExperience(singleJob?.experience)}
               </span>
             </div>
           </CardHeader>
@@ -162,7 +190,7 @@ const JobDetails = () => {
             {/* Salary & Apply */}
             <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-4">
               <span className="text-lg font-semibold text-foreground">
-                Salary: ₹{singleJob?.salary}
+                Salary: ₹ {formatSalary(singleJob?.salary)}
               </span>
 
               <Button

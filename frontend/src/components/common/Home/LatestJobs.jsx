@@ -19,10 +19,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { saveJobThunk, unsaveJobThunk } from "../../../thunk/SavedJobThunk";
+import LatestJobsSkeleton from "../loading/LatestJobsSkeleton";
+import { useMemo } from "react";
 
 const LatestJobs = () => {
-  const { allJobs, savedJobs } = useSelector((store) => store.job);
-  const latestSixJobs = allJobs.slice(-6).reverse();
+  const { allJobs, savedJobs, loading } = useSelector((store) => store.job);
+
+  
+
+  const latestSixJobs = useMemo(() => {
+    return [...allJobs]
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 6);
+  }, [allJobs]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const timeAgo = (timestamp) => {
@@ -39,8 +48,35 @@ const LatestJobs = () => {
   };
 
   const formatExperience = (exp) => {
-    if (exp === 0) return "Fresher";
-    return `${exp} ${exp > 1 ? "years" : "year"}`;
+    if (!exp) return "Not specified";
+
+    const { minMonths, maxMonths } = exp;
+
+    const toYearsMonths = (months) => {
+      const y = Math.floor(months / 12);
+      const m = months % 12;
+      if (y && m) return `${y}y ${m}m`;
+      if (y) return `${y}y`;
+      return `${m}m`;
+    };
+
+    if (minMonths === 0 && maxMonths === 0) return "Fresher";
+
+    if (minMonths === maxMonths) {
+      return toYearsMonths(minMonths);
+    }
+
+    return `${toYearsMonths(minMonths)} – ${toYearsMonths(maxMonths)}`;
+  };
+
+  const formatSalary = (salary) => {
+    if (!salary) return "Not disclosed";
+
+    const format = (n) => `${(n / 100000).toFixed(1)} LPA`;
+
+    if (salary.min === salary.max) return format(salary.min);
+
+    return `${format(salary.min)} – ${format(salary.max)}`;
   };
 
   const isSaved = (jobId) => savedJobs.some((job) => job._id === jobId);
@@ -53,8 +89,9 @@ const LatestJobs = () => {
     }
   };
 
-  console.log(savedJobs);
-
+  if (loading) {
+    return <LatestJobsSkeleton />;
+  }
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <h2 className="text-3xl font-bold mb-3 text-foreground">
@@ -65,12 +102,14 @@ const LatestJobs = () => {
       </p>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {latestSixJobs.length < 0 ? (
-          <span>No job Avaliable</span>
+        {latestSixJobs.length === 0 ? (
+          <p className="text-muted-foreground col-span-full text-center">
+            No job openings available right now
+          </p>
         ) : (
           latestSixJobs?.map((job, idx) => (
             <Card
-              key={idx}
+              key={job._id}
               className="relative p-5 border shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl"
             >
               {/* Save Icon */}
@@ -108,11 +147,11 @@ const LatestJobs = () => {
                   </Badge>
 
                   <Badge className="rounded-full flex items-center gap-1">
-                    <IndianRupee size={14} /> {job.salary}
+                    <IndianRupee size={14} /> {formatSalary(job.salary)}
                   </Badge>
 
                   <Badge variant="outline" className="rounded-full">
-                    {formatExperience(job?.experienceLevel)}
+                    {formatExperience(job.experience)}
                   </Badge>
                 </div>
 

@@ -18,41 +18,43 @@ import {
   COMPANY_API_END_POINT,
   JOB_API_END_POINT,
 } from "../../utils/constants";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setAllCompany, setLoading } from "../../features/companySlice";
 import { toast } from "sonner";
 
 const AdminJobEdit = () => {
-  const { id } = useParams(); // ✅ Job ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const { loading, allCompany } = useSelector((store) => store.company);
+  const [filters, setFilters] = useState({
+    industries: [],
+    locations: [],
+  });
 
   const [formData, setFormData] = useState({
     title: "",
-    company: "", // hidden value for backend
-    companyName: "", // visible text
+    company: "",
     location: "",
-    salary: "",
-    type: "",
-    experience: "",
+    industry: "",
+    jobType: "",
+    salaryMin: "",
+    salaryMax: "",
+    expMinMonths: "",
+    expMaxMonths: "",
     description: "",
     skills: "",
   });
 
-  // ✅ FETCH COMPANIES
+  /* ---------------- FETCH COMPANIES ---------------- */
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
         dispatch(setLoading(true));
-
         const res = await axios.get(COMPANY_API_END_POINT, {
           withCredentials: true,
         });
-
         dispatch(setAllCompany(res?.data?.companies || []));
-      } catch (error) {
+      } catch {
         toast.error("Failed to load companies");
       } finally {
         dispatch(setLoading(false));
@@ -60,73 +62,132 @@ const AdminJobEdit = () => {
     };
 
     fetchCompanies();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const res = await axios.get(`${JOB_API_END_POINT}/filters`, {
+          withCredentials: true,
+        });
+        setFilters(res.data.filters);
+      } catch {
+        toast.error("Failed to load filters");
+      }
+    };
+
+    fetchFilters();
   }, []);
 
-  // ✅ FETCH JOB DETAILS
+  /* ---------------- FETCH JOB ---------------- */
   useEffect(() => {
+    if (!id) return;
+
     const fetchJob = async () => {
       try {
         const res = await axios.get(`${JOB_API_END_POINT}/${id}`, {
           withCredentials: true,
         });
 
-        console.log(res);
-
         const job = res.data.job;
 
         setFormData({
-            title:job.title,
-          company: job.company?._id, // keep for backend update
-          companyName: job.company?.companyname, // for display only
-
-          location: job.location,
-          salary: job.salary,
-          type: job.jobType,
-          experience: job.experienceLevel,
-          description: job.description,
-          skills: job.requirements.join(", "),
+          title: job.title || "",
+          company: job.company?._id || "",
+          companyName: job.company?.companyname || "",
+          location: job.location || "",
+          jobType: job.jobType || "",
+          industry: job.industry || "",
+          salaryMin: job.salary?.min ?? "",
+          salaryMax: job.salary?.max ?? "",
+          expMinMonths: job.experience?.minMonths ?? "",
+          expMaxMonths: job.experience?.maxMonths ?? "",
+          description: job.description || "",
+          skills: job.requirements?.join(", ") || "",
         });
-      } catch (error) {
+      } catch {
         toast.error("Failed to load job data");
       }
     };
 
-    if (id) fetchJob();
+    fetchJob();
   }, [id]);
 
+  /* ---------------- HANDLERS ---------------- */
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSelect = (field, value) => {
-    setFormData({ ...formData, [field]: value });
+  const handleSelect = (value) => {
+    setFormData((prev) => ({ ...prev, jobType: value }));
   };
 
-  // ✅ UPDATE JOB
+  /* ---------------- SUBMIT ---------------- */
   const handleSubmit = async (e) => {
     e.preventDefault();
+const expMin = Number(formData.expMinMonths);
+const expMax = Number(formData.expMaxMonths);
+const salaryMin = Number(formData.salaryMin);
+const salaryMax = Number(formData.salaryMax);
 
+if (isNaN(expMin) || isNaN(expMax)) {
+  return toast.error("Experience min and max are required");
+}
+
+if (isNaN(salaryMin) || isNaN(salaryMax)) {
+  return toast.error("Salary min and max are required");
+}
+
+if (expMin < 0 || expMax < 0) {
+  return toast.error("Experience cannot be negative");
+}
+
+if (salaryMin < 0 || salaryMax < 0) {
+  return toast.error("Salary cannot be negative");
+}
+
+if (expMin > expMax) {
+  return toast.error(
+    "Minimum experience cannot be greater than maximum experience"
+  );
+}
+
+if (salaryMin > salaryMax) {
+  return toast.error(
+    "Minimum salary cannot be greater than maximum salary"
+  );
+}
+
+    const payload = {
+
+      
+      title: formData.title,
+      description: formData.description,
+      requirements: formData.skills.split(",").map((s) => s.trim()),
+      salary: {
+        min: Number(formData.salaryMin),
+        max: Number(formData.salaryMax),
+      },
+      experience: {
+        min: Number(formData.expMinMonths),
+        max: Number(formData.expMaxMonths),
+      },
+      location: formData.location,
+      jobType: formData.jobType,
+      industry: formData.industry || "",
+      company: formData.company,
+    };
+
+    
     try {
-      const payload = {
-        title: formData.title,
-        description: formData.description,
-        requirements: formData.skills.split(",").map((s) => s.trim()),
-        salary: Number(formData.salary),
-        experienceLevel: Number(formData.experience),
-        location: formData.location,
-        jobType: formData.type,
-        company: formData.company,
-      };
-
-      const res = await axios.put(`${JOB_API_END_POINT}/${id}`, payload, {
+      await axios.put(`${JOB_API_END_POINT}/${id}`, payload, {
         withCredentials: true,
       });
 
-      toast.success(res?.data?.message || "Job updated successfully");
-
+      toast.success("Job updated successfully");
       navigate("/recruiter/jobs");
     } catch (error) {
-      console.log("Update job error:", error?.response?.data || error);
       toast.error(error?.response?.data?.message || "Failed to update job");
     }
   };
@@ -176,34 +237,59 @@ const AdminJobEdit = () => {
               <Label>Location</Label>
               <Input
                 name="location"
-                value={formData.location}
+                value={formData.location || ""}
                 onChange={handleChange}
                 required
               />
             </div>
+            <div className="w-full">
+              <Label>Industry</Label>
+              <Select
+                value={formData.industry}
+                onValueChange={(v) => handleSelect("industry", v)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select industry" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  {filters.industries.map((ind) => (
+                    <SelectItem key={ind} value={ind}>
+                      {ind}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             {/* Salary */}
             <div className="space-y-2">
-              <Label>Salary</Label>
-              <Input
-                name="salary"
-                value={formData.salary}
-                onChange={handleChange}
-                required
-              />
+              <Label>Salary Range (Annual)</Label>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  placeholder="Min (₹)"
+                  name="salaryMin"
+                  value={formData.salaryMin}
+                  onChange={handleChange}
+                  required
+                />
+                <Input
+                  placeholder="Max (₹)"
+                  name="salaryMax"
+                  value={formData.salaryMax}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
 
             {/* Job Type */}
             <div className="space-y-2">
               <Label>Job Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(v) => handleSelect("type", v)}
-              >
+              <Select value={formData.jobType} onValueChange={handleSelect}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
-
                 <SelectContent>
                   <SelectItem value="Full-Time">Full-Time</SelectItem>
                   <SelectItem value="Part-Time">Part-Time</SelectItem>
@@ -212,16 +298,31 @@ const AdminJobEdit = () => {
                 </SelectContent>
               </Select>
             </div>
-
             {/* Experience */}
             <div className="space-y-2 md:col-span-2">
               <Label>Experience Required</Label>
-              <Input
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-                required
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  type="number"
+                  placeholder="0"
+                  name="expMinMonths"
+                  value={formData.expMinMonths}
+                  onChange={handleChange}
+                  required
+                />
+
+                <Input
+                  type="number"
+                  placeholder="24"
+                  name="expMaxMonths"
+                  value={formData.expMaxMonths}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Example: 6 = 6 months, 18 = 1 year 6 months
+              </p>
             </div>
           </div>
 

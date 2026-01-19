@@ -9,10 +9,15 @@ const jobSlice = createSlice({
     searchJobByText: "",
     jobapplied: [],
     savedJobs: [],
+    loading:false
   },
 
   reducers: {
     // Used when page = 1 or filters change
+  setLoading: (state, action) => {
+    state.loading = action.payload;
+  },
+
     setAllJobs: (state, action) => {
       state.allJobs = action.payload;
     },
@@ -58,6 +63,7 @@ export const {
   removeAdminJob,
   setJobapplied,
   setSavedJobs,
+  setLoading
 } = jobSlice.actions;
 
 export default jobSlice.reducer;

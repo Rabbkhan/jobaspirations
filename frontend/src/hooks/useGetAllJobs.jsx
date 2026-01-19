@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setAllJobs, appendJobs } from "../features/jobSlice";
+import { setAllJobs, appendJobs, setLoading } from "../features/jobSlice";
 import { JOB_API_END_POINT } from "../utils/constants";
 
 const useGetAllJobs = (filters) => {
@@ -9,12 +9,11 @@ const useGetAllJobs = (filters) => {
 
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [loading, setLoading] = useState(false);
 
   const fetchJobs = async (pageNumber) => {
-    if (loading || !hasMore) return;
+    if (!hasMore) return;
 
-    setLoading(true);
+   dispatch(setLoading(true));
 
     try {
       const res = await axios.get(JOB_API_END_POINT, {
@@ -38,7 +37,7 @@ const useGetAllJobs = (filters) => {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+   dispatch(setLoading(false));
     }
   };
 
@@ -56,7 +55,7 @@ const useGetAllJobs = (filters) => {
     }
   }, [page]);
 
-  return { setPage, hasMore, loading };
+  return { setPage, hasMore };
 };
 
 

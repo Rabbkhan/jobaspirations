@@ -13,18 +13,55 @@ const jobSchema = new mongoose.Schema(
       required: true,
     },
 
-    requirements: [{ type: String, trim: true }],
-    salary: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+    requirements: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
 
-    experienceLevel: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+    /* ======================
+       SALARY (MIN - MAX)
+    ====================== */
+salary: {
+  min: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  max: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  currency: {
+    type: String,
+    default: "INR",
+  },
+  period: {
+    type: String,
+    enum: ["month", "year"],
+    default: "year",
+  },
+},
+
+    /* ======================
+       EXPERIENCE (IN MONTHS)
+    ====================== */
+experience: {
+  min: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  max: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+},
+
+
     location: {
       type: String,
       required: true,

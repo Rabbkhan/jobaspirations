@@ -36,10 +36,12 @@ const Jobcreate = () => {
     title: "",
     company: "",
     location: "",
-    salary: "",
-    type: "",
     industry: "",
-    experience: "",
+    type: "",
+    salaryMin: "",
+    salaryMax: "",
+    expMinMonths: "",
+    expMaxMonths: "",
     description: "",
     skills: "",
   });
@@ -81,18 +83,60 @@ const Jobcreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const expMin = Number(formData.expMinMonths);
+    const expMax = Number(formData.expMaxMonths);
+    const salaryMin = Number(formData.salaryMin);
+    const salaryMax = Number(formData.salaryMax);
+
+    if (isNaN(expMin) || isNaN(expMax)) {
+      return toast.error("Experience min and max are required");
+    }
+
+    if (isNaN(salaryMin) || isNaN(salaryMax)) {
+      return toast.error("Salary min and max are required");
+    }
+
+    if (expMin < 0 || expMax < 0) {
+      return toast.error("Experience cannot be negative");
+    }
+
+    if (salaryMin < 0 || salaryMax < 0) {
+      return toast.error("Salary cannot be negative");
+    }
+
+    if (expMin > expMax) {
+      return toast.error(
+        "Minimum experience cannot be greater than maximum experience"
+      );
+    }
+
+    if (salaryMin > salaryMax) {
+      return toast.error(
+        "Minimum salary cannot be greater than maximum salary"
+      );
+    }
+
     try {
       const payload = {
         title: formData.title,
         description: formData.description,
-        requirements: formData.skills.split(",").map((s) => s.trim()), // ✅ ARRAY
-        salary: Number(formData.salary), // ✅ NUMBER
-        experienceLevel: Number(formData.experience), // ✅ NUMBER
+        requirements: formData.skills.split(",").map((s) => s.trim()),
+
+        salary: {
+          min: Number(formData.salaryMin),
+          max: Number(formData.salaryMax),
+        },
+
+        experience: {
+          min: Number(formData.expMinMonths),
+          max: Number(formData.expMaxMonths),
+        },
+
         location: formData.location,
-        industry: formData.industry, // 🔥 REQUIRED
+        industry: formData.industry,
         jobType: formData.type,
-        position: 1, // ✅ you can make this dynamic later
-        company: formData.company, // ✅ ObjectId from Select
+        position: 1,
+        company: formData.company,
       };
 
       const res = await axios.post(`${JOB_API_END_POINT}/create`, payload, {
@@ -265,27 +309,52 @@ const Jobcreate = () => {
                 </div>
 
                 {/* Salary */}
-                <div className="space-y-2">
-                  <Label>Annual Salary</Label>
-                  <Input
-                    placeholder="800000"
-                    name="salary"
-                    value={formData.salary}
-                    onChange={handleChange}
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Minimum Salary (₹)</Label>
+                    <Input
+                      placeholder="300000"
+                      name="salaryMin"
+                      value={formData.salaryMin}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Maximum Salary (₹)</Label>
+                    <Input
+                      placeholder="800000"
+                      name="salaryMax"
+                      value={formData.salaryMax}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
                 </div>
 
                 {/* Experience */}
-                <div className="space-y-2">
-                  <Label>Experience (Years)</Label>
-                  <Input
-                    placeholder="2"
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    required
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Min Experience (months)</Label>
+                    <Input
+                      placeholder="24"
+                      name="expMinMonths"
+                      value={formData.expMinMonths}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Max Experience (months)</Label>
+                    <Input
+                      placeholder="0"
+                      name="expMaxMonths"
+                      value={formData.expMaxMonths}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
             </div>

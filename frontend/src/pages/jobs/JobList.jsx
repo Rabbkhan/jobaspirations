@@ -6,23 +6,25 @@ import useGetAllJobs from "../../hooks/useGetAllJobs";
 import { Loader2 } from "lucide-react";
 import { saveJobThunk, unsaveJobThunk } from "../../thunk/SavedJobThunk";
 
-
 const JobList = () => {
   const [filters, setFilters] = useState({
     location: "",
     industry: "",
     salary: "",
+    experience: "", // ✅ ADD THIS
   });
 
-  const { allJobs,savedJobs } = useSelector((store) => store.job);
+  const { allJobs, savedJobs ,loading } = useSelector((store) => store.job);
 
+  console.log(allJobs);
+  
   const savedJobIds = useMemo(() => {
-  return new Set(savedJobs.map((job) => job._id));
-}, [savedJobs]);
+    return new Set(savedJobs.map((job) => job._id));
+  }, [savedJobs]);
 
-const isSaved = (jobId) => savedJobIds.has(jobId);
+  const isSaved = (jobId) => savedJobIds.has(jobId);
 
-  const { setPage, hasMore, loading } = useGetAllJobs(filters);
+  const { setPage, hasMore } = useGetAllJobs(filters);
 
   const dispatch = useDispatch();
   // Infinite scroll trigger
@@ -43,9 +45,7 @@ const isSaved = (jobId) => savedJobIds.has(jobId);
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [hasMore, loading, setPage]);
-
-
+  }, [hasMore, setPage]);
 
   const handleSaveToggle = (jobId) => {
     if (isSaved(jobId)) {
@@ -55,54 +55,45 @@ const isSaved = (jobId) => savedJobIds.has(jobId);
     }
   };
 
-
-
   return (
-<div className="max-w-6xl mx-auto px-4 py-6">
+    <div className="max-w-6xl mx-auto px-4 py-6">
+      {/* HEADER FILTER BAR — FULL WIDTH */}
+      <HeaderFilterBar filters={filters} setFilters={setFilters} />
 
-  {/* HEADER FILTER BAR — FULL WIDTH */}
- <HeaderFilterBar filters={filters} setFilters={setFilters} />
+      <div className="w-full flex justify-center mt-4">
+        <div className="w-full md:w-11/12 max-w-5xl mx-auto">
+          <p className="text-gray-700 font-medium">
+            {allJobs.length} job{allJobs.length !== 1 ? "s" : ""} found
+          </p>
+        </div>
+      </div>
 
-<div className="w-full flex justify-center mt-4">
-  <div className="w-full md:w-11/12 max-w-5xl mx-auto">
-    <p className="text-gray-700 font-medium">
-      {allJobs.length} job{allJobs.length !== 1 ? "s" : ""} found
-    </p>
-  </div>
-</div>
+      <div className="w-full flex justify-center mt-2">
+        <div className="w-full md:w-11/12 max-w-5xl mx-auto flex flex-col gap-4">
+          {allJobs.map((job) => (
+            <JobCard
+              key={job._id}
+              job={job}
+              isSaved={isSaved(job._id)}
+              onToggleSave={() => handleSaveToggle(job._id)}
+            />
+          ))}
+        </div>
+      </div>
 
-<div className="w-full flex justify-center mt-2">
-  <div className="w-full md:w-11/12 max-w-5xl mx-auto flex flex-col gap-4">
-    {allJobs.map((job) => (
-<JobCard
-  key={job._id}
-  job={job}
-  isSaved={isSaved(job._id)}
-  onToggleSave={() => handleSaveToggle(job._id)}
-/>
+      {loading && (
+        <div className="flex justify-center py-4">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      )}
 
-    ))}
-  </div>
-</div>
+      <div ref={observerRef} className="h-10" />
 
-
-
-
-  {loading && (
-    <div className="flex justify-center py-4">
-      <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      {!hasMore && (
+        <p className="text-center text-gray-500 mt-4">No more jobs available</p>
+      )}
     </div>
-  )}
-
-  <div ref={observerRef} className="h-10" />
-
-  {!hasMore && (
-    <p className="text-center text-gray-500 mt-4">
-      No more jobs available
-    </p>
-  )}
-</div>
-  )
+  );
 };
 
 export default JobList;
