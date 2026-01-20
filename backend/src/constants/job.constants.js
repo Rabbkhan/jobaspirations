@@ -13,6 +13,7 @@ export const ALLOWED_LOCATIONS = [
   "Jaipur",
   "Indore",
   "Coimbatore",
+  "AndhraPradesh",
   "Remote"
 ];
 
