@@ -13,41 +13,42 @@ const useGetAllJobs = (filters) => {
   const isFetchingRef = useRef(false);
   const isFilterResettingRef = useRef(false);
 
-  const fetchJobs = async (pageNumber, force = false) => {
-    if (isFetchingRef.current) return;
-    if (!hasMore && !force) return; // 🔥 KEY FIX
+ const fetchJobs = async (pageNumber, force = false) => {
+  if (isFetchingRef.current) return;
+  if (!hasMore && !force) return;
 
-    isFetchingRef.current = true;
-    dispatch(setLoading(true));
+  isFetchingRef.current = true;
+  dispatch(setLoading(true));
 
-    const cleanFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v !== "")
-    );
+  const safeFilters = filters || {}; // 🔒 safety
 
-    try {
-      const res = await axios.get(JOB_API_END_POINT, {
-        params: {
-          page: pageNumber,
-          limit: 9,
-          ...cleanFilters,
-        },
-        withCredentials: true,
-      });
+  const cleanFilters = Object.fromEntries(
+    Object.entries(safeFilters).filter(([_, v]) => v !== "")
+  );
 
-      if (res.data.success) {
-        if (pageNumber === 1) {
-          dispatch(setAllJobs(res.data.jobs));
-        } else {
-          dispatch(appendJobs(res.data.jobs));
-        }
-        setHasMore(res.data.hasMore);
-      }
-    } finally {
-      isFetchingRef.current = false;
-      isFilterResettingRef.current = false;
-      dispatch(setLoading(false));
+  try {
+    const res = await axios.get(JOB_API_END_POINT, {
+      params: {
+        page: pageNumber,
+        limit: 9,
+        ...cleanFilters,
+      },
+      withCredentials: true,
+    });
+
+    if (res.data.success) {
+      if (pageNumber === 1) dispatch(setAllJobs(res.data.jobs));
+      else dispatch(appendJobs(res.data.jobs));
+
+      setHasMore(res.data.hasMore);
     }
-  };
+  } finally {
+    isFetchingRef.current = false;
+    isFilterResettingRef.current = false;
+    dispatch(setLoading(false));
+  }
+};
+
 
   // 🔄 FILTER CHANGE → HARD RESET + FORCE FETCH
   useEffect(() => {

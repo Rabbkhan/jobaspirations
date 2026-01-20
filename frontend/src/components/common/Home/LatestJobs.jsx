@@ -82,9 +82,8 @@ const formatExperience = (experience) => {
     }
   };
 
-  if (loading) {
-    return <LatestJobsSkeleton />;
-  }
+  if (loading && allJobs.length === 0) return <LatestJobsSkeleton />;
+
   return (
     <section className="max-w-6xl mx-auto px-6 py-20">
       <h2 className="text-3xl font-bold mb-3 text-foreground">
