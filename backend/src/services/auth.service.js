@@ -10,7 +10,14 @@ import crypto from "crypto";
 import { FRONTEND_URL } from "../config/env.js";
 
 
-export const registerUser = async ({ fullname, email, password, phoneNumber, role, profilePhoto }) => {
+export const registerUser = async ({
+  fullname,
+  email,
+  password,
+  phoneNumber,
+  role,
+  profilePhoto,
+}) => {
   fullname = fullname?.trim();
   email = email?.toLowerCase().trim();
   phoneNumber = phoneNumber?.trim();
@@ -23,10 +30,13 @@ export const registerUser = async ({ fullname, email, password, phoneNumber, rol
   const allowedRoles = ["student", "recruiter"];
   const userRole = allowedRoles.includes(role) ? role : "student";
 
+  // ✅ FIX: extract URL from Cloudinary response
   let profilePhotoURL = "";
-  if (profilePhoto) profilePhotoURL = await uploadToCloud(profilePhoto, "image");
+  if (profilePhoto) {
+    const uploaded = await uploadToCloud(profilePhoto, "image");
+    profilePhotoURL = uploaded.url;
+  }
 
-  // First create the user
   const newUser = await User.create({
     fullname,
     email,
@@ -34,7 +44,7 @@ export const registerUser = async ({ fullname, email, password, phoneNumber, rol
     password: hashed,
     role: userRole,
     profile: {
-      profilePhoto: profilePhotoURL,
+      profilePhoto: profilePhotoURL, // ✅ string only
       bio: "",
       skills: [],
       resume: "",
@@ -43,10 +53,7 @@ export const registerUser = async ({ fullname, email, password, phoneNumber, rol
 
   if (!newUser) throw new Error("Failed to create user");
 
-  // Then generate verification code
   const code = await generateEmailVerification(newUser);
-
-  // Send code to email
   await sendVerificationCode(email, code, fullname);
 
   return {

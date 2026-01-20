@@ -10,19 +10,22 @@ export const createCompany = async (data, userId, file) => {
     throw err;
   }
 
-  // FIX: Use correct field
-  const existingCompany = await Company.findOne({ companyname: data.companyname });
+  const existingCompany = await Company.findOne({
+    companyname: data.companyname,
+  });
+
   if (existingCompany) {
     const err = new Error("Company already exists");
     err.status = 400;
     throw err;
   }
 
+  // ✅ FIX: store only the URL
   let logoURL = "";
-if (file) {
-  logoURL = await uploadToCloud(file, "image");
-}
-
+  if (file) {
+    const uploaded = await uploadToCloud(file, "image");
+    logoURL = uploaded.url;
+  }
 
   const company = await Company.create({
     companyname: data.companyname,
@@ -30,7 +33,7 @@ if (file) {
     website: data.website,
     location: data.location,
     employees: data.employees,
-    logo: logoURL,
+    logo: logoURL, // ✅ string only
     userId: userId,
   });
 

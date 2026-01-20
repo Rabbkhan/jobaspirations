@@ -1,30 +1,88 @@
-// components/company/FilterBar.jsx
-import React from "react";
-import { Input } from "@/components/ui/input";
+const RESET_FILTERS = {
+  location: "",
+  industry: "",
+  salary: "",
+  experience: "",
+};
 
-const FilterBar = ({ data, search, setSearch, location, setLocation }) => {
-  const uniqueLocations = ["All", ...new Set(data.map((c) => c.location))];
+const HeaderFilterBar = ({ filters, setFilters }) => {
+  const [data, setData] = useState({
+    locations: [],
+    industries: [],
+    salaries: [],
+    experiences: [],
+  });
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      const res = await axios.get(`${JOB_API_END_POINT}/filters`);
+      if (res.data.success) setData(res.data.filters);
+    };
+    fetchFilters();
+  }, []);
+
+  const update = (name, value) => {
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
-      <Input
-        placeholder="Search companies…"
-        className="md:w-1/3"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+    <div className="w-full flex justify-center">
+      <div className="bg-white border shadow-md rounded-2xl px-6 py-4 w-full md:w-4/5 flex flex-wrap gap-5">
 
-      <select
-        className="border border-border rounded-lg p-2 bg-background md:w-1/4"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-      >
-        {uniqueLocations.map((loc, i) => (
-          <option key={i}>{loc}</option>
-        ))}
-      </select>
+        {/* Location */}
+        <select
+          value={filters.location}
+          onChange={(e) => update("location", e.target.value)}
+        >
+          <option value="">All Locations</option>
+          {data.locations.map((loc, i) => (
+            <option key={i} value={loc}>{loc}</option>
+          ))}
+        </select>
+
+        {/* Industry */}
+        <select
+          value={filters.industry}
+          onChange={(e) => update("industry", e.target.value)}
+        >
+          <option value="">All Industries</option>
+          {data.industries.map((ind, i) => (
+            <option key={i} value={ind}>{ind}</option>
+          ))}
+        </select>
+
+        {/* Salary */}
+        <select
+          value={filters.salary}
+          onChange={(e) => update("salary", e.target.value)}
+        >
+          <option value="">All Salaries</option>
+          {data.salaries.map((s, i) => (
+            <option key={i} value={s.value}>{s.label}</option>
+          ))}
+        </select>
+
+        {/* Experience */}
+        <select
+          value={filters.experience}
+          onChange={(e) => update("experience", e.target.value)}
+        >
+          <option value="">All Experience</option>
+          {data.experiences.map((e, i) => (
+            <option key={i} value={e.value}>{e.label}</option>
+          ))}
+        </select>
+
+        {/* Reset */}
+        <button
+          onClick={() => setFilters(RESET_FILTERS)}
+          className="px-4 py-2 rounded-xl bg-gray-100"
+        >
+          Reset
+        </button>
+      </div>
     </div>
   );
 };
 
-export default FilterBar;
+export default HeaderFilterBar;

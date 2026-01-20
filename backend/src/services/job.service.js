@@ -138,21 +138,23 @@ export const getJobFilters = async () => {
     filters: {
       locations: ALLOWED_LOCATIONS,
       industries: ALLOWED_INDUSTRIES,
-     salaries: [
-  { label: "₹0 - ₹50,000", value: "0-50000" },
-  { label: "₹50k - ₹1L", value: "50000-100000" },
-  { label: "₹1L+", value: "100000-1000000" },
-],
-experiences: [
-  { label: "Fresher", value: "0-0" },
-  { label: "0-2 Years", value: "0-24" },
-  { label: "1-3 Years", value: "12-36" },
-  { label: "3+ Years", value: "36-120" },
-],
 
+      salaries: [
+        { label: "₹0 - ₹50,000", value: "0-50000" },
+        { label: "₹50k - ₹1L", value: "50000-100000" },
+        { label: "₹1L+", value: "100000-" }, // open-ended
+      ],
+
+      experiences: [
+        { label: "Fresher", value: "0-0" },
+        { label: "0-2 Years", value: "0-24" },
+        { label: "1-3 Years", value: "12-36" },
+        { label: "3+ Years", value: "36-120" },
+      ],
     },
   };
 };
+
 
 // =============================
 // GET JOB BY ID

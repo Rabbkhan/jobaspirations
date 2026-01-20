@@ -113,6 +113,10 @@ const AppRoutes = () => {
         {/* ... other public/student routes */}
         <Route path="/blogs" element={<Blogpage />} />
         <Route path="/blog/:slug" element={<BlogDetailsPage />} />
+        <Route path="/privacy-policy" element={<Privacypolicy/>} />
+                <Route path="/terms" element={<TermsAndConditions/>} />
+                <Route path="/career-tips" element={<CareerGuidance/>} />
+
       </Route>
 
       <Route path="/admin/login" element={<AdminLogin />} />

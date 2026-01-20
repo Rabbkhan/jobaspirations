@@ -16,7 +16,7 @@ const JobList = () => {
 
   const { allJobs, savedJobs ,loading } = useSelector((store) => store.job);
 
-  console.log(allJobs);
+  // console.log(allJobs);
   
   const savedJobIds = useMemo(() => {
     return new Set(savedJobs.map((job) => job._id));
@@ -24,28 +24,32 @@ const JobList = () => {
 
   const isSaved = (jobId) => savedJobIds.has(jobId);
 
-  const { setPage, hasMore } = useGetAllJobs(filters);
+  const { setPage, hasMore, isFilterResettingRef } = useGetAllJobs(filters);
 
   const dispatch = useDispatch();
   // Infinite scroll trigger
   const observerRef = useRef();
 
-  useEffect(() => {
-    if (!observerRef.current) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore && !loading) {
-          setPage((prev) => prev + 1);
-        }
-      },
-      { threshold: 1 }
-    );
+useEffect(() => {
+  if (!observerRef.current) return;
 
-    observer.observe(observerRef.current);
+  const observer = new IntersectionObserver(([entry]) => {
+    if (
+      entry.isIntersecting &&
+      hasMore &&
+      !loading &&
+      !isFilterResettingRef.current 
+    ) {
+      setPage((prev) => prev + 1);
+    }
+  });
 
-    return () => observer.disconnect();
-  }, [hasMore, setPage]);
+  observer.observe(observerRef.current);
+
+  return () => observer.disconnect();
+}, [hasMore, loading, setPage]);
+
 
   const handleSaveToggle = (jobId) => {
     if (isSaved(jobId)) {

@@ -9,14 +9,14 @@ const jobSlice = createSlice({
     searchJobByText: "",
     jobapplied: [],
     savedJobs: [],
-    loading:false
+    loading: false,
   },
 
   reducers: {
     // Used when page = 1 or filters change
-  setLoading: (state, action) => {
-    state.loading = action.payload;
-  },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
 
     setAllJobs: (state, action) => {
       state.allJobs = action.payload;
@@ -24,7 +24,11 @@ const jobSlice = createSlice({
 
     // Used for infinite scroll (page > 1)
     appendJobs: (state, action) => {
-      state.allJobs = [...state.allJobs, ...action.payload];
+      const existingIds = new Set(state.allJobs.map((j) => j._id));
+      const uniqueJobs = action.payload.filter(
+        (job) => !existingIds.has(job._id),
+      );
+      state.allJobs.push(...uniqueJobs);
     },
 
     setSingleJob: (state, action) => {
@@ -41,7 +45,7 @@ const jobSlice = createSlice({
 
     removeAdminJob: (state, action) => {
       state.allAdminJobs = state.allAdminJobs.filter(
-        (job) => job._id !== action.payload
+        (job) => job._id !== action.payload,
       );
     },
 
@@ -63,7 +67,7 @@ export const {
   removeAdminJob,
   setJobapplied,
   setSavedJobs,
-  setLoading
+  setLoading,
 } = jobSlice.actions;
 
 export default jobSlice.reducer;

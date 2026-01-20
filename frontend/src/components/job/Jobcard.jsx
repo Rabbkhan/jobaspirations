@@ -18,26 +18,26 @@ const JobCard = ({ job, isSaved, onToggleSave }) => {
     return created.toLocaleDateString();
   };
 
-const formatSalary = (salary) => {
-  if (!salary) return "Not disclosed";
-  const { min, max } = salary;
-  if (min && max) return `₹${min.toLocaleString()} - ₹${max.toLocaleString()}`;
-  if (min) return `₹${min.toLocaleString()}+`;
-  return "Not disclosed";
-};
-
-const formatExperience = (experience) => {
-  if (!experience || experience.min === 0) return "Fresher";
-
-  const toYearsMonths = (months) => {
-    const y = Math.floor(months / 12);
-    const m = months % 12;
-    return `${y ? `${y}y ` : ""}${m ? `${m}m` : ""}`.trim();
+  const formatSalary = (salary) => {
+    if (!salary) return "Not disclosed";
+    const { min, max } = salary;
+    if (min && max)
+      return `₹${min.toLocaleString()} - ₹${max.toLocaleString()}`;
+    if (min) return `₹${min.toLocaleString()}+`;
+    return "Not disclosed";
   };
 
-  return `${toYearsMonths(experience.min)} - ${toYearsMonths(experience.max)}`;
-};
+  const formatExperience = (experience) => {
+    if (!experience || experience.min === 0) return "Fresher";
 
+    const toYearsMonths = (months) => {
+      const y = Math.floor(months / 12);
+      const m = months % 12;
+      return `${y ? `${y}y ` : ""}${m ? `${m}m` : ""}`.trim();
+    };
+
+    return `${toYearsMonths(experience.min)} - ${toYearsMonths(experience.max)}`;
+  };
 
   return (
     <div className="relative w-full border rounded-xl bg-white shadow-sm hover:shadow-md transition-all p-5 flex flex-col md:flex-row justify-between gap-4">
@@ -59,25 +59,24 @@ const formatExperience = (experience) => {
             {job?.company?.name}
           </p>
 
-       <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
-  <span className="flex items-center gap-1">
-    <MapPin className="w-4 h-4" /> {job?.location}
-  </span>
+          <div className="flex flex-wrap gap-3 mt-2 text-sm text-gray-600">
+            <span className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" /> {job?.location}
+            </span>
 
-  <span className="flex items-center gap-1">
-    <IndianRupee size={14} />
-    {formatSalary(job?.salary)}
-  </span>
+            <span className="flex items-center gap-1">
+              <IndianRupee size={14} />
+              {formatSalary(job?.salary)}
+            </span>
 
-  <Badge variant="outline">{job?.jobType}</Badge>
+            <Badge variant="outline">{job?.jobType}</Badge>
 
-  {job?.experience && (
-    <Badge variant="secondary">
-      {formatExperience(job.experience)}
-    </Badge>
-  )}
-</div>
-
+            {job?.experience && (
+              <Badge variant="secondary">
+                {formatExperience(job.experience)}
+              </Badge>
+            )}
+          </div>
         </div>
       </div>
 

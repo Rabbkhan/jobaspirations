@@ -58,14 +58,14 @@ const Footer = () => {
               <li className="hover:text-white transition cursor-pointer">
                 <Link to="/jobs"> Find Jobs</Link>
               </li>
-              {user?.role !== "student" && (
+              {/* {user?.role !== "student" && (
                 <li className="hover:text-white transition cursor-pointer">
                   <Link to="/hire" className="hover:text-white transition">
                     {" "}
                     Hire Talent{" "}
                   </Link>
                 </li>
-              )}
+              )} */}
               <li className="hover:text-white transition cursor-pointer"></li>{" "}
               <li>
                 {" "}
@@ -89,17 +89,24 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white mb-4">Resources</h3>
             <ul className="space-y-2">
               <li className="hover:text-white transition cursor-pointer">
-                Blog
+                 <Link
+                  to="/blogs"
+                  className="hover:text-white transition"
+                >Blog</Link>
+                
               </li>
               <li className="hover:text-white transition cursor-pointer">
+                <Link to="/career-tips" className="hover:text-white transition">
+                
                 Career Tips
+                </Link>
               </li>
               <li className="hover:text-white transition cursor-pointer">
                 Support
               </li>
-              <li className="hover:text-white transition cursor-pointer">
+              {/* <li className="hover:text-white transition cursor-pointer">
                 FAQ
-              </li>
+              </li> */}
             </ul>
           </div>
 

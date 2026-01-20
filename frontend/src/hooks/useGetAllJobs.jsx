@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setAllJobs, appendJobs, setLoading } from "../features/jobSlice";
@@ -10,17 +10,26 @@ const useGetAllJobs = (filters) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchJobs = async (pageNumber) => {
-    if (!hasMore) return;
+  const isFetchingRef = useRef(false);
+  const isFilterResettingRef = useRef(false);
 
-   dispatch(setLoading(true));
+  const fetchJobs = async (pageNumber, force = false) => {
+    if (isFetchingRef.current) return;
+    if (!hasMore && !force) return; // 🔥 KEY FIX
+
+    isFetchingRef.current = true;
+    dispatch(setLoading(true));
+
+    const cleanFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v !== "")
+    );
 
     try {
       const res = await axios.get(JOB_API_END_POINT, {
         params: {
           page: pageNumber,
           limit: 9,
-          ...filters,
+          ...cleanFilters,
         },
         withCredentials: true,
       });
@@ -31,32 +40,35 @@ const useGetAllJobs = (filters) => {
         } else {
           dispatch(appendJobs(res.data.jobs));
         }
-
         setHasMore(res.data.hasMore);
       }
-    } catch (err) {
-      console.error(err);
     } finally {
-   dispatch(setLoading(false));
+      isFetchingRef.current = false;
+      isFilterResettingRef.current = false;
+      dispatch(setLoading(false));
     }
   };
 
-  // filter change → reset
+  // 🔄 FILTER CHANGE → HARD RESET + FORCE FETCH
   useEffect(() => {
-    setPage(1);
+    isFilterResettingRef.current = true;
     setHasMore(true);
-    fetchJobs(1);
+    setPage(1);
+    dispatch(setAllJobs([]));
+    fetchJobs(1, true); // ✅ FORCE PAGE-1 FETCH
   }, [filters]);
 
-  // page change → fetch next
+  // ⬇️ PAGE CHANGE → FETCH (NORMAL)
   useEffect(() => {
     if (page > 1) {
       fetchJobs(page);
     }
   }, [page]);
 
-  return { setPage, hasMore };
+  return { setPage, hasMore, isFilterResettingRef };
 };
+
+
 
 
 export default useGetAllJobs;
