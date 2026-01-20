@@ -47,27 +47,20 @@ const LatestJobs = () => {
     return created.toLocaleDateString(); // for older posts
   };
 
-  const formatExperience = (exp) => {
-    if (!exp) return "Not specified";
+const formatExperience = (experience) => {
+  if (!experience || experience.min === 0) return "Fresher";
 
-    const { minMonths, maxMonths } = exp;
-
-    const toYearsMonths = (months) => {
-      const y = Math.floor(months / 12);
-      const m = months % 12;
-      if (y && m) return `${y}y ${m}m`;
-      if (y) return `${y}y`;
-      return `${m}m`;
-    };
-
-    if (minMonths === 0 && maxMonths === 0) return "Fresher";
-
-    if (minMonths === maxMonths) {
-      return toYearsMonths(minMonths);
-    }
-
-    return `${toYearsMonths(minMonths)} – ${toYearsMonths(maxMonths)}`;
+  const toYearsMonths = (months) => {
+    const y = Math.floor(months / 12);
+    const m = months % 12;
+    return `${y ? `${y}y ` : ""}${m ? `${m}m` : ""}`.trim();
   };
+
+  return `${toYearsMonths(experience.min)} - ${toYearsMonths(experience.max)}`;
+};
+
+
+
 
   const formatSalary = (salary) => {
     if (!salary) return "Not disclosed";

@@ -27,7 +27,8 @@ const formatSalary = (salary) => {
 };
 
 const formatExperience = (experience) => {
-  if (!experience) return "Fresher";
+  if (!experience || experience.min === 0) return "Fresher";
+
   const toYearsMonths = (months) => {
     const y = Math.floor(months / 12);
     const m = months % 12;
@@ -36,6 +37,7 @@ const formatExperience = (experience) => {
 
   return `${toYearsMonths(experience.min)} - ${toYearsMonths(experience.max)}`;
 };
+
 
   return (
     <div className="relative w-full border rounded-xl bg-white shadow-sm hover:shadow-md transition-all p-5 flex flex-col md:flex-row justify-between gap-4">

@@ -108,7 +108,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-2 text-gray-400">
               <li>Email: info@jobaspirations.in</li>
-              <li>Phone: +91 7098037341 | +91 8159932923</li>
+              <li>Phone: +91 6296419679 | +91 8159932923</li>
               <li>Address: East Medinipur, Haldia, West Bengal ,India - 721632</li>
             </ul>
           </div>
