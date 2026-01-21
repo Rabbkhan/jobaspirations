@@ -65,7 +65,6 @@ const JobCard = ({ job, isSaved, onToggleSave }) => {
             </span>
 
             <span className="flex items-center gap-1">
-              <IndianRupee size={14} />
               {formatSalary(job?.salary)}
             </span>
 

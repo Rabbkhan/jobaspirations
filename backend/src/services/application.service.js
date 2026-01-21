@@ -5,7 +5,7 @@ import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
 import { STATUS } from "../constants/statusCodes.js";
 import { MESSAGES } from "../constants/messages.js";
-
+import {User} from "../models/user.model.js"
 
 // APPLY FOR A JOB
 export const applyForJob = async ({ jobId, userId }) => {
@@ -17,15 +17,35 @@ export const applyForJob = async ({ jobId, userId }) => {
 
   // Fetch job
   const job = await Job.findById(jobId);
-
   if (!job) {
     const err = new Error(MESSAGES.JOB_NOT_FOUND);
     err.status = STATUS.NOT_FOUND;
     throw err;
   }
 
-  // Ensure applications array exists
-  job.applications = job.applications || [];
+  // Fetch user
+  const user = await User.findById(userId);
+  if (!user) {
+    const err = new Error("User not found");
+    err.status = STATUS.NOT_FOUND;
+    throw err;
+  }
+
+  // Validate profile completeness
+  const missingFields = [];
+
+  if (!user.fullname) missingFields.push("fullname");
+  if (!user.email) missingFields.push("email");
+  if (!user.phoneNumber) missingFields.push("phoneNumber");
+  if (!user.profile.resume) missingFields.push("resume");
+
+  if (missingFields.length > 0) {
+    const err = new Error(
+      `Please complete your profile before applying. Missing: ${missingFields.join(", ")}`
+    );
+    err.status = STATUS.BAD_REQUEST;
+    throw err;
+  }
 
   // Prevent duplicate application
   const alreadyApplied = await Application.findOne({
@@ -39,13 +59,14 @@ export const applyForJob = async ({ jobId, userId }) => {
     throw err;
   }
 
-  // Create new application
+  // Create application
   const application = await Application.create({
     job: jobId,
     applicant: userId,
   });
 
-  // Push application reference into job model
+  // Link application to job
+  job.applications = job.applications || [];
   job.applications.push(application._id);
   await job.save();
 
@@ -55,6 +76,7 @@ export const applyForJob = async ({ jobId, userId }) => {
     application,
   };
 };
+
 
 export const getMyApplications = async (userId, page = 1, limit = 10) => {
   const skip = (page - 1) * limit;

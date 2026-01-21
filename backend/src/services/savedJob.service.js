@@ -18,19 +18,34 @@ export const saveJobService = async ({ userId, jobId }) => {
     throw err;
   }
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { $addToSet: { savedJobs: jobId } },
-    { new: true }
-  ).populate("savedJobs");
-
+  const user = await User.findById(userId);
   if (!user) {
     const err = new Error("User not found");
     err.status = STATUS.NOT_FOUND;
     throw err;
   }
 
-  return { savedJobs: user.savedJobs };
+  // Check if already saved
+  const alreadySaved = user.savedJobs.includes(jobId);
+
+  if (alreadySaved) {
+    return {
+      success: true,
+      message: "Job is already saved",
+      savedJobs: user.savedJobs,
+    };
+  }
+
+  user.savedJobs.push(jobId);
+  await user.save();
+
+  await user.populate("savedJobs");
+
+  return {
+    success: true,
+    message: "Job saved successfully",
+    savedJobs: user.savedJobs,
+  };
 };
 
 // ---------------- UNSAVE JOB ----------------
@@ -41,20 +56,35 @@ export const unsaveJobService = async ({ userId, jobId }) => {
     throw err;
   }
 
-  const user = await User.findByIdAndUpdate(
-    userId,
-    { $pull: { savedJobs: jobId } },
-    { new: true }
-  ).populate("savedJobs");
-
+  const user = await User.findById(userId);
   if (!user) {
     const err = new Error("User not found");
     err.status = STATUS.NOT_FOUND;
     throw err;
   }
 
-  return { savedJobs: user.savedJobs };
+  const wasSaved = user.savedJobs.includes(jobId);
+
+  if (!wasSaved) {
+    return {
+      success: true,
+      message: "Job was not in saved list",
+      savedJobs: user.savedJobs,
+    };
+  }
+
+  user.savedJobs.pull(jobId);
+  await user.save();
+
+  await user.populate("savedJobs");
+
+  return {
+    success: true,
+    message: "Job removed from saved jobs",
+    savedJobs: user.savedJobs,
+  };
 };
+
 
 // ---------------- GET SAVED JOBS ----------------
 export const getSavedJobsService = async (userId) => {
