@@ -19,24 +19,27 @@ import {
 } from "../../utils/constants";
 import axios from "axios";
 import { toast } from "sonner";
-import { setSingleJob } from "../../features/jobSlice";
+import { setLoading, setSingleJob } from "../../features/jobSlice";
 import { useDispatch, useSelector } from "react-redux";
+import JobDetailsSkeleton from "../../components/common/loading/JobDetailsSkeleton";
 
 const JobDetails = () => {
   const params = useParams();
   const jobId = params.id;
-  const { singleJob } = useSelector((store) => store.job);
+  const { singleJob, loading } = useSelector((store) => store.job);
   const disptach = useDispatch();
   const { user } = useSelector((store) => store.auth);
-  const isIntiallyApplied =
-    singleJob?.applications?.some(
-      (application) => application.applicant === user?._id
-    ) || false;
+  const isInitiallyApplied =
+  singleJob?.applications?.some(
+    (app) => app?.applicant?._id === user?._id
+  ) || false;
 
-  const [isApplied, setIsApplied] = useState(isIntiallyApplied);
+  const [isApplied, setIsApplied] = useState(isInitiallyApplied);
 
   useEffect(() => {
     const fetchSingleJob = async () => {
+            disptach(setLoading(true)); // 👈 add this
+
       try {
         const res = await axios.get(`${JOB_API_END_POINT}/${jobId}`, {
           withCredentials: true,
@@ -54,6 +57,9 @@ const JobDetails = () => {
       } catch (error) {
         console.log(error);
       }
+      finally {
+      disptach(setLoading(false)); // 👈 add this
+    }
     };
     fetchSingleJob();
   }, [jobId, disptach, user?._id]);
@@ -97,24 +103,32 @@ const JobDetails = () => {
  const formatExperience = (exp) => {
   if (!exp) return "Not specified";
 
-  const { min, max } = exp; // <-- FIX HERE
+  const { min, max } = exp;
 
-  const toYearsMonths = (months) => {
+  const toYearsMonths = (months, isStart = false) => {
+    if (months === 0 && isStart) return "0"; // 👈 key rule
+
+    if (months < 12) return `${months}m`;
+
     const y = Math.floor(months / 12);
     const m = months % 12;
-    if (y && m) return `${y}y ${m}m`;
-    if (y) return `${y}y`;
-    return `${m}m`;
+
+    if (m) return `${y}y ${m}m`;
+    return `${y}y`;
   };
 
   if (min === 0 && max === 0) return "Fresher";
 
-  if (min === max) return toYearsMonths(min);
+  if (min === max) return toYearsMonths(min, true);
 
-  return `${toYearsMonths(min)} – ${toYearsMonths(max)}`;
+  return `${toYearsMonths(min, true)} – ${toYearsMonths(max)}`;
 };
 
- 
+
+ if (loading) {
+  return <JobDetailsSkeleton />;
+}
+
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -58,14 +58,14 @@ const Footer = () => {
               <li className="hover:text-white transition cursor-pointer">
                 <Link to="/jobs"> Find Jobs</Link>
               </li>
-              {/* {user?.role !== "student" && (
-                <li className="hover:text-white transition cursor-pointer">
-                  <Link to="/hire" className="hover:text-white transition">
-                    {" "}
-                    Hire Talent{" "}
-                  </Link>
-                </li>
-              )} */}
+            {(!user || user.role === "student") && (
+  <li className="hover:text-white transition cursor-pointer">
+    <Link to="/hire" className="hover:text-white transition">
+      Hire Talent
+    </Link>
+  </li>
+)}
+
               <li className="hover:text-white transition cursor-pointer"></li>{" "}
               <li>
                 {" "}

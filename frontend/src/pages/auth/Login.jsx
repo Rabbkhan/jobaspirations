@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
 import { USER_API_END_POINT } from "../../utils/constants";
@@ -20,6 +20,10 @@ const Login = () => {
   const navigate = useNavigate();
   const { loading } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
+  const location = useLocation();
+const searchParams = new URLSearchParams(location.search);
+const redirect = searchParams.get("redirect");
+
   const changEventHandler = (e) => {
     setInput({
       ...input,
@@ -36,28 +40,35 @@ const Login = () => {
         withCredentials: true,
       });
 
-      if (res.data.success) {
-        const role = res.data.safeUser.role;
+if (res.data.success) {
+  const role = res.data.safeUser.role;
 
-        // 🚫 ABSOLUTE BLOCK: ADMINS DO NOT LOG IN HERE
-        if (role === "admin") {
-          toast.error("Admins are not allowed to log in from this portal");
-          return;
-        }
+  // 🚫 block admin
+  if (role === "admin") {
+    toast.error("Admins are not allowed to log in from this portal");
+    return;
+  }
 
-        // ✅ ALLOWED ROLES ONLY
-        if (role === "student") {
-          navigate("/profile");
-        } else if (role === "recruiter") {
-          navigate("/recruiter");
-        } else {
-          toast.error("Unauthorized role");
-          return;
-        }
+  dispatch(setUser(res.data.safeUser));
+  toast.success(res.data.message);
 
-        dispatch(setUser(res.data.safeUser));
-        toast.success(res.data.message);
-      }
+  // ✅ GO BACK TO WHERE USER CAME FROM
+  if (redirect) {
+    navigate(redirect, { replace: true });
+    return;
+  }
+
+  // default behavior
+  if (role === "student") {
+    navigate("/jobs");
+  } else if (role === "recruiter") {
+    navigate("/recruiter");
+  } else {
+    navigate("/unauthorized");
+  }
+}
+
+
     } catch (error) {
       const msg = error.response?.data?.message;
 

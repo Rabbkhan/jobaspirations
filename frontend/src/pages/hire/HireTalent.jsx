@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -9,11 +11,26 @@ export default function HireTalent() {
   const { user } = useSelector((state) => state.auth);
   const processRef = useRef(null);
 
-  const handlePrimaryCTA = () => {
-    if (!user) return navigate("/login");
-    if (user.role !== "recruiter") return navigate("/become-recruiter");
-    navigate("/admin/jobs/create");
-  };
+const handlePrimaryCTA = () => {
+  if (!user) {
+    // 👇 redirect BACK to /hire
+    navigate("/login?redirect=/hire");
+    return;
+  }
+
+  if (user.role === "recruiter" && !user.isApproved) {
+    navigate("/pending-approval");
+    return;
+  }
+
+  if (user.role === "recruiter" && user.isApproved) {
+    navigate("/recruiter");
+    return;
+  }
+
+  navigate("/hire-apply");
+};
+
 
   const scrollToProcess = () => {
     processRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -21,11 +38,9 @@ export default function HireTalent() {
 
   return (
     <main className="bg-background">
-
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 py-32 grid lg:grid-cols-2 gap-20 items-center">
-          
           {/* LEFT */}
           <div className="space-y-10">
             <span className="inline-block text-xs uppercase tracking-widest text-muted-foreground">
@@ -78,20 +93,16 @@ export default function HireTalent() {
                   {item.step}
                 </span>
                 <h3 className="text-xl font-semibold">{item.title}</h3>
-                <p className="text-sm text-muted-foreground max-w-md">
-                  {item.desc}
-                </p>
+                <p className="text-sm text-muted-foreground max-w-md">{item.desc}</p>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* OUR PROCESS (new section) */}
       <section ref={processRef} className="border-t bg-muted/30">
         <div className="max-w-7xl mx-auto px-6 py-28 space-y-14">
-
           <div className="text-center max-w-2xl mx-auto space-y-4">
             <h2 className="text-4xl font-semibold">Our Hiring Process</h2>
             <p className="text-muted-foreground text-lg">
@@ -100,7 +111,6 @@ export default function HireTalent() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-12">
-
             {[
               {
                 title: "1. Role Understanding",
@@ -132,9 +142,7 @@ export default function HireTalent() {
                 <p className="text-muted-foreground text-sm">{item.desc}</p>
               </div>
             ))}
-
           </div>
-
         </div>
       </section>
 
@@ -153,7 +161,6 @@ export default function HireTalent() {
           </Button>
         </div>
       </section>
-
     </main>
   );
 }

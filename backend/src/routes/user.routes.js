@@ -10,7 +10,7 @@ import {
   loginValidation,
   registerValidation,
 } from "../validations/authValidation.js";
-import { adminLoginController, adminLogoutController, adminMeController, approveUser, getPendingUsers } from "../controllers/admin.controller.js";
+import { adminLoginController, adminLogoutController, adminMeController, approveRecruiterApplication, getPendingRecruiterApplications, getPendingUsers, rejectRecruiterApplication } from "../controllers/admin.controller.js";
 import { adminAuthenticate } from "../middlewares/admin.middleware.js";
 
 const router = express.Router();
@@ -44,7 +44,28 @@ router.post("/admin/logout", adminLogoutController);
 
 
 router.get("/adminDashboard", adminAuthenticate, authorizeRoles("admin"), getPendingUsers);
-router.patch("/approve/:userId", adminAuthenticate, authorizeRoles("admin"), approveUser);
+// router.patch("/approve/:userId", adminAuthenticate, authorizeRoles("admin"), approveUser);
+router.get(
+  "/recruiter-applications",
+  adminAuthenticate,
+  authorizeRoles("admin"),
+  getPendingRecruiterApplications
+);
 
+// Approve a recruiter application
+router.patch(
+  "/recruiter-applications/approve/:applicationId",
+  adminAuthenticate,
+  authorizeRoles("admin"),
+  approveRecruiterApplication
+);
+
+// Reject a recruiter application
+router.patch(
+  "/recruiter-applications/reject/:applicationId",
+  adminAuthenticate,
+  authorizeRoles("admin"),
+  rejectRecruiterApplication
+);
 export default router;
 

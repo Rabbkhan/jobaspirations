@@ -30,9 +30,13 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["student", "recruiter", "admin"],
-      default: "student",
+      required: true,
     },
-    isApproved: Boolean,
+
+    isApproved: {
+      type: Boolean,
+      default: false,
+    },
 
     isFirstLogin: { type: Boolean, default: true },
 
@@ -59,7 +63,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const User = mongoose.model("User", userSchema);

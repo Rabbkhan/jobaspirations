@@ -1,25 +1,40 @@
-
 import { useDispatch, useSelector } from "react-redux";
 import AppRoutes from "./routes";
 import { loadSavedJobs } from "./thunk/SavedJobThunk";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import ScrollToTop from "./pages/ScrollToTop";
+import LoaderScreen from "./components/common/loading/LoaderScreen";
 
 function App() {
-const { user } = useSelector((state) => state.auth);
-const isAuthenticated = Boolean(user);
+  const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(true); // show loader initially
+  const isAuthenticated = Boolean(user);
 
-const dispatch = useDispatch()
-useEffect(() => {
-  if (isAuthenticated) {
-    dispatch(loadSavedJobs());
-  }
-}, [isAuthenticated, dispatch]);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      try {
+        if (isAuthenticated) {
+          await dispatch(loadSavedJobs()); // wait for thunk to complete
+        }
+      } catch (err) {
+        console.error("Error loading saved jobs:", err);
+      } finally {
+        setLoading(false); // hide loader when initialization is done
+      }
+    };
+
+    initializeApp();
+  }, [isAuthenticated, dispatch]);
+
+  // While loading, show LoaderScreen
+  if (loading) return <LoaderScreen />;
 
   return (
     <div className="bg-background min-h-screen">
-      <AppRoutes/>
-      
+      <ScrollToTop />
+      <AppRoutes />
     </div>
   );
 }

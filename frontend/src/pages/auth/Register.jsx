@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { USER_API_END_POINT } from "../../utils/constants";
 import axios from "axios";
 import { toast } from "sonner";
@@ -23,7 +23,9 @@ const Register = () => {
   const navigate = useNavigate();
   const { loading } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
-
+const location = useLocation();
+const searchParams = new URLSearchParams(location.search);
+const redirect = searchParams.get("redirect");
   const changEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
   };
@@ -38,8 +40,7 @@ const Register = () => {
     if (!allowedTypes.includes(file.type))
       return toast.error("Only JPG, PNG, and WEBP images are allowed");
 
-    if (file.size > MAX_SIZE)
-      return toast.error("Image must be under 2MB");
+    if (file.size > MAX_SIZE) return toast.error("Image must be under 2MB");
 
     setInput((prev) => ({ ...prev, profilePhotoFile: file }));
   };
@@ -58,20 +59,21 @@ const Register = () => {
     try {
       dispatch(setLoading(true));
 
-      const res = await axios.post(
-        `${USER_API_END_POINT}/register`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
 
       if (res.data.success) {
         toast.success("Account created! Please verify your email");
         navigate("/verify-email", { state: { email: input.email } });
-      }
 
+        if (redirect) {
+    navigate(redirect, { replace: true });
+    return;
+  }
+
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || "Registration failed");
     } finally {
@@ -83,10 +85,12 @@ const Register = () => {
     <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
       <div className="hidden md:flex flex-col justify-center">
         <h1 className="text-4xl font-bold text-foreground leading-tight">
-          Create your <span className="text-primary">JobAspirations</span> account
+          Create your <span className="text-primary">JobAspirations</span>{" "}
+          account
         </h1>
         <p className="mt-4 text-muted-foreground leading-relaxed">
-          Join thousands of job seekers and recruiters. Create an account & start your journey with a premium experience.
+          Join thousands of job seekers and recruiters. Create an account &
+          start your journey with a premium experience.
         </p>
 
         <img
@@ -105,7 +109,6 @@ const Register = () => {
 
         <CardContent>
           <form onSubmit={submitHandler} className="space-y-5">
-
             <div className="space-y-2">
               <Label>Full Name</Label>
               <Input
@@ -163,7 +166,14 @@ const Register = () => {
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait...
               </Button>
             ) : (
-              <Button className="w-full">Register</Button>
+              <Button className="w-full">
+                <Link
+                  to={`/register${redirect ? `?redirect=${redirect}` : ""}`}
+                  className="text-primary hover:underline"
+                >
+                  Register
+                </Link>
+              </Button>
             )}
 
             <p className="text-center text-sm">

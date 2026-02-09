@@ -52,6 +52,9 @@ import BlogCategories from "./admin/pages/Blogcategories";
 import BlogEditorPage from "./admin/pages/BlogEditorPage";
 import Blogpage from "./pages/BlogsPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
+import HireApply from "./pages/hire/HireApply";
+import PendingApproval from "./pages/PendingApproval";
+import GuestHireCTA from "./pages/GuestHireCTA";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -75,7 +78,7 @@ const AppRoutes = () => {
           }
         />
 
-           <Route
+        <Route
           path="/jobs"
           element={
             <GuestOrStudentRoute>
@@ -113,10 +116,13 @@ const AppRoutes = () => {
         {/* ... other public/student routes */}
         <Route path="/blogs" element={<Blogpage />} />
         <Route path="/blog/:slug" element={<BlogDetailsPage />} />
-        <Route path="/privacy-policy" element={<Privacypolicy/>} />
-                <Route path="/terms" element={<TermsAndConditions/>} />
-                <Route path="/career-tips" element={<CareerGuidance/>} />
-
+        <Route path="/privacy-policy" element={<Privacypolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/career-tips" element={<CareerGuidance />} />
+        <Route path="/hire" element={<HireTalent />} />
+        <Route path="/hire-apply" element={<HireApply />} />
+        <Route path="/pending-approval" element={<PendingApproval />} />
+        <Route path="/hire-guest-cta" element={<GuestHireCTA />} />
       </Route>
 
       <Route path="/admin/login" element={<AdminLogin />} />

@@ -15,8 +15,8 @@ export const registerUser = async ({
   email,
   password,
   phoneNumber,
-  role,
   profilePhoto,
+   role = "student", 
 }) => {
   fullname = fullname?.trim();
   email = email?.toLowerCase().trim();
@@ -27,10 +27,6 @@ export const registerUser = async ({
 
   const hashed = await hashPassword(password);
 
-  const allowedRoles = ["student", "recruiter"];
-  const userRole = allowedRoles.includes(role) ? role : "student";
-
-  // ✅ FIX: extract URL from Cloudinary response
   let profilePhotoURL = "";
   if (profilePhoto) {
     const uploaded = await uploadToCloud(profilePhoto, "image");
@@ -42,23 +38,22 @@ export const registerUser = async ({
     email,
     phoneNumber,
     password: hashed,
-    role: userRole,
+      role, // 'student' by default
+    isApproved: role === "recruiter" ? false : true,
     profile: {
-      profilePhoto: profilePhotoURL, // ✅ string only
+      profilePhoto: profilePhotoURL,
       bio: "",
       skills: [],
       resume: "",
     },
   });
 
-  if (!newUser) throw new Error("Failed to create user");
-
   const code = await generateEmailVerification(newUser);
   await sendVerificationCode(email, code, fullname);
 
   return {
     success: true,
-    message: "User registered successfully",
+    message: "Registered successfully",
     userId: newUser._id,
   };
 };
@@ -169,14 +164,16 @@ export const requestVerificationCodeService = async (email) => {
 
 
 export const loginUser = async ({ email, password, role }) => {
-  const user = await User.findOne({ email });
-  if (!user) {
-    const err = new Error("User not found");
+ const normalizedEmail = email.toLowerCase().trim();
+  const account = await User.findOne({ email:normalizedEmail});
+  
+  if (!account) {
+    const err = new Error("account not found");
     err.status = STATUS.NOT_FOUND;
     throw err;
   }
 
-  const isMatch = await comparePassword(password, user.password);
+  const isMatch = await comparePassword(password, account.password);
   if (!isMatch) {
     const err = new Error(MESSAGES.INVALID_CREDENTIALS);
     err.status = 401;
@@ -184,25 +181,37 @@ export const loginUser = async ({ email, password, role }) => {
   }
 
   // CHECK EMAIL VERIFICATION
-  if (!user.isEmailVerified) {
+  if (!account.isEmailVerified) {
     const err = new Error("Please verify your email before logging in");
     err.status = 403; // or 400 depending on your convention
     throw err;
   }
 
-  // AFTER user is found and password is validated
+  // AFTER account is found and password is validated
+ // 🔐 ROLE CHECK
+  if (role && account.role !== role) {
+    const err = new Error("Unauthorized role for this portal");
+    err.status = 403;
+    throw err;
+  }
+
+  // 🚫 BLOCK ADMIN HERE
+  if (account.role === "admin") {
+    const err = new Error("Admins must use admin portal");
+    err.status = 403;
+    throw err;
+  }
 
 
-
-  const token = generateToken(user);
+  const token = generateToken(account);
 
   try {
-    await sendWelcomeEmail(user.email, user.fullname);
+    await sendWelcomeEmail(account.email, account.fullname);
   } catch (error) {
     console.error("Failed to send welcome email:", error);
   }
 
-  return { user, token };
+  return { account, token };
 };
 
 //fogrogt password  logic

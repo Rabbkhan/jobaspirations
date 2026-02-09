@@ -100,14 +100,14 @@ export const login = async (req, res) => {
   try {
     const result = await loginUser(req.body);
 
+    const { account: user, token } = result; // FIXED here
 
-  if (!result || !result.user || result.user.role === "admin") {
+    if (!user || user.role === "admin") {
       return res.status(STATUS.UNAUTHORIZED).json({
         success: false,
         message: "Invalid email or password",
       });
     }
-    const { user, token } = result;
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -118,7 +118,7 @@ export const login = async (req, res) => {
     });
 
     const safeUser = {
-      _id: user._id.toString(),  // safe access
+      _id: user._id.toString(),
       fullname: user.fullname,
       email: user.email,
       phoneNumber: user.phoneNumber,
@@ -139,6 +139,7 @@ export const login = async (req, res) => {
     });
   }
 };
+
 
 
 // logout

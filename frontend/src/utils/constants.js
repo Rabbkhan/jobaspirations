@@ -8,3 +8,4 @@ export const DASHBOARD_API_END_POINT = `${BASE_URL}/api/v1/dashboard`;
 export const BLOG_API_END_POINT = `${BASE_URL}/api/v1/adminblog`;
 export const PUBLIC_BLOG_API_END_POINT = `${BASE_URL}/api/v1/blog`;
 export const CATEGORY_API_END_POINT = `${BASE_URL}/api/v1/blogcategory`;
+export const RecruiterApply_API_END_POINT = `${BASE_URL}/api/v1/recruiterapply`;

@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user.model.js";
+import { RecruiterApplication } from "../models/recruiter.model.js";
+import { Company } from "../models/company.model.js";
 
 export const adminLoginController = async (req, res) => {
   try {
@@ -108,19 +110,71 @@ export const getPendingUsers = async (req, res) => {
   }
 };
 
-// 2️⃣ Approve a recruiter or company
-export const approveUser = async (req, res) => {
+
+
+
+
+export const getPendingRecruiterApplications = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const pendingApplications = await RecruiterApplication.find({ status: "pending" })
+      .populate("userId", "fullname email")
+      .populate("companyId", "companyname website location employees logo");
 
-    user.isApproved = true;
-    await user.save();
+    res.status(200).json({ success: true, applications: pendingApplications });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
-    res
-      .status(200)
-      .json({ success: true, message: `${user.role} approved successfully` });
+// -----------------------
+// Approve Recruiter Application
+// -----------------------
+export const approveRecruiterApplication = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    const application = await RecruiterApplication.findById(applicationId);
+    if (!application) return res.status(404).json({ success: false, message: "Application not found" });
+
+    // Update application status
+    application.status = "approved";
+    await application.save();
+
+    // Activate company
+    const company = await Company.findById(application.companyId);
+    if (company) {
+      company.isActive = true;
+      await company.save();
+    }
+
+    // Update user role
+    const user = await User.findById(application.userId);
+    if (user) {
+      user.role = "recruiter";
+      user.isApproved = true;
+      await user.save();
+    }
+
+    res.status(200).json({ success: true, message: "Recruiter approved successfully", application });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// -----------------------
+// Reject Recruiter Application
+// -----------------------
+export const rejectRecruiterApplication = async (req, res) => {
+  try {
+    const { applicationId } = req.params;
+
+    const application = await RecruiterApplication.findById(applicationId);
+    if (!application) return res.status(404).json({ success: false, message: "Application not found" });
+
+    application.status = "rejected";
+    await application.save();
+
+    res.status(200).json({ success: true, message: "Recruiter application rejected", application });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
