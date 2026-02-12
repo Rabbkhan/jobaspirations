@@ -3,9 +3,9 @@ import {
   getSavedJobsApi,
   saveJobApi,
   unsaveJobApi,
-} from "../api/jobSavedApi";
+} from "@/api/jobSavedApi";
 
-import { setSavedJobs } from "../features/jobSlice";
+import { setSavedJobs } from "@/features/jobSlice";
 
 /**
  * Load saved jobs on app start / refresh

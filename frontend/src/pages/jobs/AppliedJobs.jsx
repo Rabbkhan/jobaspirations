@@ -19,8 +19,8 @@ import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setJobapplied } from "../../features/jobSlice";
-import { APPLICATIONS_API_END_POINT } from "../../utils/constants";
+import { setJobapplied } from "@/features/jobSlice";
+import { APPLICATIONS_API_END_POINT } from "@/utils/constants";
 
 const AppliedJobs = () => {
   const [statusFilter, setStatusFilter] = useState("All");

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
-import { unsaveJobThunk } from "../../thunk/SavedJobThunk";
+import { unsaveJobThunk } from "@/thunk/SavedJobThunk";
 
 const Savedjob = () => {
   const savedJobs = useSelector((state) => state.job.savedJobs);
