@@ -6,9 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
-import { USER_API_END_POINT } from "../../utils/constants";
+import { USER_API_END_POINT } from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading, setUser } from "../../features/authSlice";
+import { setLoading, setUser } from "@/features/authSlice";
 import { Loader2 } from "lucide-react";
 
 const Login = () => {

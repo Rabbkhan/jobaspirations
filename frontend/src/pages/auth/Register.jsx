@@ -4,12 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
-import { USER_API_END_POINT } from "../../utils/constants";
+import { USER_API_END_POINT } from "@/utils/constants";
 import axios from "axios";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoading } from "../../features/authSlice";
+import { setLoading } from "@/features/authSlice";
 
 const Register = () => {
   const [input, setInput] = useState({
