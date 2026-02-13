@@ -1,5 +1,5 @@
 import axios from "axios";
-import { JOB_API_END_POINT } from "../utils/constants";
+import { JOB_API_END_POINT } from "@/utils/constants";
 
 const API = axios.create({
   baseURL: JOB_API_END_POINT,

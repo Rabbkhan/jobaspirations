@@ -3,10 +3,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 /* =======================
    Layouts
 ======================= */
-import MainLayout from "@/layouts/MainLayout";
-import AuthLayout from "@/layouts/AuthLayout";
-import DashboardLayout from "@/layouts/DashboardLayout";
-import AdminLayout from "@/layouts/AdminLayout";
+import MainLayout from "@/shared/layouts/MainLayout";
+import AuthLayout from "@/shared/layouts/AuthLayout";
+import DashboardLayout from "@/shared/layouts/DashboardLayout";
+import AdminLayout from "@/shared/layouts/AdminLayout";
 
 /* =======================
    Route Guards

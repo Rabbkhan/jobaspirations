@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { CATEGORY_API_END_POINT } from "../../utils/constants";
+import { CATEGORY_API_END_POINT } from "@/utils/constants";
 
 
 const BlogCategories = () => {

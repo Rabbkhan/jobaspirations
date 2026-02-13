@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
+import useGetAllAdminJobs from "@/shared/hooks/useGetAllAdminJobs";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/constants";
