@@ -1,57 +1,78 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-/* Layouts */
+/* =======================
+   Layouts
+======================= */
 import MainLayout from "@/layouts/MainLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 import DashboardLayout from "@/layouts/DashboardLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
-/* Route Guards */
+/* =======================
+   Route Guards
+======================= */
 import ProtectedRoute from "@/pages/auth/ProtectedRoute";
 import StudentRoute from "@/pages/auth/StudentRoute";
+import AdminRoute from "@/pages/auth/AdminRoute";
 import GuestOrStudentRoute from "@/pages/auth/GuestOrStudentRoute";
 
-/* Pages */
-import Login from "@/pages/auth/Login";
-import Register from "@/pages/auth/Register";
+/* =======================
+   AUTH (Public / Pre-login)
+======================= */
+import Login from "@/features/auth/pages/Login.jsx";
+import Register from "@/features/auth/pages/Register";
+import VerifyEmail from "@/features/auth/pages/VerifyEmail";
+import ForgotPassword from "@/features/auth/pages/ForgotPassword";
+import ResetPassword from "@/features/auth/pages/ResetPassword";
+
+/* =======================
+   PUBLIC PAGES (No auth)
+======================= */
 import Home from "@/components/common/Home/Home";
 import JobList from "@/pages/jobs/JobList";
 import JobDetails from "@/pages/jobs/JobDetails";
+import Blogpage from "@/pages/BlogsPage";
+import BlogDetailsPage from "@/pages/BlogDetailsPage";
+import Privacypolicy from "@/pages/Privacypolicy";
+import TermsAndConditions from "@/pages/TermsAndConditions";
+import HireTalent from "@/pages/hire/HireTalent";
+import Unauthorized from "@/pages/Unauthorized";
+
+/* =======================
+   STUDENT PAGES
+======================= */
 import Profile from "@/pages/user/Profile";
+import AppliedJobs from "@/pages/jobs/AppliedJobs";
+import CareerGuidance from "@/pages/CareerGuidance";
+
+/* =======================
+   RECRUITER PAGES
+======================= */
+import RecruiterDashboard from "@/pages/dashboard/RecruiterDashboard";
+import Recruiterjobs from "@/pages/jobs/Recruiterjobs";
+import Jobcreate from "@/pages/jobs/Jobcreate";
+import RecruiterJobsEdit from "@/pages/jobs/RecruiterJobsEdit";
+import JobApplicants from "@/pages/jobs/JobApplicants";
 import CompanyList from "@/pages/company/CompanyList";
 import CompanyDetails from "@/pages/company/CompanyDetails";
 import Companycreate from "@/pages/company/Companycreate";
 import CompanyEdit from "@/pages/company/CompanyEdit";
-import Recruiterjobs from "@/pages/jobs/Recruiterjobs";
-import Jobcreate from "@/pages/jobs/Jobcreate";
-import JobApplicants from "@/pages/jobs/JobApplicants";
-import RecruiterJobsEdit from "@/pages/jobs/RecruiterJobsEdit";
-import Unauthorized from "@/pages/Unauthorized";
-import Privacypolicy from "@/pages/Privacypolicy";
-import TermsAndConditions from "@/pages/TermsAndConditions";
-import HireTalent from "@/pages/hire/HireTalent";
 
-/* Recruiter flow */
-import AppliedJobs from "@/pages/jobs/AppliedJobs";
-import CareerGuidance from "@/pages/CareerGuidance";
-import ConsultancyCommingSoon from "@/pages/ConsultancyCommingSoon";
-import RecruiterDashboard from "@/pages/dashboard/RecruiterDashboard";
-import VerifyEmail from "@/pages/auth/VerifyEmail";
-import ForgotPassword from "@/pages/ForgotPassword";
-import ResetPassword from "@/pages/ResetPassword";
-import Blogs from "@/admin/pages/Blogs";
-import Recruiters from "@/admin/pages/Recruiter";
+/* =======================
+   ADMIN PAGES
+======================= */
+import AdminLogin from "@/admin/pages/Adminlogin";
 import Dashboard from "@/admin/pages/Dashboard";
+import Recruiters from "@/admin/pages/Recruiter";
 import Jobs from "@/admin/pages/Jobs";
 import Users from "@/admin/pages/Users";
-import Settings from "@/admin/pages/Settings";
-import AdminLogin from "@/admin/pages/Adminlogin";
-import RecruiterRoute from "@/pages/auth/RecruiterRoute ";
-import AdminRoute from "@/pages/auth/AdminRoute";
-import AdminLayout from "@/layouts/AdminLayout";
+import Blogs from "@/admin/pages/Blogs";
 import BlogCategories from "@/admin/pages/Blogcategories";
 import BlogEditorPage from "@/admin/pages/BlogEditorPage";
-import Blogpage from "@/pages/BlogsPage";
-import BlogDetailsPage from "@/pages/BlogDetailsPage";
+import Settings from "@/admin/pages/Settings";
+import RecruiterRoute from "./pages/auth/RecruiterRoute .jsx";
+
+
 const AppRoutes = () => {
   return (
     <Routes>

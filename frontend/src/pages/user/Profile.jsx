@@ -8,9 +8,9 @@ import { Loader2, PencilIcon, XIcon } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constants";
-import { setLoading, setUser } from "@/features/authSlice";
 import { toast } from "sonner";
 import Savedjob from "@/components/job/Savedjob";
+import {setUser, setLoading} from "@/features/auth/authSlice"
 
 const EditableField = ({ label, children }) => (
   <div className="space-y-1">

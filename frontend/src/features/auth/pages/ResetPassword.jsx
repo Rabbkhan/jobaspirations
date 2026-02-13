@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 import { toast } from "sonner";
-import { USER_API_END_POINT } from "../utils/constants";
+import { USER_API_END_POINT } from "@/utils/constants";
 
 const ResetPassword = () => {
   const { token } = useParams();
