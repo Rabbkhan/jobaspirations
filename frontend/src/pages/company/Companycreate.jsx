@@ -7,10 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Upload, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { COMPANY_API_END_POINT } from "../../utils/constants";
+import { COMPANY_API_END_POINT } from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import { setLoading, setSingleCompany } from "../../features/companySlice";
+import { setLoading, setSingleCompany } from "@/features/companySlice";
 const Companycreate = () => {
   const navigate = useNavigate();
 

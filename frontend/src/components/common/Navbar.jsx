@@ -12,8 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { USER_API_END_POINT } from "@/utils/constants";
 import { toast } from "sonner";
 import axios from "axios";
-import { setUser } from "../../features/authSlice";
-import Logo from "../../assets/images/logo.png";
+import { setUser } from "@/features/authSlice";
+import Logo from "@/assets/images/logo.png";
 
 export default function Navbar() {
   const { user } = useSelector((store) => store.auth);

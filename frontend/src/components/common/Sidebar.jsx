@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { USER_API_END_POINT } from "../../utils/constants";
-import { setUser } from "../../features/authSlice";
+import { USER_API_END_POINT } from "@/utils/constants";
+import { setUser } from "@/features/authSlice";
 import { toast } from "sonner";
 
 const Sidebar = () => {

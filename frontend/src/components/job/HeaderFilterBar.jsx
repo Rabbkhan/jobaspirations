@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { JOB_API_END_POINT } from "../../utils/constants";
+import { JOB_API_END_POINT } from "@/utils/constants";
 
 const HeaderFilterBar = ({ filters, setFilters }) => {
   const [data, setData] = useState({

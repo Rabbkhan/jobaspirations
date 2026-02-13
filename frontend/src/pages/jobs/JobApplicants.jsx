@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   APPLICATIONS_API_END_POINT,
   JOB_API_END_POINT,
-} from "../../utils/constants";
+} from "@/utils/constants";
 
 const JobApplicants = () => {
   const { jobId } = useParams();

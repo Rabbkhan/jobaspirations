@@ -13,12 +13,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useGetAllAdminJobs from "../../hooks/useGetAllAdminJobs";
+import useGetAllAdminJobs from "@/hooks/useGetAllAdminJobs";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { JOB_API_END_POINT } from "../../utils/constants";
+import { JOB_API_END_POINT } from "@/utils/constants";
 import { toast } from "sonner";
-import { removeAdminJob } from "../../features/jobSlice";
+import { removeAdminJob } from "@/features/jobSlice";
 const AdminJobs = () => {
   useGetAllAdminJobs();
   const [search, setSearch] = useState("");

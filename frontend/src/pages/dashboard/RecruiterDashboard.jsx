@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Briefcase, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import axios from "axios";
-import { DASHBOARD_API_END_POINT } from "../../utils/constants";
+import { DASHBOARD_API_END_POINT } from "@/utils/constants";
 
 const RecruiterDashboard = () => {
   const [stats, setStats] = useState({

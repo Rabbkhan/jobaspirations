@@ -18,9 +18,9 @@ import { Separator } from "@/components/ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { saveJobThunk, unsaveJobThunk } from "../../../thunk/SavedJobThunk";
-import LatestJobsSkeleton from "../loading/LatestJobsSkeleton";
+import { saveJobThunk, unsaveJobThunk } from "@/thunk/SavedJobThunk";
 import { useMemo } from "react";
+import LatestJobsSkeleton from "../loading/LatestJobsSkeleton";
 
 const LatestJobs = () => {
   const { allJobs, savedJobs, loading } = useSelector((store) => store.job);

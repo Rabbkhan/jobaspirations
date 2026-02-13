@@ -16,10 +16,10 @@ import { useParams } from "react-router-dom";
 import {
   APPLICATIONS_API_END_POINT,
   JOB_API_END_POINT,
-} from "../../utils/constants";
+} from "@/utils/constants";
 import axios from "axios";
 import { toast } from "sonner";
-import { setSingleJob } from "../../features/jobSlice";
+import { setSingleJob } from "@/features/jobSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const JobDetails = () => {

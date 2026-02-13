@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import CompanyTable from "../../components/company/CompanyTable";
-import { COMPANY_API_END_POINT } from "../../utils/constants";
+import CompanyTable from "@/components/company/CompanyTable";
+import { COMPANY_API_END_POINT } from "@/utils/constants";
 import FilterBar from "../../components/company/FilterBar";
 
 const CompanyList = () => {

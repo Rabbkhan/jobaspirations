@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import JobCard from "../../components/job/Jobcard";
-import HeaderFilterBar from "../../components/job/HeaderFilterBar";
+import JobCard from "@/components/job/Jobcard";
+import HeaderFilterBar from "@/components/job/HeaderFilterBar";
 import { useDispatch, useSelector } from "react-redux";
-import useGetAllJobs from "../../hooks/useGetAllJobs";
+import useGetAllJobs from "@/hooks/useGetAllJobs";
 import { Loader2 } from "lucide-react";
-import { saveJobThunk, unsaveJobThunk } from "../../thunk/SavedJobThunk";
+import { saveJobThunk, unsaveJobThunk } from "@/thunk/SavedJobThunk";
 
 const JobList = () => {
   const [filters, setFilters] = useState({

@@ -17,9 +17,9 @@ import axios from "axios";
 import {
   COMPANY_API_END_POINT,
   JOB_API_END_POINT,
-} from "../../utils/constants";
+} from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setAllCompany, setLoading } from "../../features/companySlice";
+import { setAllCompany, setLoading } from "@/features/companySlice";
 import { toast } from "sonner";
 
 const Jobcreate = () => {
