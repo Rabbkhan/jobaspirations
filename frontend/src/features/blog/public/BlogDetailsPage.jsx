@@ -4,7 +4,7 @@ import axios from "axios";
 import { PUBLIC_BLOG_API_END_POINT } from "../../../utils/constants";
 import RelatedArticlesSidebar from "@/features/blog/components/RelatedArticlesSidebar";
 import LatestBlogsSidebar from "./LatestBlogsSidebar";
-import BlogDetailsSkeleton from "../../../components/common/loading/BlogDetailsSkeleton";
+import BlogDetailsSkeleton from "@/features/blog/components/BlogDetailsSkeleton";
 
 const BlogDetailsPage = () => {
   const { slug } = useParams();

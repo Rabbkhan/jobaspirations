@@ -3,7 +3,7 @@ import axios from "axios";
 import BlogCard from "@/features/blog/components/BlogCard";
 import CategoryFilter from "../components/CategoryFilter";
 import { PUBLIC_BLOG_API_END_POINT } from "../../../utils/constants";
-import BlogCardSkeleton from "../../../components/common/loading/BlogCardSkeleton";
+import BlogCardSkeleton from "@/features/blog/components/BlogCardSkeleton";
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState([]);

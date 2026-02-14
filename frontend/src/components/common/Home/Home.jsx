@@ -1,6 +1,6 @@
 import React from 'react'
 import Hero from './Hero'
-import LatestJobs from './LatestJobs'
+import LatestJobs from '@/features/job/components/LatestJobs'
 import CategoryCarousal from './CategoryCarousal'
 import useGetAllJobs from '@/shared/hooks/useGetAllJobs'
 import TestimonialCarousel from '../../../pages/TestimonialCarousel'

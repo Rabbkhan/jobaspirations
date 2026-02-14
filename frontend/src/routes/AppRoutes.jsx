@@ -61,9 +61,9 @@ import CompanyEdit from "@/pages/company/CompanyEdit";
 /* =======================
    ADMIN PAGES
 ======================= */
-import AdminLogin from "@/admin/pages/Adminlogin";
+import AdminLogin from "@/features/auth/pages/Adminlogin";
 import Dashboard from "@/admin/pages/Dashboard";
-import Recruiters from "@/admin/pages/Recruiter";
+import RecruiterApprovalPage from "@/admin/pages/RecruiterApprovalPage";
 import Jobs from "@/admin/pages/Jobs";
 import Users from "@/admin/pages/Users";
 import Blogs from "@/features/blog/admin/Blogs";
@@ -167,7 +167,7 @@ const AppRoutes = () => {
           <Route path="jobs" element={<Jobs />} />
           <Route path="users" element={<Users />} />
           <Route path="settings" element={<Settings />} />
-          <Route path="recruiters" element={<Recruiters />} />
+          <Route path="recruiters" element={<RecruiterApprovalPage />} />
         </Route>
       </Route>
 
