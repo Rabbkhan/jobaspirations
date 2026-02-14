@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import JobCard from "@/components/job/Jobcard";
-import HeaderFilterBar from "@/components/job/HeaderFilterBar";
+import JobCard from "@/features/job/components/Jobcard";
+import HeaderFilterBar from "@/features/job/components/HeaderFilterBar";
 import { useDispatch, useSelector } from "react-redux";
 import useGetAllJobs from "@/shared/hooks/useGetAllJobs";
 import { Loader2 } from "lucide-react";

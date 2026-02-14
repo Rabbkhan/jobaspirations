@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { JOB_API_END_POINT } from "@/utils/constants";
 import { toast } from "sonner";
-import { removeAdminJob } from "@/features/jobSlice";
+import { removeAdminJob } from "@/features/job/jobSlice";
 const AdminJobs = () => {
   useGetAllAdminJobs();
   const [search, setSearch] = useState("");

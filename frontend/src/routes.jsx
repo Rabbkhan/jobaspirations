@@ -29,8 +29,8 @@ import ResetPassword from "@/features/auth/pages/ResetPassword";
    PUBLIC PAGES (No auth)
 ======================= */
 import Home from "@/components/common/Home/Home";
-import JobList from "@/pages/jobs/JobList";
-import JobDetails from "@/pages/jobs/JobDetails";
+import JobList from "@/features/job/pages/JobList";
+import JobDetails from "@/features/job/pages/JobDetails";
 import Blogpage from "@/pages/BlogsPage";
 import BlogDetailsPage from "@/pages/BlogDetailsPage";
 import Privacypolicy from "@/pages/Privacypolicy";
@@ -42,17 +42,17 @@ import Unauthorized from "@/pages/Unauthorized";
    STUDENT PAGES
 ======================= */
 import Profile from "@/pages/user/Profile";
-import AppliedJobs from "@/pages/jobs/AppliedJobs";
+import AppliedJobs from "@/features/job/pages/AppliedJobs";
 import CareerGuidance from "@/pages/CareerGuidance";
 
 /* =======================
    RECRUITER PAGES
 ======================= */
 import RecruiterDashboard from "@/pages/dashboard/RecruiterDashboard";
-import Recruiterjobs from "@/pages/jobs/Recruiterjobs";
-import Jobcreate from "@/pages/jobs/Jobcreate";
-import RecruiterJobsEdit from "@/pages/jobs/RecruiterJobsEdit";
-import JobApplicants from "@/pages/jobs/JobApplicants";
+import Recruiterjobs from "@/features/job/pages/Recruiterjobs";
+import Jobcreate from "@/features/job/pages/Jobcreate";
+import RecruiterJobsEdit from "@/features/job/pages/RecruiterJobsEdit";
+import JobApplicants from "@/features/job/pages/JobApplicants";
 import CompanyList from "@/pages/company/CompanyList";
 import CompanyDetails from "@/pages/company/CompanyDetails";
 import Companycreate from "@/pages/company/Companycreate";

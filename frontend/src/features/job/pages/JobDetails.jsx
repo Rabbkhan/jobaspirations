@@ -19,7 +19,7 @@ import {
 } from "@/utils/constants";
 import axios from "axios";
 import { toast } from "sonner";
-import { setSingleJob } from "@/features/jobSlice";
+import { setSingleJob } from "@/features/job/jobSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const JobDetails = () => {
