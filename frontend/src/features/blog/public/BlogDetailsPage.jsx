@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { PUBLIC_BLOG_API_END_POINT } from "../../../utils/constants";
-import RelatedArticlesSidebar from "../../../components/blog/RelatedArticlesSidebar";
+import RelatedArticlesSidebar from "@/features/blog/components/RelatedArticlesSidebar";
 import LatestBlogsSidebar from "./LatestBlogsSidebar";
 import BlogDetailsSkeleton from "../../../components/common/loading/BlogDetailsSkeleton";
 
