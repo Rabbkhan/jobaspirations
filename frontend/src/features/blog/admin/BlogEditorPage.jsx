@@ -4,8 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { useFetchBlogCategories } from "../hooks/useFetchBlogCategories";
-import { useFetchBlogs } from "../hooks/useFetchBlogs";
+import { useFetchBlogCategories } from "../../../admin/hooks/useFetchBlogCategories";
+import { useFetchBlogs } from "../../../admin/hooks/useFetchBlogs";
 import BlogEditor from "../components/BlogEditor";
 
 // Replace Textarea with a real rich text editor later (TipTap / Editor.js)

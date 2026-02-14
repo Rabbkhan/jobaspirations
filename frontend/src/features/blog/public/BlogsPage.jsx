@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import BlogCard from "../components/blog/BlogCard";
-import CategoryFilter from "../components/blog/CategoryFilter";
-import { PUBLIC_BLOG_API_END_POINT } from "../utils/constants";
-import BlogCardSkeleton from "../components/common/loading/BlogCardSkeleton";
+import BlogCard from "../../../components/blog/BlogCard";
+import CategoryFilter from "../../../components/blog/CategoryFilter";
+import { PUBLIC_BLOG_API_END_POINT } from "../../../utils/constants";
+import BlogCardSkeleton from "../../../components/common/loading/BlogCardSkeleton";
 
 const BlogsPage = () => {
   const [blogs, setBlogs] = useState([]);

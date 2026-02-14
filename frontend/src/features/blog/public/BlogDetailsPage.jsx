@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { PUBLIC_BLOG_API_END_POINT } from "../utils/constants";
-import RelatedArticlesSidebar from "../components/blog/RelatedArticlesSidebar";
+import { PUBLIC_BLOG_API_END_POINT } from "../../../utils/constants";
+import RelatedArticlesSidebar from "../../../components/blog/RelatedArticlesSidebar";
 import LatestBlogsSidebar from "./LatestBlogsSidebar";
-import BlogDetailsSkeleton from "../components/common/loading/BlogDetailsSkeleton";
+import BlogDetailsSkeleton from "../../../components/common/loading/BlogDetailsSkeleton";
 
 const BlogDetailsPage = () => {
   const { slug } = useParams();

@@ -1,8 +1,8 @@
 
 import { useDispatch, useSelector } from "react-redux";
-import AppRoutes from "./routes";
 import { loadSavedJobs } from "./thunk/SavedJobThunk";
 import { useEffect } from "react";
+import AppRoutes from "./routes/AppRoutes.jsx";
 
 
 function App() {

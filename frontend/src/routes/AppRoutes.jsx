@@ -31,8 +31,8 @@ import ResetPassword from "@/features/auth/pages/ResetPassword";
 import Home from "@/components/common/Home/Home";
 import JobList from "@/features/job/pages/JobList";
 import JobDetails from "@/features/job/pages/JobDetails";
-import Blogpage from "@/pages/BlogsPage";
-import BlogDetailsPage from "@/pages/BlogDetailsPage";
+import BlogsPage from "@/features/blog/public/BlogsPage.jsx";
+import BlogDetailsPage from "@/features/blog/public/BlogDetailsPage";
 import Privacypolicy from "@/pages/Privacypolicy";
 import TermsAndConditions from "@/pages/TermsAndConditions";
 import HireTalent from "@/pages/hire/HireTalent";
@@ -66,12 +66,11 @@ import Dashboard from "@/admin/pages/Dashboard";
 import Recruiters from "@/admin/pages/Recruiter";
 import Jobs from "@/admin/pages/Jobs";
 import Users from "@/admin/pages/Users";
-import Blogs from "@/admin/pages/Blogs";
-import BlogCategories from "@/admin/pages/Blogcategories";
-import BlogEditorPage from "@/admin/pages/BlogEditorPage";
+import Blogs from "@/features/blog/admin/Blogs";
+import BlogCategories from "@/features/blog/admin/Blogcategories";
+import BlogEditorPage from "@/features/blog/admin/BlogEditorPage";
 import Settings from "@/admin/pages/Settings";
-import RecruiterRoute from "./pages/auth/RecruiterRoute .jsx";
-
+import RecruiterRoute from "../pages/auth/RecruiterRoute .jsx";
 
 const AppRoutes = () => {
   return (
@@ -96,7 +95,7 @@ const AppRoutes = () => {
           }
         />
 
-           <Route
+        <Route
           path="/jobs"
           element={
             <GuestOrStudentRoute>
@@ -132,12 +131,11 @@ const AppRoutes = () => {
           }
         />
         {/* ... other public/student routes */}
-        <Route path="/blogs" element={<Blogpage />} />
+        <Route path="/blogs" element={<BlogsPage />} />
         <Route path="/blog/:slug" element={<BlogDetailsPage />} />
-        <Route path="/privacy-policy" element={<Privacypolicy/>} />
-                <Route path="/terms" element={<TermsAndConditions/>} />
-                <Route path="/career-tips" element={<CareerGuidance/>} />
-
+        <Route path="/privacy-policy" element={<Privacypolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/career-tips" element={<CareerGuidance />} />
       </Route>
 
       <Route path="/admin/login" element={<AdminLogin />} />

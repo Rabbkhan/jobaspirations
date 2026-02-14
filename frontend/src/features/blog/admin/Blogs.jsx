@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useFetchBlogs } from "../hooks/useFetchBlogs";
+import { useFetchBlogs } from "../../../admin/hooks/useFetchBlogs";
 
 const Blogs = () => {
   const { blogs = [], deleteBlog } = useFetchBlogs();
