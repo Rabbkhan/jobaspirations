@@ -4,26 +4,26 @@ import { Separator } from "@/components/ui/separator";
 
 const Privacypolicy = () => {
   return (
-    <div className="min-h-screen bg-background py-12 px-4">
+    <div className="min-h-screen bg-muted/10 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Page Title */}
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">
+        <div className="mb-12 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
             Privacy Policy
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-muted-foreground text-sm md:text-base">
             Last updated: {new Date().toLocaleDateString()}
           </p>
         </div>
 
-        <Card className="rounded-2xl shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl">
+        <Card className="rounded-2xl shadow-lg border border-gray-700">
+          <CardHeader className="bg-primary/5 p-6 rounded-t-2xl">
+            <CardTitle className="text-2xl text-primary font-semibold">
               Your Privacy Matters
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="space-y-8 text-sm leading-relaxed text-muted-foreground">
+          <CardContent className="space-y-8 text-base leading-relaxed text-muted-foreground p-6">
             {/* Intro */}
             <p>
               At <span className="font-medium text-foreground">Job Aspirations</span>,
@@ -32,39 +32,39 @@ const Privacypolicy = () => {
               safeguard your data when you use our platform.
             </p>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Section 1 */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 1. Information We Collect
               </h2>
-              <ul className="list-disc pl-6 space-y-1">
+              <ul className="list-disc pl-6 space-y-2 marker:text-primary">
                 <li>Personal details such as name and email address</li>
                 <li>Resume, skills, and job preferences</li>
                 <li>Account activity and usage data</li>
               </ul>
             </section>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Section 2 */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 2. How We Use Your Information
               </h2>
-              <ul className="list-disc pl-6 space-y-1">
+              <ul className="list-disc pl-6 space-y-2 marker:text-primary">
                 <li>To connect job seekers with recruiters</li>
                 <li>To improve platform functionality and experience</li>
                 <li>To send important updates and notifications</li>
               </ul>
             </section>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Section 3 */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 3. Data Protection
               </h2>
               <p>
@@ -73,11 +73,11 @@ const Privacypolicy = () => {
               </p>
             </section>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Section 4 */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 4. Sharing of Information
               </h2>
               <p>
@@ -87,11 +87,11 @@ const Privacypolicy = () => {
               </p>
             </section>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Section 5 */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 5. Cookies
               </h2>
               <p>
@@ -100,11 +100,11 @@ const Privacypolicy = () => {
               </p>
             </section>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Section 6 */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 6. Your Rights
               </h2>
               <p>
@@ -113,18 +113,15 @@ const Privacypolicy = () => {
               </p>
             </section>
 
-            <Separator />
+            <Separator className="border-gray-700" />
 
             {/* Contact */}
-            <section>
-              <h2 className="text-lg font-semibold text-foreground mb-2">
+            <section className="mt-6">
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 7. Contact Us
               </h2>
-              <p>
-                If you have any questions about this Privacy Policy, please
-                contact us at:
-              </p>
-              <p className="mt-1 font-medium text-foreground">
+              <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+              <p className="mt-2 font-medium text-primary">
                 info@jobaspirations.in
               </p>
             </section>

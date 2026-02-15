@@ -11,10 +11,11 @@ import AdminLayout from "@/layouts/AdminLayout";
 /* =======================
    Route Guards
 ======================= */
-import ProtectedRoute from "@/pages/auth/ProtectedRoute";
-import StudentRoute from "@/pages/auth/StudentRoute";
-import AdminRoute from "@/pages/auth/AdminRoute";
-import GuestOrStudentRoute from "@/pages/auth/GuestOrStudentRoute";
+import ProtectedRoute from "@/shared/routes/ProtectedRoute";
+import StudentRoute from "@/shared/routes/StudentRoute";
+import AdminRoute from "@/shared/routes/AdminRoute";
+import GuestOrStudentRoute from "@/shared/routes/GuestOrStudentRoute";
+import RecruiterRoute from "@/shared/routes/RecruiterRoute .jsx";
 
 /* =======================
    AUTH (Public / Pre-login)
@@ -28,27 +29,27 @@ import ResetPassword from "@/features/auth/pages/ResetPassword";
 /* =======================
    PUBLIC PAGES (No auth)
 ======================= */
-import Home from "@/components/common/Home/Home";
+import Home from "@/pages/home/Home";
 import JobList from "@/features/job/pages/JobList";
 import JobDetails from "@/features/job/pages/JobDetails";
 import BlogsPage from "@/features/blog/public/BlogsPage.jsx";
 import BlogDetailsPage from "@/features/blog/public/BlogDetailsPage";
-import Privacypolicy from "@/pages/Privacypolicy";
-import TermsAndConditions from "@/pages/TermsAndConditions";
+import Privacypolicy from "@/pages/static/Privacypolicy";
+import TermsAndConditions from "@/pages/static/TermsAndConditions";
 import HireTalent from "@/pages/hire/HireTalent";
 import Unauthorized from "@/pages/Unauthorized";
 
 /* =======================
    STUDENT PAGES
 ======================= */
-import Profile from "@/pages/user/Profile";
+import Profile from "@/features/student/pages/Profile";
 import AppliedJobs from "@/features/job/pages/AppliedJobs";
-import CareerGuidance from "@/pages/CareerGuidance";
+import CareerGuidance from "@/pages/static/CareerGuidance";
 
 /* =======================
    RECRUITER PAGES
 ======================= */
-import RecruiterDashboard from "@/pages/dashboard/RecruiterDashboard";
+import RecruiterDashboard from "@/features/recruiter/pages/RecruiterDashboard";
 import Recruiterjobs from "@/features/job/pages/Recruiterjobs";
 import Jobcreate from "@/features/job/pages/Jobcreate";
 import RecruiterJobsEdit from "@/features/job/pages/RecruiterJobsEdit";
@@ -70,7 +71,6 @@ import Blogs from "@/features/blog/admin/Blogs";
 import BlogCategories from "@/features/blog/admin/Blogcategories";
 import BlogEditorPage from "@/features/blog/admin/BlogEditorPage";
 import Settings from "@/features/admin/pages/Settings";
-import RecruiterRoute from "../pages/auth/RecruiterRoute .jsx";
 
 const AppRoutes = () => {
   return (
@@ -128,6 +128,14 @@ const AppRoutes = () => {
             <StudentRoute>
               <AppliedJobs />
             </StudentRoute>
+          }
+        />
+          <Route
+          path="/hire"
+          element={
+            
+              <HireTalent />
+            
           }
         />
         {/* ... other public/student routes */}

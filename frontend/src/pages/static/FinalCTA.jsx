@@ -7,11 +7,8 @@ const FinalCTA = () => {
 
   const getPrimaryLink = () => {
     if (!user) return "/register";
-
     if (user.role === "student") return "/profile";
-    if (user.role === "recruiter") return "/admin"; // or recruiter dashboard
-    // if (user.role === "admin") return "/admin";
-
+    if (user.role === "recruiter") return "/admin";
     return "/register";
   };
 
@@ -22,26 +19,19 @@ const FinalCTA = () => {
   };
 
   return (
-    <section className="py-24 bg-background border-t">
+    <section className="py-24 bg-background border-t border-border">
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold">
-          Ready to Build Your Career?
-        </h2>
-
+        <h2 className="text-4xl font-bold text-foreground">Ready to Build Your Career?</h2>
         <p className="text-muted-foreground mt-4 mb-8">
-          Get expert guidance, verified opportunities, and personalized career
-          support.
+          Get expert guidance, verified opportunities, and personalized career support.
         </p>
 
         <div className="flex justify-center gap-4">
           <Link to={getPrimaryLink()}>
             <Button size="lg">{getPrimaryLabel()}</Button>
           </Link>
-
           <Link to="/jobs">
-            <Button size="lg" variant="outline">
-              Browse Jobs
-            </Button>
+            <Button size="lg" variant="outline">Browse Jobs</Button>
           </Link>
         </div>
       </div>

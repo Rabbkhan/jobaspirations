@@ -1,17 +1,13 @@
 import React from 'react'
-import Hero from './Hero'
+import Hero from './sections/Hero'
 import LatestJobs from '@/features/job/components/LatestJobs'
-import CategoryCarousal from './CategoryCarousal'
 import useGetAllJobs from '@/shared/hooks/useGetAllJobs'
-import TestimonialCarousel from '../../../pages/TestimonialCarousel'
-import FeaturedMetricsCarousel from '../../../pages/FeaturedMetricsCarousel'
-import StudentJourney from '../../../pages/StudentJourney'
-import SkillResources from '../../../pages/SkillResources'
-import EventsSection from '../../../pages/EventsSection'
-import NewsletterCTA from '../../../pages/NewsletterCTA'
-import FinalCTA from '../../../pages/FinalCTA'
+import TestimonialCarousel from '../static/TestimonialCarousel'
+import FeaturedMetricsCarousel from '../static/FeaturedMetricsCarousel'
+import StudentJourney from '../static/StudentJourney'
+import FinalCTA from '../static/FinalCTA'
 import { useSelector } from 'react-redux'
-import StudentHero from './StudentHero'
+import StudentHero from './sections/StudentHero'
 const Home = () => {
 
   useGetAllJobs()
