@@ -4,9 +4,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { USER_API_END_POINT } from "@/utils/constants";
 import { useDispatch } from "react-redux";
-import { clearAdmin } from "@/features/adminAuthSlice";
+import { clearAdmin } from "@/features/admin/adminAuthSlice";
 
-const Dashboard = () => {
+const AdminDashboardPage = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const Dashboard = () => {
     <div className="space-y-6">
       {/* Header with Logout */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Dashboard</h2>
+        <h2 className="text-2xl font-bold">AdminDashboard</h2>
         <Button
           variant="destructive"
           className="cursor-pointer"
@@ -76,4 +76,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboardPage;

@@ -62,14 +62,14 @@ import CompanyEdit from "@/features/company/pages/CompanyEdit";
    ADMIN PAGES
 ======================= */
 import AdminLogin from "@/features/auth/pages/Adminlogin";
-import Dashboard from "@/admin/pages/Dashboard";
-import RecruiterApprovalPage from "@/admin/pages/RecruiterApprovalPage";
-import Jobs from "@/admin/pages/Jobs";
-import Users from "@/admin/pages/Users";
+import AdminDashboardPage from "@/features/admin/pages/AdminDashboardPage";
+import RecruiterApprovalPage from "@/features/admin/pages/RecruiterApprovalPage";
+import Jobs from "@/features/admin/pages/Jobs";
+import Users from "@/features/admin/pages/Users";
 import Blogs from "@/features/blog/admin/Blogs";
 import BlogCategories from "@/features/blog/admin/Blogcategories";
 import BlogEditorPage from "@/features/blog/admin/BlogEditorPage";
-import Settings from "@/admin/pages/Settings";
+import Settings from "@/features/admin/pages/Settings";
 import RecruiterRoute from "../pages/auth/RecruiterRoute .jsx";
 
 const AppRoutes = () => {
@@ -159,7 +159,7 @@ const AppRoutes = () => {
         <Route element={<AdminLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
 
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="blogs" element={<Blogs />} />
           <Route path="blog-categories" element={<BlogCategories />} />
           <Route path="blogs/new" element={<BlogEditorPage />} />

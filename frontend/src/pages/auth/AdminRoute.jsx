@@ -3,7 +3,7 @@ import { Outlet, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constants";
-import { setAdmin, clearAdmin } from "@/features/adminAuthSlice";
+import { setAdmin, clearAdmin } from "@/features/admin/adminAuthSlice";
 
 const AdminRoute = () => {
   const dispatch = useDispatch();

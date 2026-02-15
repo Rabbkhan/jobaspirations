@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { USER_API_END_POINT } from "../../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setAdmin, setAdminLoading } from "@/features/adminAuthSlice";
+import { setAdmin, setAdminLoading } from "@/features/admin/adminAuthSlice";
 
 const AdminLogin = () => {
   const dispatch = useDispatch();
