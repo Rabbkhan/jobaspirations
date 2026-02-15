@@ -53,10 +53,10 @@ import Recruiterjobs from "@/features/job/pages/Recruiterjobs";
 import Jobcreate from "@/features/job/pages/Jobcreate";
 import RecruiterJobsEdit from "@/features/job/pages/RecruiterJobsEdit";
 import JobApplicants from "@/features/job/pages/JobApplicants";
-import CompanyList from "@/pages/company/CompanyList";
-import CompanyDetails from "@/pages/company/CompanyDetails";
-import Companycreate from "@/pages/company/Companycreate";
-import CompanyEdit from "@/pages/company/CompanyEdit";
+import CompanyList from "@/features/company/pages/CompanyList";
+import CompanyDetails from "@/features/company/pages/CompanyDetails";
+import Companycreate from "@/features/company/pages/Companycreate";
+import CompanyEdit from "@/features/company/pages/CompanyEdit";
 
 /* =======================
    ADMIN PAGES

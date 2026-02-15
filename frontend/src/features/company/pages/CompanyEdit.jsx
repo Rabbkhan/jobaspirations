@@ -12,7 +12,7 @@ import axios from "axios";
 import { COMPANY_API_END_POINT } from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
-import { setLoading, setSingleCompany } from "@/features/companySlice";
+import { setLoading, setSingleCompany } from "@/features/company/companySlice";
 
 const CompanyEdit = () => {
   const { id } = useParams(); // ✅ company id from URL

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Footer from "@/components/common/Footer";
-import Navbar from "@/components/common/Navbar";
+import Footer from "@/layouts/components/Footer";
+import Navbar from "@/layouts/components/Navbar";
 import { useEffect } from "react";
 import { loadSavedJobs } from "@/thunk/SavedJobThunk";
 import { useDispatch } from "react-redux";
