@@ -9,7 +9,7 @@ function App() {
   const { user } = useSelector((state) => state.auth);
   const [loading, setLoading] = useState(true); // show loader initially
   const isAuthenticated = Boolean(user);
-
+console.log("hello")
   const dispatch = useDispatch();
 
   useEffect(() => {
