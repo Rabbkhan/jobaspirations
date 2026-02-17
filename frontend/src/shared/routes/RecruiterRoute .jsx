@@ -1,17 +1,26 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Navigate, Outlet } from "react-router-dom";
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { Navigate, Outlet } from 'react-router-dom'
 
-const RecruiterRoute  = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
+const RecruiterRoute = ({ children }) => {
+    const { user } = useSelector((state) => state.auth)
 
-  if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== "recruiter") return <Navigate to="/unauthorized" replace />;
+    if (!user)
+        return (
+            <Navigate
+                to="/login"
+                replace
+            />
+        )
+    if (user.role !== 'recruiter')
+        return (
+            <Navigate
+                to="/unauthorized"
+                replace
+            />
+        )
 
-  return children ? children : <Outlet />;
-};
+    return children ? children : <Outlet />
+}
 
-export default RecruiterRoute ;
-
-
-
+export default RecruiterRoute

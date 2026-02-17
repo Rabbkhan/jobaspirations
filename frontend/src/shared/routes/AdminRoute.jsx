@@ -1,49 +1,56 @@
-import { useEffect } from "react";
-import { Outlet, Navigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { USER_API_END_POINT } from "@/utils/constants";
-import { setAdmin, clearAdmin } from "@/features/admin/adminAuthSlice";
+import { useEffect } from 'react'
+import { Outlet, Navigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { USER_API_END_POINT } from '@/utils/constants'
+import { setAdmin, clearAdmin } from '@/features/admin/adminAuthSlice'
 
 const AdminRoute = () => {
-  const dispatch = useDispatch();
-  const { admin, loading } = useSelector((state) => state.adminAuth);
+    const dispatch = useDispatch()
+    const { admin, loading } = useSelector((state) => state.adminAuth)
 
-  useEffect(() => {
-    if (admin !== null) return; // already verified
+    useEffect(() => {
+        if (admin !== null) return // already verified
 
-    const verify = async () => {
-      try {
-        const res = await axios.get(
-          `${USER_API_END_POINT}/admin/me`,
-          { withCredentials: true }
-        );
-        console.log(res);
-        
-        dispatch(setAdmin(res.data.safeUser));
-      } catch {
-        dispatch(clearAdmin());
-      }
-    };
+        const verify = async () => {
+            try {
+                const res = await axios.get(`${USER_API_END_POINT}/admin/me`, { withCredentials: true })
+                console.log(res)
 
-    verify();
-  }, [admin, dispatch]);
+                dispatch(setAdmin(res.data.safeUser))
+            } catch {
+                dispatch(clearAdmin())
+            }
+        }
 
-  // ⏳ wait for verification
-  if (admin === null && loading) return null;
+        verify()
+    }, [admin, dispatch])
 
-  // ❌ NOT ADMIN
-  if (!admin) {
-    return <Navigate to="/admin/login" replace />;
-  }
+    // ⏳ wait for verification
+    if (admin === null && loading) return null
 
-  // ❌ WRONG ROLE
-  if (admin.role !== "admin") {
-    return <Navigate to="/unauthorized" replace />;
-  }
+    // ❌ NOT ADMIN
+    if (!admin) {
+        return (
+            <Navigate
+                to="/admin/login"
+                replace
+            />
+        )
+    }
 
-  // ✅ ADMIN
-  return <Outlet />;
-};
+    // ❌ WRONG ROLE
+    if (admin.role !== 'admin') {
+        return (
+            <Navigate
+                to="/unauthorized"
+                replace
+            />
+        )
+    }
 
-export default AdminRoute;
+    // ✅ ADMIN
+    return <Outlet />
+}
+
+export default AdminRoute

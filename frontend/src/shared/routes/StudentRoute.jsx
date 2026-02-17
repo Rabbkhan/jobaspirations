@@ -1,16 +1,27 @@
-import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { useSelector } from 'react-redux'
+import { Navigate } from 'react-router-dom'
 
 const StudentRoute = ({ children }) => {
-  const { user } = useSelector((state) => state.auth);
+    const { user } = useSelector((state) => state.auth)
 
-  if (!user) return <Navigate to="/login" replace />;
+    if (!user)
+        return (
+            <Navigate
+                to="/login"
+                replace
+            />
+        )
 
-  if (user.role !== "student") {
-    return <Navigate to="/unauthorized" replace />;
-  }
+    if (user.role !== 'student') {
+        return (
+            <Navigate
+                to="/unauthorized"
+                replace
+            />
+        )
+    }
 
-  return children;
-};
+    return children
+}
 
-export default StudentRoute;
+export default StudentRoute

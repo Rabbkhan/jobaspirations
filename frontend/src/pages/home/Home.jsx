@@ -9,33 +9,27 @@ import FinalCTA from '../static/FinalCTA'
 import { useSelector } from 'react-redux'
 import StudentHero from './sections/StudentHero'
 const Home = () => {
+    useGetAllJobs()
 
-  useGetAllJobs()
+    const { user } = useSelector((state) => state.auth)
 
-const { user } = useSelector(state => state.auth)
+    return (
+        <div>
+            {!user ? <Hero /> : <StudentHero />}
 
+            {/* <CategoryCarousal/> */}
+            <LatestJobs />
 
-  return (
- <div>
-    {!user ? <Hero /> : <StudentHero />}
-
-    {/* <CategoryCarousal/> */}
-    <LatestJobs/>
-
-    {!user && (
-      <>
-        <StudentJourney/>
-        <TestimonialCarousel/>
-        <FeaturedMetricsCarousel/>
-        <FinalCTA/>
-      </>
-    )}
-  </div>
-  )
+            {!user && (
+                <>
+                    <StudentJourney />
+                    <TestimonialCarousel />
+                    <FeaturedMetricsCarousel />
+                    <FinalCTA />
+                </>
+            )}
+        </div>
+    )
 }
 
 export default Home
-
-
-
-
