@@ -7,7 +7,8 @@ import { Toaster } from '@/components/ui/sonner'
 import { Provider } from 'react-redux'
 import { store, persistor } from '@/app/store'
 import { PersistGate } from 'redux-persist/integration/react'
-import DashboardLoading from './components/common/loading/DashboardLoading'
+
+console.log('something something')
 
 createRoot(document.getElementById('root')).render(
     <React.StrictMode>

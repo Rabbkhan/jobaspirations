@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Sidebar from '@/layouts/components/Sidebar'
-import DashboardLoading from '@/components/common/loading/DashboardLoading'
+import DashboardLoading from '@/features/recruiter/components/DashboardLoading'
 
 const DashboardLayout = () => {
     const [loading, setLoading] = useState(true)

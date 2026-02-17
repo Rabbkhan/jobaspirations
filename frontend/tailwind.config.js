@@ -1,37 +1,34 @@
 // tailwind.config.js
 module.exports = {
-  darkMode: ["class"],
-  content: [
-    "./index.html",
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+    darkMode: ['class'],
+    content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+    theme: {
+        extend: {
+            colors: {
+                background: 'var(--background)',
+                foreground: 'var(--foreground)',
 
-        primary: "var(--primary)",
-        "primary-foreground": "var(--primary-foreground)",
+                primary: 'var(--primary)',
+                'primary-foreground': 'var(--primary-foreground)',
 
-        secondary: "var(--secondary)",
-        "secondary-foreground": "var(--secondary-foreground)",
+                secondary: 'var(--secondary)',
+                'secondary-foreground': 'var(--secondary-foreground)',
 
-        muted: "var(--muted)",
-        "muted-foreground": "var(--muted-foreground)",
+                muted: 'var(--muted)',
+                'muted-foreground': 'var(--muted-foreground)',
 
-        accent: "var(--accent)",
-        "accent-foreground": "var(--accent-foreground)",
+                accent: 'var(--accent)',
+                'accent-foreground': 'var(--accent-foreground)',
 
-        destructive: "var(--destructive)",
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
+                destructive: 'var(--destructive)',
+                border: 'var(--border)',
+                input: 'var(--input)',
+                ring: 'var(--ring)',
 
-        card: "var(--card)",
-        "card-foreground": "var(--card-foreground)",
-      },
+                card: 'var(--card)',
+                'card-foreground': 'var(--card-foreground)'
+            }
+        }
     },
-  },
-  plugins: [require("@tailwindcss/typography")],
-};
+    plugins: [require('@tailwindcss/typography')]
+}
