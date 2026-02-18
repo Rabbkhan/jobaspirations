@@ -10,7 +10,7 @@ import axios from 'axios'
 import { USER_API_END_POINT } from '@/utils/constants'
 import { toast } from 'sonner'
 import Savedjob from '@/features/job/components/Savedjob'
-import { setUser, setLoading } from '@/features/auth/authSlice'
+import { setUser } from '@/features/auth/authSlice'
 
 const EditableField = ({ label, children }) => (
     <div className="space-y-1">
@@ -74,7 +74,7 @@ const Profile = () => {
         if (input.profilePhotoFile) formData.append('profilePhoto', input.profilePhotoFile)
 
         try {
-            dispatch(setLoading(true))
+            // dispatch(setLoading(true))
             const res = await axios.put(`${USER_API_END_POINT}/profile/update`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
@@ -88,7 +88,7 @@ const Profile = () => {
         } catch (err) {
             toast.error(err?.response?.data?.message || 'Error updating profile')
         } finally {
-            dispatch(setLoading(false))
+            // dispatch(setLoading(false))
         }
     }
 

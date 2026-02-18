@@ -1,10 +1,12 @@
 {
-    "files": [],
-    "references": [],
     "compilerOptions": {
-        "baseUrl": ".",
+        "baseUrl": "./src",
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["*"],
+            "@app/*": ["app/*"],
+            "@features/*": ["features/*"],
+            "@shared/*": ["shared/*"]
         }
-    }
+    },
+    "include": ["src"]
 }

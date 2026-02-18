@@ -1,5 +1,5 @@
 import { toast } from 'sonner'
-import { getSavedJobsApi, saveJobApi, unsaveJobApi } from '@/api/jobSavedApi'
+import { getSavedJobsApi, saveJobApi, unsaveJobApi } from '@/app/api/jobSavedApi'
 
 import { setSavedJobs } from '@/features/job/jobSlice'
 
