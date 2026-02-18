@@ -1,10 +1,10 @@
 // components/company/CompanyTable.jsx
 import React from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
+import { Skeleton } from '@/shared/ui/skeleton'
 import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/shared/ui/button'
+import { Avatar, AvatarImage } from '@/shared/ui/avatar'
 import { Edit } from 'lucide-react'
 
 const CompanyTable = ({ data, loading }) => {

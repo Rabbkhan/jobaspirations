@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Avatar } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader } from '@/shared/ui/card'
+import { Avatar } from '@/shared/ui/avatar'
+import { Badge } from '@/shared/ui/badge'
 import { Link } from 'react-router-dom'
 
 const RelatedArticlesSidebar = ({ relatedArticle = [] }) => {

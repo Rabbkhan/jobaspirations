@@ -1,6 +1,6 @@
 // pages/company/CompanyList.jsx
 import React, { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/shared/ui/button'
 import { Plus } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'

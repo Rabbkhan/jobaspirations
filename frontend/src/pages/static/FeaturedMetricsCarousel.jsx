@@ -1,7 +1,7 @@
 import React from 'react'
 import { Users, CheckCircle, Briefcase, Rocket, Laptop } from 'lucide-react'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Card, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
 
 const metrics = [

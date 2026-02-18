@@ -3,9 +3,9 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { USER_API_END_POINT } from '@/utils/constants'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/shared/ui/button'
+import { Input } from '@/shared/ui/input'
+import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card'
 
 const VerifyEmail = () => {
     const location = useLocation()

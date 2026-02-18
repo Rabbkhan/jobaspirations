@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
+import { Separator } from '@/shared/ui/separator'
 
 const TermsAndConditions = () => {
     return (

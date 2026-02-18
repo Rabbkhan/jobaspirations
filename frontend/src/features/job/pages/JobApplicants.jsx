@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/shared/ui/table'
+import { Card, CardHeader, CardContent } from '@/shared/ui/card'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/shared/ui/select'
+import { Badge } from '@/shared/ui/badge'
 import { APPLICATIONS_API_END_POINT, JOB_API_END_POINT } from '@/utils/constants'
 
 const JobApplicants = () => {

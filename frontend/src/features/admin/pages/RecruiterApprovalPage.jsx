@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardContent } from '@/shared/ui/card'
+import { Badge } from '@/shared/ui/badge'
+import { Button } from '@/shared/ui/button'
 
 const recruitersMock = [
     { _id: 1, name: 'John Doe', email: 'john@example.com', approved: false },

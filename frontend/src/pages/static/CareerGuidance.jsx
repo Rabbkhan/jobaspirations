@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { Button } from '@/shared/ui/button'
+import { Card, CardHeader, CardTitle, CardDescription } from '@/shared/ui/card'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/shared/ui/accordion'
 import { CheckCircle, ArrowRight, Target, Briefcase, ShieldCheck, Users } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 

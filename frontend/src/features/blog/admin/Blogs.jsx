@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardContent } from '@/shared/ui/card'
+import { Button } from '@/shared/ui/button'
 import { toast } from 'sonner'
 import { useFetchBlogs } from '../../../shared/hooks/useFetchBlogs'
 

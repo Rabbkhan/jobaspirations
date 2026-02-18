@@ -1,5 +1,5 @@
 // BlogDetailsSkeleton.jsx
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/shared/ui/card'
 
 const BlogDetailsSkeleton = () => {
     return (

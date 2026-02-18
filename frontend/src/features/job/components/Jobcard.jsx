@@ -1,6 +1,6 @@
 import React from 'react'
 import { Briefcase, MapPin, IndianRupee, ArrowRight } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from '@/shared/ui/badge'
 import { useNavigate } from 'react-router-dom'
 import { Bookmark } from 'lucide-react'
 

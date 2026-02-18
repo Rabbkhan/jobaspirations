@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from '@/shared/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Briefcase, Sparkles, Bell, Clock } from 'lucide-react'

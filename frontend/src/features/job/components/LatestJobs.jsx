@@ -1,8 +1,8 @@
 import React from 'react'
 import { Bookmark, MapPin, Briefcase, ArrowRight, IndianRupee } from 'lucide-react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card'
+import { Badge } from '@/shared/ui/badge'
+import { Separator } from '@/shared/ui/separator'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 

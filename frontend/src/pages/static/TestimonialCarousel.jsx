@@ -1,6 +1,6 @@
 import React from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
 
 const testimonials = [

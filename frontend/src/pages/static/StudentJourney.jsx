@@ -1,6 +1,6 @@
 import React from 'react'
 import { User, FileText, Search, Briefcase, IndianRupee } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/shared/ui/button'
 import { useNavigate } from 'react-router-dom'
 
 const steps = [

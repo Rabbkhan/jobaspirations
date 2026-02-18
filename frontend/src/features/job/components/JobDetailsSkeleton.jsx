@@ -1,6 +1,6 @@
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Separator } from '@/components/ui/separator'
+import { Card, CardHeader, CardContent } from '@/shared/ui/card'
+import { Skeleton } from '@/shared/ui/skeleton'
+import { Separator } from '@/shared/ui/separator'
 
 const JobDetailsSkeleton = () => {
     return (

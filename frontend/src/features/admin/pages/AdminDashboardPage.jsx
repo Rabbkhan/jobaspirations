@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/shared/ui/card'
+import { Button } from '@/shared/ui/button'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { USER_API_END_POINT } from '@/utils/constants'

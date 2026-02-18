@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/shared/ui/button'
 import { ShieldAlert } from 'lucide-react'
 import { useNavigate, useLocation, Navigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
