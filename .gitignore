@@ -12,7 +12,7 @@ pnpm-debug.log*
 .env.* 
 backend/.env
 frontend/.env
-
+!.env.example
 # Build output
 dist/
 build/
