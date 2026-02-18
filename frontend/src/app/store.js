@@ -1,36 +1,40 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
-import jobSlice from '@/features/job/jobSlice'
-import adminAuthSlice from '@/features/admin/adminAuthSlice'
-import companySlice from '@/features/company/companySlice'
-import authSlice from '@/features/auth/authSlice'
-
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist'
-
 import storage from 'redux-persist/lib/storage'
 
-// ✅ ONLY AUTH IS PERSISTED (FAST STARTUP)
+// ✅ Feature slices
+import authSlice from '@/features/auth/authSlice'
+import adminAuthSlice from '@/features/admin/adminAuthSlice'
+import jobSlice from '@/features/job/jobSlice'
+import companySlice from '@/features/company/companySlice'
+
+// ✅ RTK Query central API
+import { baseApi } from '@/app/api/baseApi'
+
+// ✅ Persist configs
 const authPersistConfig = {
     key: 'auth',
     version: 1,
     storage,
-    whitelist: ['user', 'isAuthenticated'] // ✅ persist only what is needed
+    whitelist: ['user', 'isAuthenticated']
 }
 const adminPersistConfig = {
     key: 'admin',
     version: 1,
     storage,
-    whitelist: ['admin'] // ✅ CORRECT
+    whitelist: ['admin']
 }
 
-// ✅ ROOT REDUCER
+// ✅ Root reducer
 const rootReducer = combineReducers({
     auth: persistReducer(authPersistConfig, authSlice),
-    job: jobSlice,
     adminAuth: persistReducer(adminPersistConfig, adminAuthSlice),
-    company: companySlice
+    job: jobSlice,
+    company: companySlice,
+    [baseApi.reducerPath]: baseApi.reducer // <-- RTK Query
 })
 
-// ✅ STORE
+// ✅ Store
 export const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
@@ -38,9 +42,9 @@ export const store = configureStore({
             serializableCheck: {
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
             }
-        }),
+        }).concat(baseApi.middleware), // <-- add RTK Query middleware
     devTools: process.env.NODE_ENV !== 'production'
 })
 
-// ✅ PERSISTOR
+// ✅ Persistor
 export const persistor = persistStore(store)

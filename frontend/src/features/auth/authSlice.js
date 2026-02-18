@@ -1,23 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { LogOut } from 'lucide-react'
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        loading: false,
-        user: null
+        user: null,
+        isAuthenticated: false
     },
     reducers: {
         //actions
 
-        setLoading: (state, action) => {
-            state.loading = action.payload
-        },
-
         setUser: (state, action) => {
             state.user = action.payload
+            state.isAuthenticated = true
+        },
+        Logout(state) {
+            ;((state.user = null), (state.isAuthenticated = false))
         }
     }
 })
 
-export const { setLoading, setUser } = authSlice.actions
+export const { setUser, logout } = authSlice.actions
 export default authSlice.reducer

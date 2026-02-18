@@ -5,71 +5,42 @@ import { Button } from '@/shared/ui/button'
 import { Label } from '@/shared/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import axios from 'axios'
-import { USER_API_END_POINT } from '@/utils/constants'
-import { useDispatch, useSelector } from 'react-redux'
-import { setLoading, setUser } from '@/features/auth/authSlice'
+import { useDispatch } from 'react-redux'
+import { setUser } from '@/features/auth/authSlice'
 import { Loader2 } from 'lucide-react'
+import { useLoginMutation } from '@/features/auth/api/authApi.js'
 
 const Login = () => {
     const [input, setInput] = useState({
         email: '',
         password: ''
     })
+    const [login, { isLoading }] = useLoginMutation()
 
     const navigate = useNavigate()
-    const { loading } = useSelector((store) => store.auth)
     const dispatch = useDispatch()
-    const changEventHandler = (e) => {
+    const handleChange = (e) => {
         setInput({
             ...input,
             [e.target.name]: e.target.value
         })
     }
 
-    const submitHandler = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
-            dispatch(setLoading(true))
-            const res = await axios.post(`${USER_API_END_POINT}/login`, input, {
-                withCredentials: true
-            })
-
-            if (res.data.success) {
-                const role = res.data.safeUser.role
-
-                // 🚫 ABSOLUTE BLOCK: ADMINS DO NOT LOG IN HERE
-                if (role === 'admin') {
-                    toast.error('Admins are not allowed to log in from this portal')
-                    return
-                }
-
-                // ✅ ALLOWED ROLES ONLY
-                if (role === 'student') {
-                    navigate('/profile')
-                } else if (role === 'recruiter') {
-                    navigate('/recruiter')
-                } else {
-                    toast.error('Unauthorized role')
-                    return
-                }
-
-                dispatch(setUser(res.data.safeUser))
-                toast.success(res.data.message)
-            }
+            const res = await login(input).unwrap()
+            dispatch(setUser(res.safeUser))
+            const role = res.safeUser.role
+            if (role === 'student') navigate('/profile')
+            else if (role === 'recruiter') navigate('/recruiter')
+            else toast.error('Unauthorized role')
+            toast.success(res.message)
         } catch (error) {
-            const msg = error.response?.data?.message
-
-            if (msg === 'Please verify your email before logging in') {
-                toast.info(msg)
-                navigate(`/verify-email?email=${input.email}`)
-                return
-            }
-
-            toast.error(msg || 'Something went wrong')
-        } finally {
-            dispatch(setLoading(false))
+            const msg = error?.data?.message || 'Login failed'
+            toast.error(msg)
+            if (msg.includes('verify your email')) navigate(`/verify-email?email=${input.email}`)
         }
     }
 
@@ -99,7 +70,7 @@ const Login = () => {
                     </CardHeader>
 
                     <CardContent className="space-y-5 mt-2">
-                        <form onSubmit={submitHandler}>
+                        <form onSubmit={handleSubmit}>
                             {/* Email */}
                             <div className="space-y-2">
                                 <Label>Email</Label>
@@ -109,7 +80,7 @@ const Login = () => {
                                     type="email"
                                     value={input.email}
                                     name="email"
-                                    onChange={changEventHandler}
+                                    onChange={handleChange}
                                 />
                             </div>
 
@@ -122,7 +93,7 @@ const Login = () => {
                                     className="bg-background"
                                     value={input.password}
                                     name="password"
-                                    onChange={changEventHandler}
+                                    onChange={handleChange}
                                 />
                             </div>
 
@@ -135,13 +106,14 @@ const Login = () => {
                             </p>
 
                             {/* Button */}
-                            {loading ? (
-                                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait....
-                                </Button>
-                            ) : (
-                                <Button className="w-full cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground">Login</Button>
-                            )}
+
+                            <Button
+                                type="submit"
+                                className="w-full cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground"
+                                disabled={isLoading}>
+                                {' '}
+                                {isLoading ? 'Please wait...' : 'Login'}
+                            </Button>
 
                             <p className="text-center text-sm text-muted-foreground">
                                 Don’t have an account?{' '}

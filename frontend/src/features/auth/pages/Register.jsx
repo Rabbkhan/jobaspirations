@@ -4,12 +4,10 @@ import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Label } from '@/shared/ui/label'
 import { Link, useNavigate } from 'react-router-dom'
-import { USER_API_END_POINT } from '@/utils/constants'
-import axios from 'axios'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
-import { useDispatch, useSelector } from 'react-redux'
-import { setLoading } from '@/features/auth/authSlice'
+import { useRegisterMutation } from '@/features/auth/api/authApi.js'
+import { validateFile } from '@/shared/lib/fileValidator.js'
 
 const Register = () => {
     const [input, setInput] = useState({
@@ -21,24 +19,17 @@ const Register = () => {
     })
 
     const navigate = useNavigate()
-    const { loading } = useSelector((store) => store.auth)
-    const dispatch = useDispatch()
+    const [register, { isLoading }] = useRegisterMutation()
 
-    const changEventHandler = (e) => {
+    const hanldeChange = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value })
     }
 
-    const changeFileHandler = (e) => {
+    const hanldeFileChange = (e) => {
         const file = e.target.files?.[0]
-        if (!file) return
+        const { valid, message } = validateFile(file)
 
-        const MAX_SIZE = 2 * 1024 * 1024
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-
-        if (!allowedTypes.includes(file.type)) return toast.error('Only JPG, PNG, and WEBP images are allowed')
-
-        if (file.size > MAX_SIZE) return toast.error('Image must be under 2MB')
-
+        if (!valid) return toast.error(message)
         setInput((prev) => ({ ...prev, profilePhotoFile: file }))
     }
 
@@ -53,21 +44,13 @@ const Register = () => {
         if (input.profilePhotoFile) formData.append('profilePhoto', input.profilePhotoFile)
 
         try {
-            dispatch(setLoading(true))
-
-            const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-                withCredentials: true
-            })
-
-            if (res.data.success) {
-                toast.success('Account created! Please verify your email')
-                navigate('/verify-email', { state: { email: input.email } })
-            }
+            // dispatch(setLoading(true))
+            await register(formData).unwrap() // we just wait for success
+            toast.success('Account created! Please verify your email')
+            navigate('/verify-email', { state: { email: input.email } })
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Registration failed')
-        } finally {
-            dispatch(setLoading(false))
+            const msg = err?.data?.message || 'Registration failed'
+            toast.error(msg)
         }
     }
 
@@ -103,7 +86,7 @@ const Register = () => {
                                 placeholder="Enter your full name"
                                 name="fullname"
                                 value={input.fullname}
-                                onChange={changEventHandler}
+                                onChange={hanldeChange}
                             />
                         </div>
 
@@ -114,7 +97,7 @@ const Register = () => {
                                 placeholder="Enter your email"
                                 name="email"
                                 value={input.email}
-                                onChange={changEventHandler}
+                                onChange={hanldeChange}
                             />
                         </div>
 
@@ -125,7 +108,7 @@ const Register = () => {
                                 placeholder="Enter your phone number"
                                 name="phoneNumber"
                                 value={input.phoneNumber}
-                                onChange={changEventHandler}
+                                onChange={hanldeChange}
                             />
                         </div>
 
@@ -136,7 +119,7 @@ const Register = () => {
                                 placeholder="Enter password"
                                 name="password"
                                 value={input.password}
-                                onChange={changEventHandler}
+                                onChange={hanldeChange}
                             />
                         </div>
 
@@ -145,18 +128,22 @@ const Register = () => {
                             <Input
                                 type="file"
                                 accept="image/*"
-                                onChange={changeFileHandler}
+                                onChange={hanldeFileChange}
                             />
                         </div>
 
-                        {loading ? (
-                            <Button className="w-full">
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait...
-                            </Button>
-                        ) : (
-                            <Button className="w-full">Register</Button>
-                        )}
-
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={isLoading}>
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait...
+                                </>
+                            ) : (
+                                'Register'
+                            )}
+                        </Button>
                         <p className="text-center text-sm">
                             Already have an account?{' '}
                             <Link
