@@ -1,6 +1,10 @@
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
-import { sendPasswordResetEmail, sendVerificationCode, sendWelcomeEmail } from "../middlewares/Email.js";
+import {
+  sendPasswordResetEmail,
+  sendVerificationCode,
+  sendWelcomeEmail,
+} from "../middlewares/Email.js";
 import { User } from "../models/user.model.js";
 import { comparePassword, hashPassword } from "../utils/hash.js";
 import { generateToken } from "../utils/token.js";
@@ -8,7 +12,7 @@ import { uploadToCloud } from "../utils/uploadToCloud.js";
 import { generateEmailVerification } from "../utils/generateEmailVerification.js";
 import crypto from "crypto";
 import { FRONTEND_URL } from "../config/env.js";
-
+import AppError from "../utils/AppError.js";
 
 export const registerUser = async ({
   fullname,
@@ -63,10 +67,6 @@ export const registerUser = async ({
   };
 };
 
-
-
-
-
 export const verifyEmailService = async (email, code) => {
   if (!email || !code)
     return {
@@ -80,8 +80,7 @@ export const verifyEmailService = async (email, code) => {
 
   const user = await User.findOne({ email });
 
-  if (!user)
-    return { status: 404, success: false, message: "User not found" };
+  if (!user) return { status: 404, success: false, message: "User not found" };
 
   if (user.isEmailVerified)
     return { status: 400, success: false, message: "Email already verified" };
@@ -107,10 +106,7 @@ export const verifyEmailService = async (email, code) => {
       message: "Verification code expired. Request a new one.",
     };
 
-  const hashed = crypto
-    .createHash("sha256")
-    .update(code)
-    .digest("hex");
+  const hashed = crypto.createHash("sha256").update(code).digest("hex");
 
   if (hashed !== user.verificationCode) {
     user.verificationAttempts += 1;
@@ -136,13 +132,11 @@ export const verifyEmailService = async (email, code) => {
   };
 };
 
-
 export const requestVerificationCodeService = async (email) => {
   email = email.trim().toLowerCase();
 
   const user = await User.findOne({ email });
-  if (!user)
-    return { status: 404, success: false, message: "User not found" };
+  if (!user) return { status: 404, success: false, message: "User not found" };
 
   if (user.isEmailVerified)
     return { status: 400, success: false, message: "Email already verified" };
@@ -164,9 +158,6 @@ export const requestVerificationCodeService = async (email) => {
     message: "Verification code sent to email",
   };
 };
-
-
-
 
 export const loginUser = async ({ email, password, role }) => {
   const user = await User.findOne({ email });
@@ -191,8 +182,6 @@ export const loginUser = async ({ email, password, role }) => {
   }
 
   // AFTER user is found and password is validated
-
-
 
   const token = generateToken(user);
 
@@ -230,29 +219,24 @@ export const forgotPasswordService = async (email) => {
 
   await user.save({ validateBeforeSave: false });
 
-const resetLink = `${FRONTEND_URL}/reset-password/${resetToken}`;
+  const resetLink = `${FRONTEND_URL}/reset-password/${resetToken}`;
   // LOCAL TESTING
- await sendPasswordResetEmail({
+  await sendPasswordResetEmail({
     to: user.email,
     resetLink,
     userName: user.name,
   });
 };
 
-
 export const resetPasswordService = async (token, newPassword) => {
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   }).select("+password");
-
   if (!user) {
-    throw new Error("Invalid or expired token");
+    throw new AppError("Reset link has expired", 410);
   }
 
   user.password = await hashPassword(newPassword);
@@ -264,4 +248,3 @@ export const resetPasswordService = async (token, newPassword) => {
 
   await user.save();
 };
-

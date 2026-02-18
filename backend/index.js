@@ -13,8 +13,7 @@ import path from "path";
 
 // Decide environment BEFORE reading any env values
 const isProduction =
-  process.env.NODE_ENV === "production" ||
-  process.env.FORCE_PROD === "true";
+  process.env.NODE_ENV === "production" || process.env.FORCE_PROD === "true";
 
 // Load correct env file
 dotenv.config({
@@ -37,15 +36,13 @@ import companyRoutes from "./src/routes/company.routes.js";
 import jobRoutes from "./src/routes/job.routes.js";
 import applicationRoutes from "./src/routes/application.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.route.js";
-import adminblogRoutes from "./src/routes/admin.blog.routes.js"
-import BlogcategoryRoutes from "./src/routes/category.routes.js"
-import publicblogRoutes from "./src/routes/blog.routes.js"
+import adminblogRoutes from "./src/routes/admin.blog.routes.js";
+import BlogcategoryRoutes from "./src/routes/category.routes.js";
+import publicblogRoutes from "./src/routes/blog.routes.js";
 // Infrastructure
 import connectDb from "./src/config/db.js";
-import {
-  FRONTEND_URL,
-  FRONTEND_ALLOWED_ORIGINS,
-} from "./src/config/env.js";
+import { FRONTEND_URL, FRONTEND_ALLOWED_ORIGINS } from "./src/config/env.js";
+import { globalErrorHandler } from "./src/middlewares/error.middleware.js";
 
 /* ===========================
    3. HARD ENV VALIDATION
@@ -63,7 +60,10 @@ if (!FRONTEND_URL) {
   process.exit(1);
 }
 
-if (!Array.isArray(FRONTEND_ALLOWED_ORIGINS) || FRONTEND_ALLOWED_ORIGINS.length === 0) {
+if (
+  !Array.isArray(FRONTEND_ALLOWED_ORIGINS) ||
+  FRONTEND_ALLOWED_ORIGINS.length === 0
+) {
   console.error("❌ FATAL: FRONTEND_ALLOWED_ORIGINS is empty");
   process.exit(1);
 }
@@ -104,15 +104,15 @@ app.use(
       return callback(null, false);
     },
     credentials: true,
-  })
+  }),
 );
 
 /* ===========================
    6. MIDDLEWARES
    =========================== */
 
-app.use(express.json({ limit: "10mb" }));          // For JSON content
-app.use(express.urlencoded({ limit: "10mb", extended: true }));  // For form submissions
+app.use(express.json({ limit: "10mb" })); // For JSON content
+app.use(express.urlencoded({ limit: "10mb", extended: true })); // For form submissions
 app.use(cookieParser());
 
 /* ===========================
@@ -140,7 +140,6 @@ app.use("/api/v1/adminblog", adminblogRoutes);
 app.use("/api/v1/blogcategory", BlogcategoryRoutes);
 app.use("/api/v1/blog", publicblogRoutes);
 
-
 // Root sanity check
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -153,18 +152,7 @@ app.get("/", (req, res) => {
    9. GLOBAL ERROR HANDLER
    =========================== */
 
-app.use((err, req, res, next) => {
-  console.error("❌ Unhandled error:", err);
-
-  if (res.headersSent) {
-    return next(err);
-  }
-
-  res.status(500).json({
-    success: false,
-    message: "Internal Server Error",
-  });
-});
+app.use(globalErrorHandler);
 
 /* ===========================
    10. START SERVER (DB FIRST)
