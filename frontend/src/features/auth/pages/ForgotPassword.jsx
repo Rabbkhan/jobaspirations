@@ -3,26 +3,24 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/shared/ui/card'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Label } from '@/shared/ui/label'
-import axios from 'axios'
 import { toast } from 'sonner'
-import { USER_API_END_POINT } from '@/utils/constants'
+import { useForgotPasswordMutation } from '@/features/auth/api/authApi.js'
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('')
-    const [loading, setLoading] = useState(false)
+    const [forgotPassword, { isLoading }] = useForgotPasswordMutation()
 
     const submitHandler = async (e) => {
         e.preventDefault()
-
+        if (!email) {
+            toast.error('Please enter your email')
+            return
+        }
         try {
-            setLoading(true)
-            const res = await axios.post(`${USER_API_END_POINT}/forgot-password`, { email })
-
-            toast.success(res.data.message || 'Reset link sent to email')
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to send reset link')
-        } finally {
-            setLoading(false)
+            const res = await forgotPassword(email).unwrap()
+            toast.success(res.message || 'Reset link sent to email')
+        } catch (err) {
+            toast.error(err?.data?.message || 'Failed to send reset link')
         }
     }
 
@@ -49,8 +47,8 @@ const ForgotPassword = () => {
 
                         <Button
                             className="w-full cursor-pointer"
-                            disabled={loading}>
-                            {loading ? 'Sending...' : 'Send reset link'}
+                            disabled={isLoading}>
+                            {isLoading ? 'Sending...' : 'Send reset link'}
                         </Button>
                     </form>
                 </CardContent>
