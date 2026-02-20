@@ -65,7 +65,7 @@ const CompanyTable = ({ data, loading }) => {
                                 <TableCell>{company?.location}</TableCell>
 
                                 <TableCell className="text-right">
-                                    <Link to={`/admin/companies/edit/${company._id}`}>
+                                    <Link to={`/recruiter/companies/edit/${company._id}`}>
                                         <Button
                                             variant="outline"
                                             size="sm"
