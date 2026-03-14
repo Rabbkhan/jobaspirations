@@ -75,7 +75,7 @@ export default function StudentHero() {
                                 <Button
                                     variant="secondary"
                                     className="cursor-pointer"
-                                    onClick={() => navigate('/saved-jobs')}>
+                                    onClick={() => navigate('/profile/saved-jobs')}>
                                     View
                                 </Button>
                             </div>
