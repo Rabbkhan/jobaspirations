@@ -7,7 +7,7 @@ export const baseApi = createApi({
         baseUrl: API_BASE_PATH,
         credentials: 'include'
     }),
-    tagTypes: ['Auth', 'User', 'Job', 'Company'], // optional, useful for caching
+    tagTypes: ['Auth', 'User', 'Job', 'Company', 'Profile', 'SavedJobs'], // optional, useful for caching
 
     endpoints: () => ({})
 })

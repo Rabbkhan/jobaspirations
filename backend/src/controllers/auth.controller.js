@@ -8,7 +8,7 @@ import {
   resetPasswordService,
 } from "../services/auth.service.js";
 import { validationResult } from "express-validator";
-import { updateProfile } from "../services/user.service.js";
+import { getProfileService, updateProfile } from "../services/user.service.js";
 import { verifyEmailService } from "../services/auth.service.js";
 import { transporter } from "../middlewares/email.config.middleware.js";
 import { welcomeEmailTemplate } from "../libs/Emailtemplates.js";
@@ -100,8 +100,7 @@ export const login = async (req, res) => {
   try {
     const result = await loginUser(req.body);
 
-
-  if (!result || !result.user || result.user.role === "admin") {
+    if (!result || !result.user || result.user.role === "admin") {
       return res.status(STATUS.UNAUTHORIZED).json({
         success: false,
         message: "Invalid email or password",
@@ -118,7 +117,7 @@ export const login = async (req, res) => {
     });
 
     const safeUser = {
-      _id: user._id.toString(),  // safe access
+      _id: user._id.toString(), // safe access
       fullname: user.fullname,
       email: user.email,
       phoneNumber: user.phoneNumber,
@@ -139,7 +138,6 @@ export const login = async (req, res) => {
     });
   }
 };
-
 
 // logout
 
@@ -164,6 +162,19 @@ export const logout = async (req, res) => {
   }
 };
 
+// ------------------- GET PROFILE -------------------
+export const getProfile = async (req, res) => {
+  try {
+    const user = await getProfileService(req.user._id);
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(404).json({
+      message: err.message,
+    });
+  }
+};
+
 //update profile
 
 export const updateProfileController = async (req, res) => {
@@ -171,6 +182,10 @@ export const updateProfileController = async (req, res) => {
     const resumeFile = req.files?.resume?.[0] || null;
     const profilePhotoFile = req.files?.profilePhoto?.[0] || null;
 
+    // console.log("BODY:", req.body);
+    // console.log("FILES:", req.files);
+    // console.log("Resume:", resumeFile);
+    // console.log("Profile Photo:", profilePhotoFile);
     const updatedUser = await updateProfile({
       userId: req.user._id,
       fullname: req.body.fullname,
@@ -182,12 +197,14 @@ export const updateProfileController = async (req, res) => {
       profilePhotoFile,
     });
 
-    res.status(200).json({
-      success: true,
-      data: updatedUser,
-    });
+    const userObj = updatedUser.toObject();
+    delete userObj.password;
+
+    res.status(200).json(userObj);
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res.status(400).json({
+      message: err.message,
+    });
   }
 };
 
@@ -230,9 +247,6 @@ export const updateProfileController = async (req, res) => {
 //     });
 //   }
 // };
-
-
-
 
 export const forgotPasswordController = async (req, res, next) => {
   try {

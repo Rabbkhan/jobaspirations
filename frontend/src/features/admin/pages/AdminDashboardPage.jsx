@@ -1,24 +1,29 @@
 import { Card, CardContent } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { USER_API_END_POINT } from '@/utils/constants'
 import { useDispatch } from 'react-redux'
 import { clearAdmin } from '@/features/admin/adminAuthSlice'
+import { useAdminLogoutMutation } from '@/features/admin/api/adminAuthApi'
+import { baseApi } from '@/app/api/baseApi'
+import { toast } from 'sonner'
 
 const AdminDashboardPage = () => {
     const navigate = useNavigate()
-
     const dispatch = useDispatch()
+
+    const [adminLogout] = useAdminLogoutMutation()
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${USER_API_END_POINT}/admin/logout`, {}, { withCredentials: true })
-        } catch (error) {
-            console.error('Admin logout failed:', error)
+            await adminLogout().unwrap()
+        } catch {
+            toast.error('Logout failed')
         } finally {
-            // 🔥 CRITICAL
+            // clear admin auth state
             dispatch(clearAdmin())
+
+            // clear RTK Query cache
+            dispatch(baseApi.util.resetApiState())
 
             navigate('/admin/login', { replace: true })
         }
@@ -26,9 +31,10 @@ const AdminDashboardPage = () => {
 
     return (
         <div className="space-y-6">
-            {/* Header with Logout */}
+            {/* Header */}
             <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold">AdminDashboard</h2>
+
                 <Button
                     variant="destructive"
                     className="cursor-pointer"
@@ -61,7 +67,6 @@ const AdminDashboardPage = () => {
                 </Card>
             </div>
 
-            {/* Placeholder */}
             <Card>
                 <CardContent className="h-64 flex items-center justify-center text-muted-foreground">Charts / Activity Feed Placeholder</CardContent>
             </Card>

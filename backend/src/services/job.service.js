@@ -1,13 +1,13 @@
-
-
 // services/job.service.js
 import mongoose from "mongoose";
 import { Job } from "../models/job.model.js";
 import { Company } from "../models/company.model.js";
 import { MESSAGES } from "../constants/messages.js";
 import { STATUS } from "../constants/statusCodes.js";
-import { ALLOWED_INDUSTRIES, ALLOWED_LOCATIONS } from "../constants/job.constants.js";
-
+import {
+  ALLOWED_INDUSTRIES,
+  ALLOWED_LOCATIONS,
+} from "../constants/job.constants.js";
 
 // =============================
 // CREATE JOB
@@ -34,7 +34,6 @@ export const createJob = async ({ data, userId }) => {
     throw err;
   }
 
-
   if (!ALLOWED_LOCATIONS.includes(location)) {
     const err = new Error("Invalid location");
     err.status = STATUS.BAD_REQUEST;
@@ -47,7 +46,7 @@ export const createJob = async ({ data, userId }) => {
     throw err;
   }
 
-   if (!salary?.min || !salary?.max) {
+  if (!salary?.min || !salary?.max) {
     throw new Error("Salary min and max are required");
   }
 
@@ -55,17 +54,13 @@ export const createJob = async ({ data, userId }) => {
     throw new Error("Max salary must be greater than min salary");
   }
 
-  if (
-    experience?.min === undefined ||
-    experience?.max === undefined
-  ) {
+  if (experience?.min === undefined || experience?.max === undefined) {
     throw new Error("Experience min and max are required");
   }
 
   if (experience.max < experience.min) {
     throw new Error("Max experience must be >= min experience");
   }
-
 
   const job = await Job.create({
     ...data,
@@ -81,18 +76,11 @@ export const createJob = async ({ data, userId }) => {
   };
 };
 
-
 // =============================
 // GET ALL JOBS
 // =============================
 export const getAllJobs = async (query) => {
-  const {
-    page = 1,
-    limit = 10,
-    location,
-    industry,
-    salary,
-  } = query;
+  const { page = 1, limit = 10, location, industry, salary } = query;
 
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
@@ -103,15 +91,14 @@ export const getAllJobs = async (query) => {
   if (location) filter.location = location;
   if (industry) filter.industry = industry;
 
-if (salary) {
-  const [min, max] = salary.split("-").map(Number);
+  if (salary) {
+    const [min, max] = salary.split("-").map(Number);
 
-  if (!isNaN(min) && !isNaN(max)) {
-    filter["salary.min"] = { $lte: max };
-    filter["salary.max"] = { $gte: min };
+    if (!isNaN(min) && !isNaN(max)) {
+      filter["salary.min"] = { $lte: max };
+      filter["salary.max"] = { $gte: min };
+    }
   }
-}
-
 
   const jobs = await Job.find(filter)
     .populate("company", "name location")
@@ -129,7 +116,6 @@ if (salary) {
     total,
   };
 };
-
 
 // services/job.service.js
 export const getJobFilters = async () => {
@@ -155,7 +141,6 @@ export const getJobFilters = async () => {
   };
 };
 
-
 // =============================
 // GET JOB BY ID
 // =============================
@@ -173,8 +158,8 @@ export const getJobById = async (id) => {
       path: "applications",
       populate: {
         path: "applicant",
-        select: "_id fullname email"
-      }
+        select: "_id fullname email",
+      },
     });
 
   if (!job) {
@@ -186,7 +171,6 @@ export const getJobById = async (id) => {
   return { success: true, job };
 };
 
-
 // =============================
 // UPDATE JOB
 // =============================
@@ -197,19 +181,19 @@ export const updateJob = async ({ jobId, data, userId }) => {
     throw err;
   }
 
-if (data.location && !ALLOWED_LOCATIONS.includes(data.location)) {
+  if (data.location && !ALLOWED_LOCATIONS.includes(data.location)) {
     const err = new Error("Invalid location");
     err.status = STATUS.BAD_REQUEST;
     throw err;
   }
 
-    if (data.industry && !ALLOWED_INDUSTRIES.includes(data.industry)) {
+  if (data.industry && !ALLOWED_INDUSTRIES.includes(data.industry)) {
     const err = new Error("Invalid industry");
     err.status = STATUS.BAD_REQUEST;
     throw err;
   }
 
-   if (data.salary) {
+  if (data.salary) {
     const { min, max } = data.salary;
 
     if (min === undefined || max === undefined) {
@@ -224,7 +208,7 @@ if (data.location && !ALLOWED_LOCATIONS.includes(data.location)) {
       throw err;
     }
   }
- if (data.experience) {
+  if (data.experience) {
     const { min, max } = data.experience;
 
     if (min === undefined || max === undefined) {
@@ -240,7 +224,6 @@ if (data.location && !ALLOWED_LOCATIONS.includes(data.location)) {
     }
   }
 
-
   const job = await Job.findById(jobId);
   if (!job) {
     const err = new Error(MESSAGES.JOB_NOT_FOUND);
@@ -253,12 +236,10 @@ if (data.location && !ALLOWED_LOCATIONS.includes(data.location)) {
     throw err;
   }
 
-
-  
   const updatedJob = await Job.findByIdAndUpdate(
     jobId,
     { $set: data },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
 
   return {
@@ -279,8 +260,8 @@ export const getAdminJobs = async (userId) => {
   }
 
   const jobs = await Job.find({ created_by: userId })
- 
-    .populate({path:"company"})
+
+    .populate({ path: "company" })
     .populate("created_by", "fullname email");
 
   return { success: true, jobs };
@@ -313,7 +294,6 @@ export const getJobApplicants = async (jobId) => {
     applicants: job.applications,
   };
 };
-
 
 // =============================
 // DELETE JOB

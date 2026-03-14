@@ -1,55 +1,65 @@
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Card, CardHeader, CardContent } from '@/shared/ui/card'
+import { useState } from 'react'
+import { Card, CardHeader } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/shared/ui/dialog'
 import { toast } from 'sonner'
-import { CATEGORY_API_END_POINT } from '@/utils/constants'
+
+import {
+    useGetCategoriesQuery,
+    useCreateCategoryMutation,
+    useUpdateCategoryMutation,
+    useDeleteCategoryMutation
+} from '@/features/blog/api/categoryApi'
 
 const BlogCategories = () => {
-    const [categories, setCategories] = useState([])
+    const { data } = useGetCategoriesQuery()
+    const [createCategory] = useCreateCategoryMutation()
+    const [updateCategory] = useUpdateCategoryMutation()
+    const [deleteCategory] = useDeleteCategoryMutation()
+
+    const categories = data?.categories || []
+
     const [modalOpen, setModalOpen] = useState(false)
     const [editingCategory, setEditingCategory] = useState(null)
     const [name, setName] = useState('')
 
-    const fetchCategories = async () => {
-        const res = await axios.get(CATEGORY_API_END_POINT)
-        setCategories(res.data.categories || [])
-    }
-
-    useEffect(() => {
-        fetchCategories()
-    }, [])
-
     const handleSave = async () => {
-        if (!name.trim()) return toast.error('Category name required')
+        if (!name.trim()) {
+            toast.error('Category name required')
+            return
+        }
 
         try {
             if (editingCategory) {
-                await axios.put(`${CATEGORY_API_END_POINT}/${editingCategory._id}`, { name }, { withCredentials: true })
+                await updateCategory({
+                    id: editingCategory._id,
+                    name
+                }).unwrap()
+
                 toast.success('Category updated')
             } else {
-                await axios.post(CATEGORY_API_END_POINT, { name }, { withCredentials: true })
+                await createCategory({ name }).unwrap()
+
                 toast.success('Category created')
             }
+
             setModalOpen(false)
             setEditingCategory(null)
             setName('')
-            fetchCategories()
-        } catch (err) {
-            toast.error(err.response?.data?.message || 'Operation failed')
+        } catch {
+            toast.error('Operation failed')
         }
     }
 
     const handleDelete = async (id) => {
         if (!confirm('Delete this category?')) return
+
         try {
-            await axios.delete(`${CATEGORY_API_END_POINT}/${id}`, { withCredentials: true })
+            await deleteCategory(id).unwrap()
             toast.success('Category deleted')
-            fetchCategories()
-        } catch (err) {
-            toast.error(err.response?.data?.message || 'Delete failed')
+        } catch {
+            toast.error('Delete failed')
         }
     }
 
@@ -74,12 +84,14 @@ const BlogCategories = () => {
                                 <p className="font-medium">{cat.name}</p>
                                 <p className="text-xs text-muted-foreground">Slug: {cat.slug}</p>
                             </div>
+
                             <div className="flex gap-2">
                                 <Button
                                     size="sm"
                                     onClick={() => openEdit(cat)}>
                                     Edit
                                 </Button>
+
                                 <Button
                                     size="sm"
                                     variant="destructive"
@@ -96,6 +108,7 @@ const BlogCategories = () => {
                 open={modalOpen}
                 onOpenChange={(o) => {
                     setModalOpen(o)
+
                     if (!o) {
                         setEditingCategory(null)
                         setName('')

@@ -1,38 +1,46 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { JOB_API_END_POINT } from '@/utils/constants'
+import { useGetJobFiltersQuery } from '@/features/job/api/jobApi.js'
+import { useMemo } from 'react'
 
-const HeaderFilterBar = ({ filters, setFilters }) => {
-    const [data, setData] = useState({
-        locations: [],
-        industries: [],
-        salaries: []
-    })
+const HeaderFilterBar = ({ filters, setFilters, resetFilters, isMobile = false }) => {
+    const { data, isLoading, isError } = useGetJobFiltersQuery()
 
-    useEffect(() => {
-        const fetchFilters = async () => {
-            const res = await axios.get(`${JOB_API_END_POINT}/filters`)
-            if (res.data.success) setData(res.data.filters)
-        }
-        fetchFilters()
-    }, [])
+    const options = useMemo(
+        () => ({
+            locations: data?.filters?.locations || [],
+            industries: data?.filters?.industries || [],
+            salaries: data?.filters?.salaries || [],
+            experiences: data?.filters?.experiences || []
+        }),
+        [data]
+    )
 
-    const update = (name, value) => {
-        setFilters((prev) => ({ ...prev, [name]: value }))
+    const updateFilter = (key, value) => {
+        setFilters((prev) => ({
+            ...prev,
+            [key]: value
+        }))
+    }
+
+    if (isLoading) {
+        return <div className="w-full flex justify-center py-4 text-muted-foreground">Loading filters...</div>
+    }
+
+    if (isError) {
+        return <div className="w-full flex justify-center py-4 text-red-500">Failed to load filters</div>
     }
 
     return (
-        <div className="w-full flex justify-center">
-            <div className="bg-white border shadow-md rounded-2xl px-6 py-4 w-full md:w-4/5 flex flex-wrap items-center justify-center gap-5">
+        <div className={isMobile ? 'w-full' : 'hidden md:flex justify-center'}>
+            <div className="bg-white border shadow-md rounded-2xl px-6 py-4 w-full md:w-4/5 flex flex-wrap gap-5 items-center">
                 {/* Location */}
                 <select
-                    className="border rounded-xl cursor-pointer px-4 py-2 min-w-[180px] outline-none"
+                    className="border rounded-xl px-4 py-2 min-w-[170px]"
                     value={filters.location}
-                    onChange={(e) => update('location', e.target.value)}>
+                    onChange={(e) => updateFilter('location', e.target.value)}>
                     <option value="">All Locations</option>
-                    {data.locations.map((loc, i) => (
+                    {options.locations.map((loc) => (
                         <option
-                            key={i}
+                            key={loc}
                             value={loc}>
                             {loc}
                         </option>
@@ -41,13 +49,13 @@ const HeaderFilterBar = ({ filters, setFilters }) => {
 
                 {/* Industry */}
                 <select
-                    className="border rounded-xl cursor-pointer px-4 py-2 min-w-[180px] outline-none"
+                    className="border rounded-xl px-4 py-2 min-w-[170px]"
                     value={filters.industry}
-                    onChange={(e) => update('industry', e.target.value)}>
+                    onChange={(e) => updateFilter('industry', e.target.value)}>
                     <option value="">All Industries</option>
-                    {data.industries.map((ind, i) => (
+                    {options.industries.map((ind) => (
                         <option
-                            key={i}
+                            key={ind}
                             value={ind}>
                             {ind}
                         </option>
@@ -56,23 +64,38 @@ const HeaderFilterBar = ({ filters, setFilters }) => {
 
                 {/* Salary */}
                 <select
-                    className="border rounded-xl cursor-pointer px-4 py-2 min-w-[180px] outline-none"
+                    className="border rounded-xl px-4 py-2 min-w-[170px]"
                     value={filters.salary}
-                    onChange={(e) => update('salary', e.target.value)}>
+                    onChange={(e) => updateFilter('salary', e.target.value)}>
                     <option value="">All Salaries</option>
-                    {data.salaries.map((s, i) => (
+                    {options.salaries.map((s) => (
                         <option
-                            key={i}
+                            key={s.value}
                             value={s.value}>
                             {s.label}
                         </option>
                     ))}
                 </select>
 
-                {/* Reset Button */}
+                {/* Experience */}
+                <select
+                    className="border rounded-xl px-4 py-2 min-w-[170px]"
+                    value={filters.experience}
+                    onChange={(e) => updateFilter('experience', e.target.value)}>
+                    <option value="">All Experience</option>
+                    {options.experiences.map((e) => (
+                        <option
+                            key={e.value}
+                            value={e.value}>
+                            {e.label}
+                        </option>
+                    ))}
+                </select>
+
+                {/* Reset */}
                 <button
-                    onClick={() => setFilters({ location: '', industry: '', salary: '' })}
-                    className="px-4 py-2 cursor-pointer rounded-xl bg-gray-100 hover:bg-gray-200">
+                    onClick={resetFilters}
+                    className="px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition">
                     Reset
                 </button>
             </div>

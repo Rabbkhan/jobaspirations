@@ -1,36 +1,17 @@
-import { useEffect } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
-import { USER_API_END_POINT } from '@/utils/constants'
-import { setAdmin, clearAdmin } from '@/features/admin/adminAuthSlice'
+import LoaderScreen from '@/shared/components/LoaderScreen'
+import { useAdminMeQuery } from '@/features/admin/api/adminAuthApi.js'
 
 const AdminRoute = () => {
-    const dispatch = useDispatch()
-    const { admin, loading } = useSelector((state) => state.adminAuth)
+    const { data, isLoading, isError } = useAdminMeQuery()
 
-    useEffect(() => {
-        if (admin !== null) return // already verified
+    // ⏳ Checking authentication
+    if (isLoading) {
+        return <LoaderScreen />
+    }
 
-        const verify = async () => {
-            try {
-                const res = await axios.get(`${USER_API_END_POINT}/admin/me`, { withCredentials: true })
-                console.log(res)
-
-                dispatch(setAdmin(res.data.safeUser))
-            } catch {
-                dispatch(clearAdmin())
-            }
-        }
-
-        verify()
-    }, [admin, dispatch])
-
-    // ⏳ wait for verification
-    if (admin === null && loading) return null
-
-    // ❌ NOT ADMIN
-    if (!admin) {
+    // ❌ Not logged in
+    if (isError || !data?.safeUser) {
         return (
             <Navigate
                 to="/admin/login"
@@ -39,7 +20,9 @@ const AdminRoute = () => {
         )
     }
 
-    // ❌ WRONG ROLE
+    const admin = data.safeUser
+
+    // ❌ Wrong role
     if (admin.role !== 'admin') {
         return (
             <Navigate
@@ -49,7 +32,7 @@ const AdminRoute = () => {
         )
     }
 
-    // ✅ ADMIN
+    // ✅ Authorized admin
     return <Outlet />
 }
 

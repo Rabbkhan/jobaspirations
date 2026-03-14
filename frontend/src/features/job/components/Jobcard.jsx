@@ -3,40 +3,10 @@ import { Briefcase, MapPin, IndianRupee, ArrowRight } from 'lucide-react'
 import { Badge } from '@/shared/ui/badge'
 import { useNavigate } from 'react-router-dom'
 import { Bookmark } from 'lucide-react'
+import { formatExperience, formatSalary, timeAgo } from '../utils/jobHelpers.js'
 
-const JobCard = ({ job, isSaved, onToggleSave }) => {
+const JobCard = ({ job, isSaved = false, onToggleSave = () => {} }) => {
     const navigate = useNavigate()
-
-    const timeAgo = (timestamp) => {
-        const now = new Date()
-        const created = new Date(timestamp)
-        const diff = (now - created) / 1000
-
-        if (diff < 60) return 'Just now'
-        if (diff < 3600) return `${Math.floor(diff / 60)} min ago`
-        if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`
-        return created.toLocaleDateString()
-    }
-
-    const formatSalary = (salary) => {
-        if (!salary) return 'Not disclosed'
-        const { min, max } = salary
-        if (min && max) return `₹${min.toLocaleString()} - ₹${max.toLocaleString()}`
-        if (min) return `₹${min.toLocaleString()}+`
-        return 'Not disclosed'
-    }
-
-    const formatExperience = (experience) => {
-        if (!experience || experience.min === 0) return 'Fresher'
-
-        const toYearsMonths = (months) => {
-            const y = Math.floor(months / 12)
-            const m = months % 12
-            return `${y ? `${y}y ` : ''}${m ? `${m}m` : ''}`.trim()
-        }
-
-        return `${toYearsMonths(experience.min)} - ${toYearsMonths(experience.max)}`
-    }
 
     return (
         <div className="relative w-full border rounded-xl bg-white shadow-sm hover:shadow-md transition-all p-5 flex flex-col md:flex-row justify-between gap-4">

@@ -4,21 +4,30 @@ import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Card, CardContent } from '@/shared/ui/card'
 import { toast } from 'sonner'
-import { useFetchBlogCategories } from '../../../shared/hooks/useFetchBlogCategories'
-import { useFetchBlogs } from '../../../shared/hooks/useFetchBlogs'
-import BlogEditor from '../components/BlogEditor'
-
-// Replace Textarea with a real rich text editor later (TipTap / Editor.js)
+import { useCreateBlogMutation, useGetAdminBlogsQuery, useUpdateBlogMutation } from '../api/adminBlogApi.js'
+import { useGetCategoriesQuery } from '../api/categoryApi.js'
 
 const BlogEditorPage = () => {
     const navigate = useNavigate()
-    const { id } = useParams() // if id exists -> edit mode
+    const { id } = useParams()
 
-    const { blogs, createBlog, updateBlog } = useFetchBlogs()
-    const { categories } = useFetchBlogCategories()
+    /* =========================
+       RTK Query
+    ========================= */
+    const { data: blogsData } = useGetAdminBlogsQuery()
+    const { data: categoriesData } = useGetCategoriesQuery()
+
+    const [createBlog] = useCreateBlogMutation()
+    const [updateBlog] = useUpdateBlogMutation()
+
+    const blogs = blogsData?.blogs || []
+    const categories = categoriesData?.categories || []
 
     const existingBlog = blogs.find((b) => b._id === id)
 
+    /* =========================
+       Local State
+    ========================= */
     const [form, setForm] = useState({
         title: '',
         content: '',
@@ -31,8 +40,8 @@ const BlogEditorPage = () => {
     const [saving, setSaving] = useState(false)
 
     /* =========================
-     Populate Edit Mode
-  ========================= */
+       Populate Edit Mode
+    ========================= */
     useEffect(() => {
         if (existingBlog) {
             setForm({
@@ -42,13 +51,14 @@ const BlogEditorPage = () => {
                 published: existingBlog.published,
                 image: null
             })
+
             setPreview(existingBlog.featuredImage?.url || '')
         }
     }, [existingBlog])
 
     /* =========================
-     Image Handler
-  ========================= */
+       Image Handler
+    ========================= */
     const handleImageChange = (e) => {
         const file = e.target.files?.[0]
         if (!file) return
@@ -58,8 +68,8 @@ const BlogEditorPage = () => {
     }
 
     /* =========================
-     Submit Handler
-  ========================= */
+       Submit Handler
+    ========================= */
     const handleSave = async () => {
         if (!form.title.trim()) {
             toast.error('Title is required')
@@ -83,16 +93,22 @@ const BlogEditorPage = () => {
 
         try {
             setSaving(true)
+
             if (existingBlog) {
-                await updateBlog(existingBlog._id, form)
+                await updateBlog({
+                    id: existingBlog._id,
+                    formData: form
+                }).unwrap()
+
                 toast.success('Blog updated')
             } else {
-                await createBlog(form)
+                await createBlog(form).unwrap()
                 toast.success('Blog created')
             }
+
             navigate('/admin/blogs')
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Save failed')
+            toast.error(err?.data?.message || 'Save failed')
         } finally {
             setSaving(false)
         }
@@ -121,11 +137,18 @@ const BlogEditorPage = () => {
                     {/* Category */}
                     <div className="space-y-1">
                         <label className="text-sm font-medium">Category</label>
+
                         <select
                             className="w-full border rounded px-3 py-2 text-sm"
                             value={form.category}
-                            onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    category: e.target.value
+                                })
+                            }>
                             <option value="">Select category</option>
+
                             {categories.map((cat) => (
                                 <option
                                     key={cat._id}
@@ -141,7 +164,12 @@ const BlogEditorPage = () => {
                         <input
                             type="checkbox"
                             checked={form.published}
-                            onChange={(e) => setForm({ ...form, published: e.target.checked })}
+                            onChange={(e) =>
+                                setForm({
+                                    ...form,
+                                    published: e.target.checked
+                                })
+                            }
                         />
                         Publish
                     </label>
@@ -149,11 +177,13 @@ const BlogEditorPage = () => {
                     {/* Image */}
                     <div className="space-y-1">
                         <label className="text-sm font-medium">Featured Image</label>
+
                         <input
                             type="file"
                             accept="image/*"
                             onChange={handleImageChange}
                         />
+
                         {preview && (
                             <img
                                 src={preview}

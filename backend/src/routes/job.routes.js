@@ -19,7 +19,10 @@ import {
   unsaveJobController,
 } from "../controllers/savedJobs.controller.js";
 
-import { createJobValidation, updateJobValidation } from "../validations/jobValidation.js";
+import {
+  createJobValidation,
+  updateJobValidation,
+} from "../validations/jobValidation.js";
 
 const router = express.Router();
 
@@ -29,21 +32,21 @@ router.get(
   "/saved",
   authenticate,
   authorizeRoles("student"),
-  getSavedJobsController
+  getSavedJobsController,
 );
 
 router.post(
   "/save/:jobId",
   authenticate,
   authorizeRoles("student"),
-  saveJobController
+  saveJobController,
 );
 
 router.delete(
   "/unsave/:jobId",
   authenticate,
   authorizeRoles("student"),
-  unsaveJobController
+  unsaveJobController,
 );
 
 /* ===================== OTHER STATIC ROUTES ===================== */
@@ -57,21 +60,21 @@ router.post(
   authenticate,
   authorizeRoles("recruiter"),
   createJobValidation,
-  createJobController
+  createJobController,
 );
 
 router.get(
-  "/getadminJobs",
+  "/getrecruiterJobs",
   authenticate,
   authorizeRoles("recruiter"),
-  getAdminJobsController
+  getAdminJobsController,
 );
 
 router.get(
   "/:jobId/applications",
   authenticate,
   authorizeRoles("recruiter"),
-  getJobApplicantsController
+  getJobApplicantsController,
 );
 
 /* ===================== DYNAMIC ROUTES (ALWAYS LAST) ===================== */
@@ -83,14 +86,14 @@ router.put(
   authenticate,
   updateJobValidation,
   authorizeRoles("recruiter"),
-  updateJobController
+  updateJobController,
 );
 
 router.delete(
   "/:id",
   authenticate,
   authorizeRoles("recruiter"),
-  deleteJobController
+  deleteJobController,
 );
 
 export default router;

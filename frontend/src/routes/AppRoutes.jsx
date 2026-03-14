@@ -42,17 +42,17 @@ import Unauthorized from '@/pages/Unauthorized'
 /* =======================
    STUDENT PAGES
 ======================= */
-import Profile from '@/features/student/pages/Profile'
-import AppliedJobs from '@/features/job/pages/AppliedJobs'
+import Profile from '@/features/profile/pages/ProfilePage'
+import AppliedJobs from '@/features/profile/pages/AppliedJobs'
 import CareerGuidance from '@/pages/static/CareerGuidance'
 
 /* =======================
    RECRUITER PAGES
 ======================= */
 import RecruiterDashboard from '@/features/recruiter/pages/RecruiterDashboard'
-import Recruiterjobs from '@/features/recruiter/pages/Recruiterjobs'
+import RecruiterJobs from '@/features/recruiter/pages/Recruiterjobs'
 import Jobcreate from '@/features/recruiter/pages/Jobcreate'
-import RecruiterJobsEdit from '@/features/recruiter/pages/RecruiterJobsEdit'
+import RecruiterJobEdit from '@/features/recruiter/pages/RecruiterJobEdit'
 import JobApplicants from '@/features/recruiter/pages/JobApplicants'
 import CompanyList from '@/features/company/pages/CompanyList'
 import CompanyDetails from '@/features/company/pages/CompanyDetails'
@@ -71,6 +71,7 @@ import Blogs from '@/features/blog/admin/Blogs'
 import BlogCategories from '@/features/blog/admin/Blogcategories'
 import BlogEditorPage from '@/features/blog/admin/BlogEditorPage'
 import Settings from '@/features/admin/pages/Settings'
+import Savedjob from '@/features/job/pages/Savedjobs.jsx'
 
 const AppRoutes = () => {
     return (
@@ -135,6 +136,10 @@ const AppRoutes = () => {
                             <Profile />
                         </StudentRoute>
                     }
+                />
+                <Route
+                    path="/profile/saved-jobs"
+                    element={<Savedjob />}
                 />
 
                 <Route
@@ -203,7 +208,7 @@ const AppRoutes = () => {
                     />
                     <Route
                         path="jobs"
-                        element={<Recruiterjobs />}
+                        element={<RecruiterJobs />}
                     />
                     <Route
                         path="jobs/create"
@@ -211,7 +216,7 @@ const AppRoutes = () => {
                     />
                     <Route
                         path="jobs/edit/:id"
-                        element={<RecruiterJobsEdit />}
+                        element={<RecruiterJobEdit />}
                     />
                     <Route
                         path="jobs/:jobId/applications"

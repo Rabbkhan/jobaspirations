@@ -1,89 +1,98 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import JobCard from '@/features/job/components/Jobcard'
 import HeaderFilterBar from '@/features/job/components/HeaderFilterBar'
-import { useDispatch, useSelector } from 'react-redux'
-import useGetAllJobs from '@/shared/hooks/useGetAllJobs'
 import { Loader2 } from 'lucide-react'
-import { saveJobThunk, unsaveJobThunk } from '@/thunk/SavedJobThunk'
+import { useGetAllJobsQuery, useGetSavedJobsQuery, useSaveJobMutation, useUnsaveJobMutation } from '@/features/job/api/jobApi'
+
+import { useDebounce } from '@/shared/hooks/useDebounce.js'
+import MobileFilterDrawer from '../components/MobileFilterDrawer.jsx'
+import { toast } from 'sonner'
 
 const JobList = () => {
-    const [filters, setFilters] = useState({
+    const DEFAULT_FILTERS = {
         location: '',
         industry: '',
         salary: '',
-        experience: '' // ✅ ADD THIS
-    })
+        experience: ''
+    }
 
-    const { allJobs, savedJobs, loading } = useSelector((store) => store.job)
+    const [filters, setFilters] = useState(DEFAULT_FILTERS)
 
-    // console.log(allJobs);
-
-    const savedJobIds = useMemo(() => {
-        return new Set(savedJobs.map((job) => job._id))
-    }, [savedJobs])
-
-    const isSaved = (jobId) => savedJobIds.has(jobId)
-
-    const { setPage, hasMore, isFilterResettingRef } = useGetAllJobs(filters)
-
-    const dispatch = useDispatch()
-    // Infinite scroll trigger
+    const [page, setPage] = useState(1)
     const observerRef = useRef()
+    const debouncedFilters = useDebounce(filters)
+
+    const { data, isFetching, isLoading } = useGetAllJobsQuery({ page, filters: debouncedFilters })
+
+    const { data: savedData } = useGetSavedJobsQuery()
+
+    const [saveJob] = useSaveJobMutation()
+    const [unsaveJob] = useUnsaveJobMutation()
+
+    const jobs = data?.jobs || []
+    const hasMore = data?.hasMore
+    const resetFilters = () => {
+        setFilters(DEFAULT_FILTERS)
+        setPage(1)
+    }
+
+    const savedJobs = savedData?.savedJobs || []
+
+    const isSaved = (id) => savedJobs.some((j) => j._id === id)
+
+    const toggleSave = async (jobId) => {
+        try {
+            if (isSaved(jobId)) {
+                await unsaveJob(jobId).unwrap()
+            } else {
+                await saveJob(jobId).unwrap()
+            }
+        } catch (err) {
+            toast.error(err?.data?.message || 'Something went wrong')
+        }
+    }
 
     useEffect(() => {
-        if (!observerRef.current) return
+        if (!observerRef.current || !hasMore || isFetching) return
 
         const observer = new IntersectionObserver(([entry]) => {
-            if (entry.isIntersecting && hasMore && !loading && !isFilterResettingRef.current) {
-                setPage((prev) => prev + 1)
+            if (entry.isIntersecting) {
+                setPage((p) => p + 1)
             }
         })
 
         observer.observe(observerRef.current)
-
         return () => observer.disconnect()
-    }, [hasMore, loading, setPage])
-
-    const handleSaveToggle = (jobId) => {
-        if (isSaved(jobId)) {
-            dispatch(unsaveJobThunk(jobId))
-        } else {
-            dispatch(saveJobThunk(jobId))
-        }
-    }
+    }, [hasMore, isFetching])
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-6">
-            {/* HEADER FILTER BAR — FULL WIDTH */}
+            <MobileFilterDrawer
+                filters={filters}
+                setFilters={setFilters}
+                resetFilters={resetFilters}
+            />
+
             <HeaderFilterBar
                 filters={filters}
                 setFilters={setFilters}
+                resetFilters={resetFilters}
             />
 
-            <div className="w-full flex justify-center mt-4">
-                <div className="w-full md:w-11/12 max-w-5xl mx-auto">
-                    <p className="text-gray-700 font-medium">
-                        {allJobs.length} job{allJobs.length !== 1 ? 's' : ''} found
-                    </p>
-                </div>
+            <div className="space-y-4 mt-4">
+                {jobs.map((job) => (
+                    <JobCard
+                        key={job._id}
+                        job={job}
+                        isSaved={isSaved(job._id)}
+                        onToggleSave={() => toggleSave(job._id)}
+                    />
+                ))}
             </div>
 
-            <div className="w-full flex justify-center mt-2">
-                <div className="w-full md:w-11/12 max-w-5xl mx-auto flex flex-col gap-4">
-                    {allJobs.map((job) => (
-                        <JobCard
-                            key={job._id}
-                            job={job}
-                            isSaved={isSaved(job._id)}
-                            onToggleSave={() => handleSaveToggle(job._id)}
-                        />
-                    ))}
-                </div>
-            </div>
-
-            {loading && (
-                <div className="flex justify-center py-4">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            {(isLoading || isFetching) && (
+                <div className="flex justify-center py-6">
+                    <Loader2 className="animate-spin" />
                 </div>
             )}
 
@@ -91,8 +100,6 @@ const JobList = () => {
                 ref={observerRef}
                 className="h-10"
             />
-
-            {!hasMore && <p className="text-center text-gray-500 mt-4">No more jobs available</p>}
         </div>
     )
 }

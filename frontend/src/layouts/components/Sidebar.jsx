@@ -1,11 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Building2, Briefcase, LayoutDashboard, LogOut } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar'
 import { Button } from '@/shared/ui/button'
-import { USER_API_END_POINT } from '@/utils/constants'
-import { setUser } from '@/features/auth/authSlice'
+import { logout as logoutAction } from '@/features/auth/authSlice'
+
+import { logout } from '@/features/auth/authSlice'
 import { toast } from 'sonner'
 
 const Sidebar = () => {
@@ -16,20 +16,14 @@ const Sidebar = () => {
 
     const logoutHandler = async () => {
         try {
-            const res = await axios.get(`${USER_API_END_POINT}/logout`, {
-                withCredentials: true
-            })
-
-            if (res.data.success) {
-                dispatch(setUser(null))
-                navigate('/login')
-                toast.success('Logged out successfully')
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Logout failed')
+            await logout().unwrap()
+            dispatch(logoutAction())
+            navigate('/login')
+            toast.success('Logged out successfully')
+        } catch {
+            toast.error('Logout failed')
         }
     }
-
     const linkClass = (path) =>
         `flex items-center gap-3 p-3 rounded-lg text-sm transition 
      ${pathname === path ? 'bg-primary text-primary-foreground' : 'hover:bg-accent'}`

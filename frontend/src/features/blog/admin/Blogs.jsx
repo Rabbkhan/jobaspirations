@@ -2,15 +2,20 @@ import { Link } from 'react-router-dom'
 import { Card, CardHeader, CardContent } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
 import { toast } from 'sonner'
-import { useFetchBlogs } from '../../../shared/hooks/useFetchBlogs'
+
+import { useGetAdminBlogsQuery, useDeleteBlogMutation } from '@/features/blog/api/adminBlogApi'
 
 const Blogs = () => {
-    const { blogs = [], deleteBlog } = useFetchBlogs()
+    const { data } = useGetAdminBlogsQuery()
+    const [deleteBlog] = useDeleteBlogMutation()
+
+    const blogs = data?.blogs || []
 
     const handleDelete = async (id) => {
         if (!confirm('Are you sure?')) return
+
         try {
-            await deleteBlog(id)
+            await deleteBlog(id).unwrap()
             toast.success('Blog deleted')
         } catch {
             toast.error('Delete failed')
@@ -22,7 +27,6 @@ const Blogs = () => {
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Blog Management</h2>
 
-                {/* CREATE → PAGE */}
                 <Button asChild>
                     <Link to="/admin/blogs/new">Create Blog</Link>
                 </Button>
@@ -32,6 +36,7 @@ const Blogs = () => {
                 <Card key={blog._id}>
                     <CardHeader className="flex justify-between items-center">
                         <h3 className="font-semibold">{blog.title}</h3>
+
                         <span>{blog.published ? 'Published' : 'Draft'}</span>
                     </CardHeader>
 
@@ -39,7 +44,6 @@ const Blogs = () => {
                         <p>{blog.content.slice(0, 120)}...</p>
 
                         <div className="flex gap-2">
-                            {/* EDIT → PAGE */}
                             <Button
                                 size="sm"
                                 asChild>

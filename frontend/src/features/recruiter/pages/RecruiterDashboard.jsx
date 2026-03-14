@@ -1,139 +1,133 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
 import { Button } from '@/shared/ui/button'
 import { Users, Briefcase, Building2 } from 'lucide-react'
 import { Badge } from '@/shared/ui/badge'
-import axios from 'axios'
-import { DASHBOARD_API_END_POINT } from '@/utils/constants'
+import { toast } from 'sonner'
+import { useGetRecruiterDashboardQuery } from '../api/recruiterApi.js'
 
 const RecruiterDashboard = () => {
-    const [stats, setStats] = useState({
-        totalJobs: 0,
-        totalApplicants: 0,
-        activeCompanies: 0
+    const { data, isLoading, isError, error, refetch } = useGetRecruiterDashboardQuery(undefined, {
+        refetchOnMountOrArgChange: true,
+        refetchOnFocus: true
     })
-
-    const [recentApplicants, setRecentApplicants] = useState([])
-    const [loading, setLoading] = useState(true)
-
-    useEffect(() => {
-        const fetchDashboard = async () => {
-            setLoading(true)
-            try {
-                const res = await axios.get(`${DASHBOARD_API_END_POINT}/recruiter`, { withCredentials: true })
-
-                if (res.data.success) {
-                    setStats(res.data.stats)
-                    setRecentApplicants(res.data.recentApplicants)
-                }
-            } catch (error) {
-                console.error('Dashboard fetch error:', error)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        fetchDashboard()
-    }, [])
-
-    if (loading) {
-        return <div className="p-6 text-center text-sm">Loading dashboard...</div>
+    if (isLoading) {
+        return (
+            <div className="min-h-screen p-6 space-y-6 animate-pulse">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[...Array(3)].map((_, i) => (
+                        <div
+                            key={i}
+                            className="h-28 bg-muted rounded-xl"
+                        />
+                    ))}
+                </div>
+                <div className="h-64 bg-muted rounded-xl" />
+            </div>
+        )
     }
+
+    if (isError) {
+        toast.error(error?.data?.message || 'Failed to load dashboard')
+
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                <p className="text-muted-foreground">Unable to load dashboard</p>
+                <Button onClick={refetch}>Retry</Button>
+            </div>
+        )
+    }
+
+    const stats = data?.stats || {}
+    const recentApplicants = data?.recentApplicants || []
 
     return (
         <div className="min-h-screen bg-background p-6 space-y-6">
-            {/* ✅ TOP STATS */}
+            {/* 🔥 Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                    <CardHeader className="flex justify-between items-center">
-                        <CardTitle>Total Jobs</CardTitle>
-                        <Briefcase className="w-6 h-6 text-primary" />
-                    </CardHeader>
-                    <CardContent className="text-3xl font-bold">{stats.totalJobs}</CardContent>
-                </Card>
+                <StatCard
+                    title="Total Jobs"
+                    value={stats.totalJobs}
+                    icon={<Briefcase className="w-6 h-6 text-primary" />}
+                />
 
-                <Card>
-                    <CardHeader className="flex justify-between items-center">
-                        <CardTitle>Total Applicants</CardTitle>
-                        <Users className="w-6 h-6 text-primary" />
-                    </CardHeader>
-                    <CardContent className="text-3xl font-bold">{stats.totalApplicants}</CardContent>
-                </Card>
+                <StatCard
+                    title="Total Applicants"
+                    value={stats.totalApplicants}
+                    icon={<Users className="w-6 h-6 text-primary" />}
+                />
 
-                <Card>
-                    <CardHeader className="flex justify-between items-center">
-                        <CardTitle>Active Companies</CardTitle>
-                        <Building2 className="w-6 h-6 text-primary" />
-                    </CardHeader>
-                    <CardContent className="text-3xl font-bold">{stats.activeCompanies}</CardContent>
-                </Card>
+                <StatCard
+                    title="Active Companies"
+                    value={stats.activeCompanies}
+                    icon={<Building2 className="w-6 h-6 text-primary" />}
+                />
             </div>
 
-            {/* ✅ RECENT APPLICANTS TABLE */}
-            <Card className="mt-6">
-                <CardHeader>
-                    <div className="flex justify-between items-center">
-                        <CardTitle>Recent Applicants</CardTitle>
-                        <Button
-                            variant="outline"
-                            size="sm">
-                            View All
-                        </Button>
-                    </div>
+            {/* 🔥 Recent Applicants */}
+            <Card>
+                <CardHeader className="flex justify-between items-center">
+                    <CardTitle>Recent Applicants</CardTitle>
+                    <Button
+                        variant="outline"
+                        size="sm">
+                        View All
+                    </Button>
                 </CardHeader>
 
                 <CardContent>
-                    <table className="w-full text-sm border">
-                        <thead>
-                            <tr className="border-b">
-                                <th className="text-left py-2 px-3">Name</th>
-                                <th className="text-left py-2 px-3">Job</th>
-                                <th className="text-left py-2 px-3">Applied On</th>
-                                <th className="text-left py-2 px-3">Status</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {recentApplicants.length === 0 ? (
+                    {recentApplicants.length === 0 ? (
+                        <div className="text-center py-10 text-muted-foreground">No recent applicants yet</div>
+                    ) : (
+                        <table className="w-full text-sm">
+                            <thead className="bg-muted/50">
                                 <tr>
-                                    <td
-                                        colSpan="4"
-                                        className="text-center py-4 text-muted-foreground">
-                                        No recent applicants found
-                                    </td>
+                                    <th className="text-left py-3 px-3">Name</th>
+                                    <th className="text-left py-3 px-3">Job</th>
+                                    <th className="text-left py-3 px-3">Applied On</th>
+                                    <th className="text-left py-3 px-3">Status</th>
                                 </tr>
-                            ) : (
-                                recentApplicants.map((app) => (
+                            </thead>
+                            <tbody>
+                                {recentApplicants.map((app) => (
                                     <tr
                                         key={app._id}
-                                        className="border-b hover:bg-muted">
-                                        <td className="py-2 px-3">{app.applicant?.fullname}</td>
-
-                                        <td className="py-2 px-3">{app.job?.title}</td>
-
-                                        <td className="py-2 px-3">{new Date(app.createdAt).toLocaleDateString('en-IN')}</td>
-
-                                        <td className="py-2 px-3">
-                                            <Badge
-                                                className={
-                                                    app.status === 'pending'
-                                                        ? 'bg-yellow-500/10 text-yellow-500'
-                                                        : app.status === 'accepted'
-                                                          ? 'bg-green-500/10 text-green-500'
-                                                          : 'bg-red-500/10 text-red-500'
-                                                }>
-                                                {app.status}
-                                            </Badge>
+                                        className="border-b hover:bg-muted/50 transition">
+                                        <td className="py-3 px-3 font-medium">{app.applicant?.fullname}</td>
+                                        <td className="py-3 px-3">{app.job?.title}</td>
+                                        <td className="py-3 px-3">{new Date(app.createdAt).toLocaleDateString('en-IN')}</td>
+                                        <td className="py-3 px-3">
+                                            <StatusBadge status={app.status} />
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </CardContent>
             </Card>
         </div>
     )
+}
+
+const StatCard = ({ title, value, icon }) => (
+    <Card className="hover:shadow-md transition">
+        <CardHeader className="flex justify-between items-center">
+            <CardTitle className="text-sm">{title}</CardTitle>
+            {icon}
+        </CardHeader>
+        <CardContent className="text-3xl font-bold">{value}</CardContent>
+    </Card>
+)
+
+const StatusBadge = ({ status }) => {
+    const styles = {
+        pending: 'bg-yellow-500/10 text-yellow-600',
+        accepted: 'bg-green-500/10 text-green-600',
+        rejected: 'bg-red-500/10 text-red-600'
+    }
+
+    return <Badge className={styles[status] || ''}>{status}</Badge>
 }
 
 export default RecruiterDashboard

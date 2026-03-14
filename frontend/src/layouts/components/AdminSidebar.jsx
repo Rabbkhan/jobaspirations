@@ -8,7 +8,6 @@ const Sidebar = () => {
     const baseClass = 'flex items-center gap-2 p-2 rounded hover:bg-primary/10'
     const activeClass = 'bg-primary/10 font-medium'
 
-    console.log(admin)
     return (
         <aside className="w-64 bg-white shadow-md p-4 flex flex-col gap-4">
             {/* Admin Welcome */}

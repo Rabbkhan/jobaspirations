@@ -1,52 +1,40 @@
 import { useState } from 'react'
-import axios from 'axios'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { useNavigate } from 'react-router-dom'
-import { USER_API_END_POINT } from '../../../utils/constants'
-import { useDispatch, useSelector } from 'react-redux'
-import { setAdmin, setAdminLoading } from '@/features/admin/adminAuthSlice'
+import { useDispatch } from 'react-redux'
+import { setAdmin } from '@/features/admin/adminAuthSlice'
+import { useAdminLoginMutation } from '@/features/admin/api/adminAuthApi'
 
 const AdminLogin = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-    // ✅ LOCAL STATE
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     })
     const [error, setError] = useState('')
 
-    // ✅ REDUX STATE
-    const { loading } = useSelector((state) => state.adminAuth)
+    const [adminLogin, { isLoading }] = useAdminLoginMutation()
+
     const handleSubmit = async (e) => {
         e.preventDefault()
-        dispatch(setAdminLoading(true))
         setError('')
 
         try {
-            const res = await axios.post(`${USER_API_END_POINT}/admin/login`, formData, { withCredentials: true })
+            const res = await adminLogin(formData).unwrap()
+            const { safeUser } = res
 
-            if (!res.data?.success) {
-                throw new Error('Login failed')
-            }
-
-            const { safeUser } = res.data
-
-            // 🚫 ABSOLUTE BLOCK
+            // 🚫 HARD BLOCK
             if (safeUser.role !== 'admin') {
                 throw new Error('Unauthorized access')
             }
 
-            // ✅ ONLY NOW update Redux
             dispatch(setAdmin(safeUser))
-            dispatch(setAdminLoading(false))
-
             navigate('/admin/dashboard', { replace: true })
         } catch (err) {
-            dispatch(setAdminLoading(false))
-            setError(err.response?.data?.message || err.message || 'Login failed')
+            setError(err?.data?.message || err.message || 'Login failed')
         }
     }
 
@@ -62,7 +50,6 @@ const AdminLogin = () => {
                 <Input
                     placeholder="Admin Email"
                     type="email"
-                    autoComplete="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     required
@@ -71,7 +58,6 @@ const AdminLogin = () => {
                 <Input
                     placeholder="Password"
                     type="password"
-                    autoComplete="current-password"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     required
@@ -79,8 +65,8 @@ const AdminLogin = () => {
 
                 <Button
                     type="submit"
-                    disabled={loading}>
-                    {loading ? 'Logging in...' : 'Login'}
+                    disabled={isLoading}>
+                    {isLoading ? 'Logging in...' : 'Login'}
                 </Button>
             </form>
         </div>

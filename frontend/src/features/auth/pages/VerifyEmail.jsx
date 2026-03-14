@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { USER_API_END_POINT } from '@/utils/constants'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card'

@@ -19,6 +19,7 @@ const Unauthorized = () => {
         )
     }
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
         // 2. Recruiter/Admin trying to access student pages (like /profile)
         if (user.role === 'recruiter') {
