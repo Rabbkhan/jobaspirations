@@ -14,10 +14,8 @@ export const ALLOWED_LOCATIONS = [
   "Indore",
   "Coimbatore",
   "AndhraPradesh",
-  "Remote"
+  "Remote",
 ];
-
-
 
 export const ALLOWED_INDUSTRIES = [
   "Software / IT Services",
@@ -34,5 +32,7 @@ export const ALLOWED_INDUSTRIES = [
   "Manufacturing / Industrial Engineering",
   "Robotics & Automation",
   "Healthcare / MedTech Engineering",
-  "Other"
+  "Other",
 ];
+
+export const JOB_TYPES = ["Full-Time", "Part-Time", "Internship", "Contract"];

@@ -94,6 +94,14 @@ export const recruiterApi = baseApi.injectEndpoints({
                 body: { status }
             }),
             invalidatesTags: (result, error, { jobId }) => [{ type: 'RecruiterApplicants', id: jobId }, 'RecruiterDashboard']
+        }),
+        // New: recruiter apply request
+        submitApplication: builder.mutation({
+            query: (formData) => ({
+                url: '/recruiterapply/apply',
+                method: 'POST',
+                body: formData
+            })
         })
     })
 })

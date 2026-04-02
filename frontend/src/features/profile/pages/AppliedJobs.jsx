@@ -15,14 +15,15 @@ const AppliedJobs = () => {
         limit: 10
     })
 
-    const applications = data?.applications || []
     const totalPages = data?.pagination?.totalPages || 1
 
     /* ---------------- Filter Jobs ---------------- */
+
     const filteredJobs = useMemo(() => {
+        const applications = data?.applications || []
         if (statusFilter === 'All') return applications
         return applications.filter((job) => job.status === statusFilter)
-    }, [applications, statusFilter])
+    }, [data?.applications, statusFilter])
 
     /* ---------------- Date Format ---------------- */
     const formatDate = (dateStr) =>

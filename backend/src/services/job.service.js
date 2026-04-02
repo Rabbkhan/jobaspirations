@@ -7,6 +7,7 @@ import { STATUS } from "../constants/statusCodes.js";
 import {
   ALLOWED_INDUSTRIES,
   ALLOWED_LOCATIONS,
+  JOB_TYPES,
 } from "../constants/job.constants.js";
 
 // =============================
@@ -124,6 +125,7 @@ export const getJobFilters = async () => {
     filters: {
       locations: ALLOWED_LOCATIONS,
       industries: ALLOWED_INDUSTRIES,
+      jobTypes: JOB_TYPES,
 
       salaries: [
         { label: "₹0 - ₹50,000", value: "0-50000" },

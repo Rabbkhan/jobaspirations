@@ -154,10 +154,13 @@ const JobForm = ({ defaultValues = {}, companies = [], filters = {}, onSubmit, i
                                             </SelectTrigger>
 
                                             <SelectContent>
-                                                <SelectItem value="Full-Time">Full-Time</SelectItem>
-                                                <SelectItem value="Part-Time">Part-Time</SelectItem>
-                                                <SelectItem value="Remote">Remote</SelectItem>
-                                                <SelectItem value="Contract">Contract</SelectItem>
+                                                {filters?.jobTypes?.map((type) => (
+                                                    <SelectItem
+                                                        key={type}
+                                                        value={type}>
+                                                        {type}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                     )}

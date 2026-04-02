@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { JOB_TYPES } from "../constants/job.constants.js";
 
 const jobSchema = new mongoose.Schema(
   {
@@ -23,44 +24,43 @@ const jobSchema = new mongoose.Schema(
     /* ======================
        SALARY (MIN - MAX)
     ====================== */
-salary: {
-  min: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  max: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  currency: {
-    type: String,
-    default: "INR",
-  },
-  period: {
-    type: String,
-    enum: ["month", "year"],
-    default: "year",
-  },
-},
+    salary: {
+      min: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      max: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      currency: {
+        type: String,
+        default: "INR",
+      },
+      period: {
+        type: String,
+        enum: ["month", "year"],
+        default: "year",
+      },
+    },
 
     /* ======================
        EXPERIENCE (IN MONTHS)
     ====================== */
-experience: {
-  min: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  max: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-},
-
+    experience: {
+      min: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+      max: {
+        type: Number,
+        required: true,
+        min: 0,
+      },
+    },
 
     location: {
       type: String,
@@ -77,7 +77,7 @@ experience: {
     jobType: {
       type: String,
       required: true,
-      enum: ["Full-Time", "Part-Time", "Internship", "Contract"],
+      enum: JOB_TYPES,
     },
 
     position: {
@@ -112,7 +112,7 @@ experience: {
       default: "Active",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Job = mongoose.model("Job", jobSchema);

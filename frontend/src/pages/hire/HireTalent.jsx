@@ -10,11 +10,19 @@ export default function HireTalent() {
     const processRef = useRef(null)
 
     const handlePrimaryCTA = () => {
-        if (!user) return navigate('/login')
-        if (user.role !== 'recruiter') return navigate('/become-recruiter')
-        navigate('/admin/jobs/create')
-    }
+        if (!user) {
+            navigate('/login', {
+                state: { redirect: '/become-recruiter' }
+            })
+            return
+        }
+        if (user.role === 'recruiter') {
+            navigate('/recruiter/dashboard')
+            return
+        }
 
+        navigate('/become-recruiter')
+    }
     const scrollToProcess = () => {
         processRef.current?.scrollIntoView({ behavior: 'smooth' })
     }

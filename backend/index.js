@@ -39,6 +39,8 @@ import dashboardRoutes from "./src/routes/dashboard.route.js";
 import adminblogRoutes from "./src/routes/admin.blog.routes.js";
 import BlogcategoryRoutes from "./src/routes/category.routes.js";
 import publicblogRoutes from "./src/routes/blog.routes.js";
+import RecruiterRoutes from "./src/routes/recruiter.route.js";
+
 // Infrastructure
 import connectDb from "./src/config/db.js";
 import { FRONTEND_URL, FRONTEND_ALLOWED_ORIGINS } from "./src/config/env.js";
@@ -139,6 +141,7 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/adminblog", adminblogRoutes);
 app.use("/api/v1/blogcategory", BlogcategoryRoutes);
 app.use("/api/v1/blog", publicblogRoutes);
+app.use("/api/v1/recruiter-applications", RecruiterRoutes);
 
 // Root sanity check
 app.get("/", (req, res) => {

@@ -72,6 +72,10 @@ import BlogCategories from '@/features/blog/admin/Blogcategories'
 import BlogEditorPage from '@/features/blog/admin/BlogEditorPage'
 import Settings from '@/features/admin/pages/Settings'
 import Savedjob from '@/features/job/pages/Savedjobs.jsx'
+import HireApply from '@/features/recruiter/pages/RecruiterApplyPage.jsx'
+import PendingApproval from '@/pages/static/PendingApproval.jsx'
+import RecruiterOnboarding from '@/pages/recruiter/RecruiterOnboarding.jsx'
+import RecruiterPendingPage from '@/pages/recruiter/RecruiterPendingPage.jsx'
 
 const AppRoutes = () => {
     return (
@@ -154,7 +158,28 @@ const AppRoutes = () => {
                     path="/hire"
                     element={<HireTalent />}
                 />
+
+                {/* recruiter onboarding */}
+                <Route
+                    path="/become-recruiter"
+                    element={
+                        <ProtectedRoute>
+                            <RecruiterOnboarding />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/recruiter/pending-approval"
+                    element={
+                        <ProtectedRoute>
+                            <RecruiterPendingPage />
+                        </ProtectedRoute>
+                    }
+                />
+
                 {/* ... other public/student routes */}
+
                 <Route
                     path="/blogs"
                     element={<BlogsPage />}

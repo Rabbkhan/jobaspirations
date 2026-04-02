@@ -20,7 +20,7 @@ const Register = () => {
 
     const navigate = useNavigate()
     const [register, { isLoading }] = useRegisterMutation()
-
+    const redirect = location.state?.redirect
     const hanldeChange = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value })
     }
@@ -45,9 +45,17 @@ const Register = () => {
 
         try {
             // dispatch(setLoading(true))
-            await register(formData).unwrap() // we just wait for success
+
+            await register(formData).unwrap()
+
             toast.success('Account created! Please verify your email')
-            navigate('/verify-email', { state: { email: input.email } })
+
+            navigate('/verify-email', {
+                state: {
+                    email: input.email,
+                    redirect // ✅ PASS REDIRECT
+                }
+            })
         } catch (err) {
             const msg = err?.data?.message || 'Registration failed'
             toast.error(msg)

@@ -5,15 +5,20 @@ import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Card, CardHeader, CardTitle, CardContent } from '@/shared/ui/card'
 import { useResendVerificationCodeMutation, useVerifyEmailMutation } from '@/features/auth/api/authApi.js'
+import { useDispatch } from 'react-redux'
+import { setUser } from '../authSlice.js'
 
 const VerifyEmail = () => {
     const location = useLocation()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const params = new URLSearchParams(location.search)
     const emailParam = params.get('email')
     const stateEmail = location.state?.email
-    const storedEmail = localStorage.getItem('pendingEmail')
+    const storedEmail = sessionStorage.getItem('pendingEmail')
+
+    // ✅ unified email source
     const email = emailParam || stateEmail || storedEmail || ''
 
     const [code, setCode] = useState('')
@@ -21,8 +26,9 @@ const VerifyEmail = () => {
     const [verifyEmail, { isLoading: verifying }] = useVerifyEmailMutation()
     const [resendCode, { isLoading: resending }] = useResendVerificationCodeMutation()
 
+    // ✅ store email for refresh safety
     useEffect(() => {
-        if (email) localStorage.setItem('pendingEmail', email)
+        if (email) sessionStorage.setItem('pendingEmail', email)
     }, [email])
 
     if (!email) {
@@ -31,18 +37,34 @@ const VerifyEmail = () => {
 
     const handleVerify = async (e) => {
         e.preventDefault()
-        if (code.length !== 6) return toast.error('Enter a valid 6-digit code')
+
+        if (code.length !== 6) {
+            return toast.error('Enter a valid 6-digit code')
+        }
 
         try {
             const res = await verifyEmail({ email, code }).unwrap()
+
             toast.success(res.message || 'Email verified successfully')
-            localStorage.removeItem('pendingEmail')
-            navigate('/login')
+
+            // ✅ cleanup
+            sessionStorage.removeItem('pendingEmail')
+
+            // ✅ cookie already set
+            dispatch(setUser(res.user))
+
+            const redirect = location.state?.redirect || sessionStorage.getItem('redirectAfterAuth')
+
+            if (redirect) {
+                sessionStorage.removeItem('redirectAfterAuth') // ✅ FIXED
+                navigate(redirect)
+            } else {
+                navigate('/profile')
+            }
         } catch (err) {
             toast.error(err.data?.message || 'Verification failed')
         }
     }
-
     const handleResend = async () => {
         try {
             await resendCode(email).unwrap()
@@ -51,7 +73,6 @@ const VerifyEmail = () => {
             toast.error(err.data?.message || 'Failed to resend code')
         }
     }
-
     return (
         <div className="flex justify-center items-center min-h-screen">
             <Card className="w-100 shadow-md border">

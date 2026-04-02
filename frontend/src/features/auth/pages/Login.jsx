@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/shared/ui/card'
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
 import { Label } from '@/shared/ui/label'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { setUser } from '@/features/auth/authSlice'
@@ -16,6 +16,7 @@ const Login = () => {
         password: ''
     })
     const [login, { isLoading }] = useLoginMutation()
+    const location = useLocation()
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -31,15 +32,28 @@ const Login = () => {
 
         try {
             const res = await login(input).unwrap()
+
             dispatch(setUser(res.safeUser))
+
+            toast.success(res.message)
+
+            const redirect = location.state?.redirect
+
+            if (redirect) {
+                navigate(redirect)
+                return
+            }
+
             const role = res.safeUser.role
+
             if (role === 'student') navigate('/profile')
             else if (role === 'recruiter') navigate('/recruiter')
+            else if (role === 'admin') navigate('/admin')
             else toast.error('Unauthorized role')
-            toast.success(res.message)
         } catch (error) {
             const msg = error?.data?.message || 'Login failed'
             toast.error(msg)
+
             if (msg.includes('verify your email')) navigate(`/verify-email?email=${input.email}`)
         }
     }
@@ -119,6 +133,7 @@ const Login = () => {
                                 Don’t have an account?{' '}
                                 <Link
                                     to="/register"
+                                    state={{ redirect: location.state?.redirect }}
                                     className="text-primary hover:underline">
                                     Register
                                 </Link>

@@ -146,7 +146,7 @@ export const logout = async (req, res) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax", // ✅ MUST MATCH
     });
 
     res.status(STATUS.OK).json({
@@ -155,6 +155,7 @@ export const logout = async (req, res) => {
     });
   } catch (error) {
     console.error("Logout Error:", error.message);
+
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: MESSAGES.LOGOUT_FAILED,
