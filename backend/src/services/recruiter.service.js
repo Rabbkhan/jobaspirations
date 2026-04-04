@@ -1,7 +1,13 @@
 import { RecruiterApplication } from "../models/recruiter.model.js";
-import { User } from "../models/user.model.js";
 import { Company } from "../models/company.model.js";
 import { uploadToCloud } from "../utils/uploadToCloud.js";
+import { User } from "../modules/auth/user.model.js";
+import { sendRecruiterApprovedEmail } from "../middlewares/Email.js";
+
+const CLIENT_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_URL_LIVE
+    : process.env.FRONTEND_URL_LOCAL;
 
 export const applyRecruiter = async (userId, companyData, file) => {
   // Check if user already applied
@@ -44,7 +50,7 @@ export const getAllRecruiterApplications = async () => {
     .populate("companyId", "companyname location")
     .sort({ createdAt: -1 });
 };
-
+// approveRecruiter — add Trigger 7
 export const approveRecruiter = async (applicationId) => {
   const application = await RecruiterApplication.findById(applicationId);
   if (!application) throw new Error("Application not found");
@@ -52,20 +58,22 @@ export const approveRecruiter = async (applicationId) => {
   application.status = "approved";
   await application.save();
 
-  // Activate company
   const company = await Company.findById(application.companyId);
   company.isActive = true;
   await company.save();
 
-  // Upgrade user role
   const user = await User.findById(application.userId);
   user.role = "recruiter";
   user.isApproved = true;
   await user.save();
 
+  // Trigger 7 — notify recruiter they're approved
+  await sendRecruiterApprovedEmail(user.email, user.fullname).catch((err) =>
+    console.error("Trigger 7 email failed:", err),
+  );
+
   return application;
 };
-
 export const rejectRecruiter = async (applicationId, reason = "") => {
   const application = await RecruiterApplication.findById(applicationId);
   if (!application) throw new Error("Application not found");
@@ -94,4 +102,11 @@ export const rejectRecruiter = async (applicationId, reason = "") => {
   }
 
   return application;
+};
+
+export const getMyApplication = async (userId) => {
+  return await RecruiterApplication.findOne({ userId }).populate(
+    "companyId",
+    "companyname logo",
+  );
 };

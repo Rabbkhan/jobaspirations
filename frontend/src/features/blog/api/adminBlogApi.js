@@ -41,4 +41,4 @@ export const adminBlogApi = baseApi.injectEndpoints({
     })
 })
 
-export const { useGetAdminBlogsQuery, useCreateBlogMutation, useUpdateBlogMutation, useDeleteBlogMutation } = adminBlogApi
+export const { useGetAdminBlogsQuery, useCreateBlogMutation, useUpdateBlogMutation, useGetAdminBlogByIdQuery, useDeleteBlogMutation } = adminBlogApi

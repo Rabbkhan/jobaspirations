@@ -2,6 +2,7 @@ import {
   applyRecruiter,
   approveRecruiter,
   getAllRecruiterApplications,
+  getMyApplication,
   rejectRecruiter,
 } from "../services/recruiter.service.js";
 
@@ -86,5 +87,14 @@ export const rejectRecruiterController = async (req, res) => {
       success: false,
       message: err.message,
     });
+  }
+};
+
+export const getMyApplicationController = async (req, res) => {
+  try {
+    const application = await getMyApplication(req.user._id);
+    res.json({ success: true, application }); // null if none
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };

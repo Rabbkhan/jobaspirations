@@ -5,9 +5,7 @@ import {
   getPublicBlogsController,
   getRelatedBlogsController,
 } from "../controllers/getPublicBlogsController.js";
-import {
-  getPublicBlogBySlugController,
-} from "../controllers/getPublicBlogBySlugController.js";
+import { getPublicBlogBySlugController } from "../controllers/getPublicBlogBySlugController.js";
 import { incrementBlogViewController } from "../controllers/incrementBlogViewController.js";
 
 const router = express.Router();
@@ -17,7 +15,6 @@ const router = express.Router();
 router.get("/categories", getBlogCategoriesController);
 router.get("/", getPublicBlogsController);
 router.get("/latest", getLatestBlogsController);
-
 
 router.get("/related/:slug", getRelatedBlogsController);
 router.get("/:slug", getPublicBlogBySlugController);

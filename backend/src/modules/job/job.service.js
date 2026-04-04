@@ -1,18 +1,24 @@
 // services/job.service.js
 import mongoose from "mongoose";
-import { Job } from "../models/job.model.js";
-import { Company } from "../models/company.model.js";
-import { MESSAGES } from "../constants/messages.js";
-import { STATUS } from "../constants/statusCodes.js";
+import { Job } from "./job.model.js";
+import { Company } from "../../models/company.model.js";
+import { MESSAGES } from "../../constants/messages.js";
+import { STATUS } from "../../constants/statusCodes.js";
 import {
   ALLOWED_INDUSTRIES,
   ALLOWED_LOCATIONS,
   JOB_TYPES,
-} from "../constants/job.constants.js";
+} from "../../constants/job.constants.js";
+import axios from "axios";
+import { mapJSearchToCompany, mapJSearchToJob } from "./job.mapper.js";
+import { User } from "../auth/user.model.js";
+import { sendNewJobAlert } from "../../middlewares/Email.js";
+import { FRONTEND_URL } from "../../config/env.js";
 
 // =============================
 // CREATE JOB
 // =============================
+// createJob — add Trigger 6
 export const createJob = async ({ data, userId }) => {
   const { company, location, industry, salary, experience } = data;
 
@@ -47,21 +53,14 @@ export const createJob = async ({ data, userId }) => {
     throw err;
   }
 
-  if (!salary?.min || !salary?.max) {
+  if (!salary?.min || !salary?.max)
     throw new Error("Salary min and max are required");
-  }
-
-  if (salary.max < salary.min) {
+  if (salary.max < salary.min)
     throw new Error("Max salary must be greater than min salary");
-  }
-
-  if (experience?.min === undefined || experience?.max === undefined) {
+  if (experience?.min === undefined || experience?.max === undefined)
     throw new Error("Experience min and max are required");
-  }
-
-  if (experience.max < experience.min) {
+  if (experience.max < experience.min)
     throw new Error("Max experience must be >= min experience");
-  }
 
   const job = await Job.create({
     ...data,
@@ -69,6 +68,30 @@ export const createJob = async ({ data, userId }) => {
     experience,
     created_by: userId,
   });
+
+  // Trigger 6 — alert matching candidates
+  const matchingCandidates = await User.find({
+    role: "student",
+    "profile.skills": { $in: data.skills || [] },
+  }).select("email fullname");
+
+  if (matchingCandidates.length > 0) {
+    await Promise.all(
+      matchingCandidates.map((candidate) =>
+        sendNewJobAlert(
+          candidate.email,
+          candidate.fullname,
+          job.title,
+          existingCompany.companyname,
+          job.location,
+          job.jobType,
+          `${FRONTEND_URL}/jobs/${job._id}`,
+        ).catch((err) =>
+          console.error(`Job alert failed for ${candidate.email}:`, err),
+        ),
+      ),
+    );
+  }
 
   return {
     success: true,
@@ -330,4 +353,120 @@ export const deleteJob = async ({ jobId, userId }) => {
     message: MESSAGES.JOB_DELETED,
     deletedJobId: jobId,
   };
+};
+
+// ─── fetch from JSearch API ───────────────────────────────
+const fetchFromJSearch = async (query) => {
+  const response = await axios.get("https://jsearch.p.rapidapi.com/search", {
+    params: {
+      query,
+      page: 1,
+      num_pages: 1,
+      country: "in",
+      language: "en",
+    },
+    headers: {
+      "X-RapidAPI-Key": process.env.JSEARCH_API_KEY,
+      "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
+    },
+  });
+  return response.data?.data ?? [];
+};
+
+// ─── upsert company ───────────────────────────────────────
+const upsertCompany = async (apiJob) => {
+  const companyData = mapJSearchToCompany(apiJob);
+  const company = await Company.findOneAndUpdate(
+    { normalizedName: companyData.normalizedName },
+    companyData,
+    { upsert: true, new: true },
+  );
+  return company;
+};
+
+// ─── upsert job ───────────────────────────────────────────
+const upsertJob = async (apiJob, companyId) => {
+  const jobData = mapJSearchToJob(apiJob, companyId);
+  await Job.findOneAndUpdate({ externalId: jobData.externalId }, jobData, {
+    upsert: true,
+    new: true,
+  });
+};
+
+// ─── delete old external jobs ─────────────────────────────
+const deleteOldJobs = async () => {
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  await Job.deleteMany({
+    isExternal: true,
+    createdAt: { $lt: thirtyDaysAgo },
+  });
+};
+
+// ─── main sync function ───────────────────────────────────
+export const syncExternalJobs = async () => {
+  console.log("Starting job sync...");
+
+  const queries =
+    process.env.NODE_ENV === "development"
+      ? [
+          "developer jobs india", // 1 query in dev
+        ]
+      : [
+          // IT / Software
+          "software developer jobs india",
+          "full stack developer jobs india",
+          "python developer jobs india",
+          "data analyst jobs india",
+
+          // Electrical
+          "electrical engineer jobs india",
+
+          // Mechanical
+          "mechanical engineer jobs india",
+          "automobile engineer jobs india",
+
+          // Civil
+          "civil engineer jobs india",
+        ];
+
+  let totalSaved = 0;
+  let totalFailed = 0;
+
+  for (const query of queries) {
+    try {
+      const apiJobs = await fetchFromJSearch(query);
+
+      for (const apiJob of apiJobs) {
+        try {
+          // skip if no job id
+          if (!apiJob.job_id) continue;
+          if (!apiJob.job_title) continue;
+          if (!apiJob.job_description || apiJob.job_description.trim() === "")
+            continue;
+          if (!apiJob.employer_name) continue;
+          // upsert company
+          const company = await upsertCompany(apiJob);
+
+          // upsert job
+          await upsertJob(apiJob, company._id);
+
+          totalSaved++;
+        } catch (err) {
+          console.error(`Failed to save job ${apiJob.job_id}:`, err.message);
+          totalFailed++;
+        }
+      }
+
+      // delay between queries — avoid rate limiting
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    } catch (err) {
+      console.error(`Failed query "${query}":`, err.message);
+    }
+  }
+
+  // cleanup old jobs
+  await deleteOldJobs();
+
+  console.log(`Sync done. Saved: ${totalSaved}, Failed: ${totalFailed}`);
+  return { totalSaved, totalFailed };
 };

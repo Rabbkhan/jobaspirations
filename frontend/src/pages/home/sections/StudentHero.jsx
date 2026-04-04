@@ -1,101 +1,139 @@
 import { Button } from '@/shared/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { Briefcase, Sparkles, Bell, Clock } from 'lucide-react'
+import { Briefcase, Sparkles, Clock, ArrowRight, BookmarkCheck, UserCircle2, Search } from 'lucide-react'
 
 export default function StudentHero() {
     const navigate = useNavigate()
     const { user } = useSelector((state) => state.auth)
+    const firstName = user?.fullname?.split(' ')[0] || 'Student'
+
+    const quickLinks = [
+        {
+            icon: Briefcase,
+            label: 'Applied Jobs',
+            desc: 'Track your applications',
+            to: '/applied_jobs',
+            color: 'bg-blue-50 dark:bg-blue-900/20 border-blue-100 dark:border-blue-800',
+            iconColor: 'text-blue-600 dark:text-blue-400'
+        },
+        {
+            icon: BookmarkCheck,
+            label: 'Saved Jobs',
+            desc: 'Jobs you bookmarked',
+            to: '/profile/saved-jobs',
+            color: 'bg-violet-50 dark:bg-violet-900/20 border-violet-100 dark:border-violet-800',
+            iconColor: 'text-violet-600 dark:text-violet-400'
+        },
+        {
+            icon: UserCircle2,
+            label: 'My Profile',
+            desc: 'Complete your profile',
+            to: '/profile',
+            color: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800',
+            iconColor: 'text-emerald-600 dark:text-emerald-400'
+        }
+    ]
 
     return (
         <section className="w-full border-b bg-background relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            {/* subtle background pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative">
                 {/* LEFT */}
-                <div className="space-y-8">
-                    <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight">
-                        Welcome back,
-                        <span className="text-primary"> {user?.fullname?.split(' ')[0] || 'Student'}</span>
-                    </h1>
+                <div className="space-y-7">
+                    {/* greeting badge */}
+                    <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-semibold px-3 py-1.5 rounded-full border border-primary/20">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Welcome back, {firstName}
+                    </div>
 
-                    <p className="text-lg text-muted-foreground max-w-xl">
-                        Continue your journey. Explore new opportunities, track your applications, and discover roles tailored to your skills.
-                    </p>
+                    <div className="space-y-4">
+                        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight text-foreground">
+                            Find your next
+                            <span className="text-primary"> opportunity</span>
+                        </h1>
+                        <p className="text-base text-muted-foreground max-w-md leading-relaxed">
+                            Explore new roles, track your applications, and get AI-powered resume analysis — all in one place.
+                        </p>
+                    </div>
 
-                    <div className="flex flex-wrap gap-4 ">
+                    {/* CTA buttons */}
+                    <div className="flex flex-wrap gap-3">
                         <Button
                             size="lg"
-                            className="cursor-pointer"
+                            className="gap-2"
                             onClick={() => navigate('/jobs')}>
+                            <Search className="w-4 h-4" />
                             Browse Jobs
                         </Button>
                         <Button
                             size="lg"
-                            className="cursor-pointer"
                             variant="outline"
+                            className="gap-2"
                             onClick={() => navigate('/applied_jobs')}>
                             My Applications
+                            <ArrowRight className="w-4 h-4" />
                         </Button>
                     </div>
 
-                    {/* Quick Benefit Bar */}
-                    <div className="grid sm:grid-cols-3 gap-4 pt-6 text-sm">
-                        <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-lg p-3">
-                            <Sparkles className="w-4 h-4 text-primary" />
-                            Smart Recommendations
-                        </div>
-                        <div className="flex items-center gap-2 bg-accent/10 border rounded-lg p-3">
-                            <Briefcase className="w-4 h-4" /> Verified Companies
-                        </div>
-                        <div className="flex items-center gap-2 bg-muted border rounded-lg p-3">
-                            <Clock className="w-4 h-4" /> Real‑time Updates
-                        </div>
+                    {/* benefit chips */}
+                    <div className="flex flex-wrap gap-2 pt-2">
+                        {[
+                            { icon: Sparkles, label: 'AI Resume Analysis' },
+                            { icon: Briefcase, label: 'Verified Companies' },
+                            { icon: Clock, label: 'Daily Job Updates' }
+                        ].map((item) => (
+                            <span
+                                key={item.label}
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground bg-muted border border-border rounded-full px-3 py-1.5">
+                                <item.icon className="w-3.5 h-3.5" />
+                                {item.label}
+                            </span>
+                        ))}
                     </div>
                 </div>
 
                 {/* RIGHT */}
                 <div className="relative">
-                    <div className="absolute -inset-6 bg-primary/20 blur-3xl rounded-full" />
+                    {/* glow */}
+                    <div className="absolute -inset-4 bg-primary/10 blur-3xl rounded-full pointer-events-none" />
 
-                    <div className="relative bg-card border rounded-2xl shadow-xl p-8 space-y-6">
-                        <h3 className="text-lg font-semibold">Your Dashboard Quick View</h3>
-
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center p-4 rounded-lg bg-muted">
-                                <span>Applied Jobs</span>
-                                <Button
-                                    variant="secondary"
-                                    className="cursor-pointer"
-                                    onClick={() => navigate('/applied_jobs')}>
-                                    View
-                                </Button>
-                            </div>
-
-                            <div className="flex justify-between items-center p-4 rounded-lg bg-muted">
-                                <span>Saved Jobs</span>
-                                <Button
-                                    variant="secondary"
-                                    className="cursor-pointer"
-                                    onClick={() => navigate('/profile/saved-jobs')}>
-                                    View
-                                </Button>
-                            </div>
-
-                            <div className="flex justify-between items-center p-4 rounded-lg bg-muted">
-                                <span>Profile Status</span>
-                                <Button
-                                    variant="secondary"
-                                    className="cursor-pointer"
-                                    onClick={() => navigate('/profile')}>
-                                    Complete Profile
-                                </Button>
-                            </div>
+                    <div className="relative bg-background border border-border rounded-2xl shadow-sm p-6 space-y-4">
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-semibold text-foreground">Quick Access</h3>
+                            <span className="text-xs text-muted-foreground">Your workspace</span>
                         </div>
 
-                        <Button
-                            className="w-full cursor-pointer"
-                            onClick={() => navigate('/jobs')}>
-                            Start Exploring Now
-                        </Button>
+                        {/* quick link cards */}
+                        <div className="space-y-3">
+                            {quickLinks.map((item) => (
+                                <button
+                                    key={item.to}
+                                    onClick={() => navigate(item.to)}
+                                    className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all hover:shadow-sm hover:-translate-y-0.5 text-left ${item.color}`}>
+                                    <div className={`w-9 h-9 rounded-lg bg-background flex items-center justify-center shrink-0 shadow-sm`}>
+                                        <item.icon className={`w-4 h-4 ${item.iconColor}`} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                                        <p className="text-xs text-muted-foreground">{item.desc}</p>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4 text-muted-foreground ml-auto shrink-0" />
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* divider */}
+                        <div className="border-t border-border pt-4">
+                            <Button
+                                className="w-full gap-2"
+                                onClick={() => navigate('/jobs')}>
+                                <Search className="w-4 h-4" />
+                                Start Exploring Jobs
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

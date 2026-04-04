@@ -5,7 +5,7 @@ import {
   sendVerificationCode,
   sendWelcomeEmail,
 } from "../middlewares/Email.js";
-import { User } from "../models/user.model.js";
+import { User } from "../modules/auth/user.model.js";
 import { comparePassword, hashPassword } from "../utils/hash.js";
 import { generateToken } from "../utils/token.js";
 import { uploadToCloud } from "../utils/uploadToCloud.js";

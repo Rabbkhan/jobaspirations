@@ -1,0 +1,18 @@
+<svg viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" width="320" height="80">
+  <defs>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(12,12)">
+    <rect x="2" y="18" width="52" height="36" rx="6" fill="url(#iconGrad)"/>
+    <rect x="18" y="10" width="20" height="11" rx="4" fill="none" stroke="url(#iconGrad)" stroke-width="4"/>
+    <rect x="2" y="33" width="52" height="3" rx="1.5" fill="white" opacity="0.2"/>
+    <rect x="25.5" y="25" width="5" height="16" rx="2" fill="white" opacity="0.95"/>
+    <polygon points="28,18 21,28 35,28" fill="white" opacity="0.95"/>
+  </g>
+  <text x="86" y="52" font-family="system-ui,-apple-system,sans-serif" font-size="28" font-weight="700" letter-spacing="-0.5" fill="#f8fafc">Job</text>
+  <circle cx="131" cy="46" r="3.5" fill="#818cf8"/>
+  <text x="136" y="52" font-family="system-ui,-apple-system,sans-serif" font-size="28" font-weight="400" letter-spacing="-0.3" fill="#94a3b8">Aspirations</text>
+</svg>

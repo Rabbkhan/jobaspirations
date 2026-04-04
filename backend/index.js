@@ -31,9 +31,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 // Routes
-import userRoutes from "./src/routes/user.routes.js";
+import userRoutes from "./src/modules/auth/user.routes.js";
 import companyRoutes from "./src/routes/company.routes.js";
-import jobRoutes from "./src/routes/job.routes.js";
+import jobRoutes from "./src/modules/job/job.routes.js";
 import applicationRoutes from "./src/routes/application.routes.js";
 import dashboardRoutes from "./src/routes/dashboard.route.js";
 import adminblogRoutes from "./src/routes/admin.blog.routes.js";
@@ -45,6 +45,7 @@ import RecruiterRoutes from "./src/routes/recruiter.route.js";
 import connectDb from "./src/config/db.js";
 import { FRONTEND_URL, FRONTEND_ALLOWED_ORIGINS } from "./src/config/env.js";
 import { globalErrorHandler } from "./src/middlewares/error.middleware.js";
+import { initCronJobs } from "./src/config/cron.js";
 
 /* ===========================
    3. HARD ENV VALIDATION
@@ -164,6 +165,7 @@ app.use(globalErrorHandler);
 const startServer = async () => {
   try {
     await connectDb();
+    initCronJobs(); // ← add this
 
     app.listen(PORT, "127.0.0.1", () => {
       console.log(`✅ Server listening on http://127.0.0.1:${PORT}`);

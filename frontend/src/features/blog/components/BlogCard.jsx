@@ -1,42 +1,55 @@
 import { Link } from 'react-router-dom'
 import { Badge } from '@/shared/ui/badge'
+import { CalendarIcon, UserIcon } from 'lucide-react'
 
 const BlogCard = ({ blog }) => {
+    const snippet = blog.content?.replace(/<[^>]+>/g, '')?.slice(0, 120)
+
     return (
         <Link
             to={`/blog/${blog.slug}`}
-            className="group block w-full max-w-xs rounded-xl overflow-hidden border border-gray-200 bg-white hover:shadow-lg transition-shadow duration-300">
-            {/* Image */}
-            {blog.featuredImage?.url && (
-                <div className="h-36 w-full overflow-hidden">
+            className="group flex flex-col w-full rounded-2xl overflow-hidden border border-border bg-background hover:border-primary/40 hover:shadow-md transition-all duration-200">
+            {/* image */}
+            {blog.featuredImage?.url ? (
+                <div className="h-44 w-full overflow-hidden bg-muted shrink-0">
                     <img
                         src={blog.featuredImage.url}
                         alt={blog.title}
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                 </div>
+            ) : (
+                <div className="h-44 w-full bg-muted flex items-center justify-center shrink-0">
+                    <span className="text-3xl">📝</span>
+                </div>
             )}
 
-            {/* Content */}
-            <div className="p-4 space-y-2">
-                {/* Category */}
+            {/* content */}
+            <div className="flex flex-col flex-1 p-5 gap-3">
+                {/* category badge */}
                 {blog.category?.name && (
-                    <Badge className="bg-primary/10 text-primary px-2 py-1 text-xs font-medium rounded-full">{blog.category.name}</Badge>
+                    <Badge className="self-start bg-primary/10 text-primary border-0 text-xs font-medium rounded-full px-3 py-1">
+                        {blog.category.name}
+                    </Badge>
                 )}
 
-                {/* Title */}
-                <h3 className="text-md font-semibold text-gray-900 group-hover:text-primary transition-colors duration-300 line-clamp-2">
+                {/* title */}
+                <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                     {blog.title}
                 </h3>
 
-                {/* Snippet */}
-                <p className="text-sm text-gray-600 line-clamp-3">{blog.content.replace(/<[^>]+>/g, '').slice(0, 150)}...</p>
+                {/* snippet */}
+                {snippet && <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed flex-1">{snippet}...</p>}
 
-                {/* Footer: Author & Date */}
-                <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span>{blog.author?.name}</span>
-                    <span className="bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">
-                        {new Date(blog.createdAt).toLocaleDateString('en-US', {
+                {/* footer */}
+                <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <UserIcon className="w-3 h-3" />
+                        {blog.author?.name ?? 'Anonymous'}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <CalendarIcon className="w-3 h-3" />
+                        {new Date(blog.createdAt).toLocaleDateString('en-IN', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric'

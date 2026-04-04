@@ -1,84 +1,73 @@
-// components/company/CompanyTable.jsx
 import React from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
-import { Skeleton } from '@/shared/ui/skeleton'
 import { Link } from 'react-router-dom'
-import { Button } from '@/shared/ui/button'
-import { Avatar, AvatarImage } from '@/shared/ui/avatar'
-import { Edit } from 'lucide-react'
+import { BuildingIcon, Edit, MapPinIcon } from 'lucide-react'
 
 const CompanyTable = ({ data, loading }) => {
+    if (loading) {
+        return (
+            <div className="space-y-3 animate-pulse">
+                {[...Array(4)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="h-16 rounded-2xl bg-muted border border-border"
+                    />
+                ))}
+            </div>
+        )
+    }
+
+    if (!data?.length) {
+        return (
+            <div className="flex flex-col items-center justify-center gap-3 py-16 border border-border rounded-2xl bg-background">
+                <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center">
+                    <BuildingIcon className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <p className="text-sm font-semibold text-foreground">No companies found</p>
+                <p className="text-xs text-muted-foreground">Create your first company to get started</p>
+            </div>
+        )
+    }
+
     return (
-        <div className="rounded-lg border overflow-hidden">
-            <Table>
-                <TableHeader>
-                    <TableRow className="bg-muted/50">
-                        <TableHead className="w-[120px] text-center">Logo</TableHead>
-                        <TableHead className="w-[30%]">Company</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead className="text-right w-[120px]">Action</TableHead>
-                    </TableRow>
-                </TableHeader>
+        <div className="border border-border rounded-2xl bg-background overflow-hidden shadow-sm">
+            {data.map((company, idx) => (
+                <div
+                    key={company._id}
+                    className={`flex items-center gap-4 px-5 py-4 hover:bg-primary/5 transition-colors ${
+                        idx !== data.length - 1 ? 'border-b border-border' : ''
+                    }`}>
+                    {/* Logo */}
+                    <div className="w-10 h-10 rounded-xl border border-border overflow-hidden shrink-0 bg-muted flex items-center justify-center">
+                        {company?.logo ? (
+                            <img
+                                src={company.logo}
+                                alt={company.companyname}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <BuildingIcon className="w-4 h-4 text-muted-foreground" />
+                        )}
+                    </div>
 
-                <TableBody>
-                    {loading &&
-                        [...Array(5)].map((_, i) => (
-                            <TableRow key={i}>
-                                <TableCell className="text-center">
-                                    <Skeleton className="h-16 w-16 mx-auto rounded-full" />
-                                </TableCell>
-                                <TableCell>
-                                    <Skeleton className="h-5 w-32" />
-                                </TableCell>
-                                <TableCell>
-                                    <Skeleton className="h-5 w-16" />
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Skeleton className="h-8 w-20 ml-auto" />
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-foreground truncate">{company?.companyname}</p>
+                        {company?.location && (
+                            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                                <MapPinIcon className="w-3 h-3" />
+                                {company.location}
+                            </span>
+                        )}
+                    </div>
 
-                    {!loading && data?.length === 0 && (
-                        <TableRow>
-                            <TableCell
-                                colSpan={4}
-                                className="text-center py-6">
-                                No companies found.
-                            </TableCell>
-                        </TableRow>
-                    )}
-
-                    {!loading &&
-                        data?.map((company) => (
-                            <TableRow
-                                key={company._id}
-                                className="hover:bg-muted/30">
-                                <TableCell className="text-center py-4">
-                                    <Avatar className="h-16 w-16 mx-auto">
-                                        <AvatarImage src={company?.logo || 'https://avatar.iran.liara.run/public/25'} />
-                                    </Avatar>
-                                </TableCell>
-
-                                <TableCell>{company?.companyname}</TableCell>
-
-                                <TableCell>{company?.location}</TableCell>
-
-                                <TableCell className="text-right">
-                                    <Link to={`/recruiter/companies/edit/${company._id}`}>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="flex gap-2 ml-auto">
-                                            <Edit size={16} />
-                                            Edit
-                                        </Button>
-                                    </Link>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                </TableBody>
-            </Table>
+                    {/* Edit */}
+                    <Link
+                        to={`/recruiter/companies/edit/${company._id}`}
+                        className="w-8 h-8 rounded-xl border border-border flex items-center justify-center hover:border-primary/40 hover:bg-primary/5 transition-colors shrink-0">
+                        <Edit className="w-3.5 h-3.5 text-muted-foreground" />
+                    </Link>
+                </div>
+            ))}
         </div>
     )
 }

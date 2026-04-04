@@ -8,6 +8,42 @@ import SkillsInput from './SkillsInput'
 import ResumeUpload from './ResumeUpload'
 import ProfilePhotoUpload from './ProfilePhotoUpload'
 import { Button } from '@/shared/ui/button'
+import { UserIcon, FileTextIcon, StarIcon, PaperclipIcon, CameraIcon, SaveIcon } from 'lucide-react'
+
+const SectionCard = ({ icon: Icon, label, eyebrow, children }) => (
+    <div className="border border-border rounded-2xl bg-background shadow-sm overflow-hidden">
+        {/* Card Header */}
+        <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-muted/40">
+            <div className="w-7 h-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                <Icon className="w-3.5 h-3.5 text-primary" />
+            </div>
+            <div>
+                {eyebrow && (
+                    <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase leading-none mb-0.5">{eyebrow}</p>
+                )}
+                <h2 className="text-sm font-semibold text-foreground leading-none">{label}</h2>
+            </div>
+        </div>
+        {/* Card Body */}
+        <div className="px-6 py-6">{children}</div>
+    </div>
+)
+
+const Field = ({ label, error, children }) => (
+    <div className="space-y-1.5">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{label}</label>
+        {children}
+        {error && (
+            <p className="text-xs text-red-500 flex items-center gap-1">
+                <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
+                {error}
+            </p>
+        )}
+    </div>
+)
+
+const inputClass =
+    'w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors'
 
 const ProfileForm = () => {
     const { data: user, isLoading: userLoading } = useGetUserQuery()
@@ -31,7 +67,6 @@ const ProfileForm = () => {
         formState: { errors }
     } = methods
 
-    // Reset form whenever user changes
     useEffect(() => {
         if (user) {
             reset({
@@ -46,118 +81,138 @@ const ProfileForm = () => {
 
     const onSubmit = async (data) => {
         const formData = new FormData()
-
         formData.append('fullname', data.fullname)
         formData.append('email', data.email)
         formData.append('phoneNumber', data.phoneNumber)
         formData.append('bio', data.bio)
         formData.append('skills', JSON.stringify(data.skills))
-
         if (data.resumeFile?.[0]) formData.append('resume', data.resumeFile[0])
-
         if (data.profilePhotoFile?.[0]) formData.append('profilePhoto', data.profilePhotoFile[0])
-
-        // console.log(data.resumeFile)
-        // console.log(data.profilePhotoFile)
 
         try {
             await updateProfile(formData).unwrap()
-
             toast.success('Profile updated successfully')
-
-            reset({
-                ...data,
-                resumeFile: null,
-                profilePhotoFile: null
-            })
+            reset({ ...data, resumeFile: null, profilePhotoFile: null })
         } catch (err) {
             toast.error(err?.data?.message || 'Update failed')
         }
     }
 
-    if (userLoading) return <div>Loading profile...</div>
+    if (userLoading) {
+        return (
+            <div className="max-w-3xl mx-auto space-y-4 py-8 px-4">
+                {[...Array(4)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="border border-border rounded-2xl overflow-hidden animate-pulse">
+                        <div className="h-14 bg-muted/60 border-b border-border" />
+                        <div className="px-6 py-6 space-y-3">
+                            <div className="h-4 bg-muted rounded w-1/3" />
+                            <div className="h-9 bg-muted rounded w-full" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
 
     return (
         <FormProvider {...methods}>
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="max-w-3xl mx-auto space-y-8">
+                className="max-w-3xl mx-auto space-y-5 py-8 px-4">
                 {/* Personal Information */}
-                <div className="border rounded-xl p-6 space-y-6 bg-background shadow-sm">
-                    <h2 className="text-lg font-semibold">Personal Information</h2>
-
+                <SectionCard
+                    icon={UserIcon}
+                    eyebrow="Step 1"
+                    label="Personal Information">
                     <div className="grid md:grid-cols-2 gap-5">
-                        {/* Full Name */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Full Name</label>
+                        <Field
+                            label="Full Name"
+                            error={errors.fullname?.message}>
                             <input
                                 {...register('fullname')}
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="John Doe"
+                                className={inputClass}
                             />
-                            {errors.fullname && <p className="text-red-500 text-sm">{errors.fullname.message}</p>}
-                        </div>
-
-                        {/* Email */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Email</label>
+                        </Field>
+                        <Field
+                            label="Email"
+                            error={errors.email?.message}>
                             <input
                                 {...register('email')}
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="you@example.com"
+                                className={inputClass}
                             />
-                            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
-                        </div>
-
-                        {/* Phone */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Phone</label>
+                        </Field>
+                        <Field
+                            label="Phone"
+                            error={errors.phoneNumber?.message}>
                             <input
                                 {...register('phoneNumber')}
-                                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                                placeholder="+91 98765 43210"
+                                className={inputClass}
                             />
-                            {errors.phoneNumber && <p className="text-red-500 text-sm">{errors.phoneNumber.message}</p>}
-                        </div>
+                        </Field>
                     </div>
-                </div>
+                </SectionCard>
 
-                {/* Bio Section */}
-                <div className="border rounded-xl p-6 space-y-4 bg-background shadow-sm">
-                    <h2 className="text-lg font-semibold">About You</h2>
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Bio</label>
+                {/* Bio */}
+                <SectionCard
+                    icon={FileTextIcon}
+                    eyebrow="Step 2"
+                    label="About You">
+                    <Field label="Bio">
                         <textarea
                             {...register('bio')}
                             rows={4}
-                            className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+                            placeholder="Tell recruiters a bit about yourself..."
+                            className={inputClass}
                         />
-                    </div>
-                </div>
+                    </Field>
+                </SectionCard>
 
                 {/* Skills */}
-                <div className="border rounded-xl p-6 space-y-4 bg-background shadow-sm">
-                    <h2 className="text-lg font-semibold">Skills</h2>
+                <SectionCard
+                    icon={StarIcon}
+                    eyebrow="Step 3"
+                    label="Skills">
                     <SkillsInput />
-                </div>
+                </SectionCard>
 
                 {/* Resume */}
-                <div className="border rounded-xl p-6 space-y-4 bg-background shadow-sm">
-                    <h2 className="text-lg font-semibold">Resume</h2>
+                <SectionCard
+                    icon={PaperclipIcon}
+                    eyebrow="Step 4"
+                    label="Resume">
                     <ResumeUpload user={user} />
-                </div>
+                </SectionCard>
 
                 {/* Profile Photo */}
-                <div className="border rounded-xl p-6 space-y-4 bg-background shadow-sm">
-                    <h2 className="text-lg font-semibold">Profile Photo</h2>
+                <SectionCard
+                    icon={CameraIcon}
+                    eyebrow="Step 5"
+                    label="Profile Photo">
                     <ProfilePhotoUpload user={user} />
-                </div>
+                </SectionCard>
 
                 {/* Submit */}
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-2">
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        className="min-w-[140px]">
-                        {isLoading ? 'Saving...' : 'Save Changes'}
+                        className="min-w-[150px] gap-2 cursor-pointer">
+                        {isLoading ? (
+                            <>
+                                <span className="w-3.5 h-3.5 border-2 border-background/40 border-t-background rounded-full animate-spin" />
+                                Saving...
+                            </>
+                        ) : (
+                            <>
+                                <SaveIcon className="w-3.5 h-3.5" />
+                                Save Changes
+                            </>
+                        )}
                     </Button>
                 </div>
             </form>

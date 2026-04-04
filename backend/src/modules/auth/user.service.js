@@ -1,5 +1,5 @@
-import { User } from "../models/user.model.js";
-import { uploadToCloud } from "../utils/uploadToCloud.js";
+import { User } from "./user.model.js";
+import { uploadToCloud } from "../../utils/uploadToCloud.js";
 
 // ------------------- GET PROFILE -------------------
 export const getProfileService = async (userId) => {

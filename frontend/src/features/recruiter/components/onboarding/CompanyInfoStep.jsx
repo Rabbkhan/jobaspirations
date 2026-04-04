@@ -1,60 +1,88 @@
 import { Input } from '@/shared/ui/input'
 import { Button } from '@/shared/ui/button'
+import { ArrowLeftIcon, ArrowRightIcon } from 'lucide-react'
+
+const inputClass =
+    'w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-colors'
+
+const Field = ({ label, children }) => (
+    <div className="space-y-1.5">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{label}</label>
+        {children}
+    </div>
+)
 
 export default function CompanyInfoStep({ formData, setFormData, next, prev }) {
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        })
-    }
+    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value })
 
     return (
         <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Company Information</h2>
+            <div className="space-y-1">
+                <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase">Step 2</p>
+                <h2 className="text-lg font-bold text-foreground">Company Information</h2>
+                <p className="text-xs text-muted-foreground">Tell us about the company you represent.</p>
+            </div>
 
-            <Input
-                name="companyname"
-                placeholder="Company Name"
-                value={formData.companyname}
-                onChange={handleChange}
-            />
+            <div className="space-y-4">
+                <Field label="Company Name">
+                    <Input
+                        name="companyname"
+                        placeholder="Acme Corp"
+                        value={formData.companyname}
+                        onChange={handleChange}
+                        className={inputClass}
+                    />
+                </Field>
+                <Field label="Company Email">
+                    <Input
+                        name="companyEmail"
+                        placeholder="hire@acme.com"
+                        value={formData.companyEmail}
+                        onChange={handleChange}
+                        className={inputClass}
+                    />
+                </Field>
+                <Field label="Website">
+                    <Input
+                        name="website"
+                        placeholder="https://acme.com"
+                        value={formData.website}
+                        onChange={handleChange}
+                        className={inputClass}
+                    />
+                </Field>
+                <Field label="Company LinkedIn">
+                    <Input
+                        name="companyLinkedin"
+                        placeholder="https://linkedin.com/company/acme"
+                        value={formData.companyLinkedin}
+                        onChange={handleChange}
+                        className={inputClass}
+                    />
+                </Field>
+                <Field label="Location">
+                    <Input
+                        name="location"
+                        placeholder="Mumbai, India"
+                        value={formData.location}
+                        onChange={handleChange}
+                        className={inputClass}
+                    />
+                </Field>
+            </div>
 
-            <Input
-                name="companyEmail"
-                placeholder="Company Email"
-                value={formData.companyEmail}
-                onChange={handleChange}
-            />
-
-            <Input
-                name="website"
-                placeholder="Website"
-                value={formData.website}
-                onChange={handleChange}
-            />
-
-            <Input
-                name="companyLinkedin"
-                placeholder="Company LinkedIn"
-                value={formData.companyLinkedin}
-                onChange={handleChange}
-            />
-
-            <Input
-                name="location"
-                placeholder="Company Location"
-                value={formData.location}
-                onChange={handleChange}
-            />
-
-            <div className="flex justify-between">
+            <div className="flex justify-between pt-2">
                 <Button
-                    variant="ghost"
-                    onClick={prev}>
-                    Back
+                    variant="outline"
+                    onClick={prev}
+                    className="gap-2 cursor-pointer">
+                    <ArrowLeftIcon className="w-4 h-4" /> Back
                 </Button>
-                <Button onClick={next}>Continue</Button>
+                <Button
+                    onClick={next}
+                    className="gap-2 cursor-pointer">
+                    Continue <ArrowRightIcon className="w-4 h-4" />
+                </Button>
             </div>
         </div>
     )

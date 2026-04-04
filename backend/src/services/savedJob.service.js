@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { Job } from "../models/job.model.js";
-import { User } from "../models/user.model.js";
+import { Job } from "../modules/job/job.model.js";
 import { STATUS } from "../constants/statusCodes.js";
+import { User } from "../modules/auth/user.model.js";
 
 // ---------------- SAVE JOB ----------------
 export const saveJobService = async ({ userId, jobId }) => {
@@ -85,7 +85,6 @@ export const unsaveJobService = async ({ userId, jobId }) => {
   };
 };
 
-
 // ---------------- GET SAVED JOBS ----------------
 export const getSavedJobsService = async (userId) => {
   if (!mongoose.Types.ObjectId.isValid(userId)) {
@@ -95,14 +94,14 @@ export const getSavedJobsService = async (userId) => {
   }
 
   const user = await User.findById(userId)
-  .select("savedJobs")
-  .populate({
-    path: "savedJobs",
-    populate: {
-      path: "company",
-      model: "Company",
-    },
-  });
+    .select("savedJobs")
+    .populate({
+      path: "savedJobs",
+      populate: {
+        path: "company",
+        model: "Company",
+      },
+    });
 
   if (!user) {
     const err = new Error("User not found");

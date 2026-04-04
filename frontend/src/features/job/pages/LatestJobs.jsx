@@ -1,55 +1,58 @@
-import React, { useMemo } from 'react'
-import { Bookmark, MapPin, ArrowRight, IndianRupee } from 'lucide-react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/card'
-import { Badge } from '@/shared/ui/badge'
-import { Separator } from '@/shared/ui/separator'
+import React, { useMemo, useState } from 'react'
+import { Bookmark, MapPin, ArrowRight, Building2, Clock, ExternalLink, Briefcase } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-
 import { useGetAllJobsQuery, useGetSavedJobsQuery, useSaveJobMutation, useUnsaveJobMutation } from '@/features/job/api/jobApi'
-
 import LatestJobsSkeleton from '@/features/job/components/LatestJobsSkeleton'
 import { formatExperience, formatSalary, timeAgo } from '@/features/job/utils/jobHelpers'
 import { toast } from 'sonner'
 
+const CompanyLogo = ({ logo, name }) => {
+    const [imgError, setImgError] = useState(false)
+
+    if (logo && !imgError) {
+        return (
+            <img
+                src={logo}
+                alt={name}
+                className="w-10 h-10 rounded-xl object-contain border border-border bg-muted p-1 shrink-0"
+                onError={() => setImgError(true)}
+            />
+        )
+    }
+
+    return (
+        <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+            <Building2 className="w-5 h-5 text-primary" />
+        </div>
+    )
+}
+
 const LatestJobs = () => {
     const navigate = useNavigate()
 
-    /* ---------------- GET JOBS ---------------- */
-    const { data, isLoading } = useGetAllJobsQuery({
-        page: 1,
-        filters: {}
-    })
-
-    /* ---------------- SAVED JOBS ---------------- */
+    const { data, isLoading } = useGetAllJobsQuery({ page: 1, filters: {} })
     const { data: savedData } = useGetSavedJobsQuery()
-
     const [saveJob] = useSaveJobMutation()
     const [unsaveJob] = useUnsaveJobMutation()
 
-    /* ---------------- LATEST 6 JOBS ---------------- */
     const latestSixJobs = useMemo(() => {
         if (!data?.jobs) return []
-
         return [...data.jobs].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 6)
     }, [data])
 
-    /* ---------------- SAVED JOB IDS ---------------- */
     const savedJobIds = useMemo(() => {
         return new Set(savedData?.savedJobs?.map((job) => job._id) || [])
     }, [savedData])
 
     const isSaved = (jobId) => savedJobIds.has(jobId)
 
-    /* ---------------- SAVE / UNSAVE ---------------- */
     const handleSaveToggle = async (jobId) => {
         try {
             if (isSaved(jobId)) {
                 await unsaveJob(jobId).unwrap()
-
                 toast.success('Removed from saved jobs')
             } else {
                 await saveJob(jobId).unwrap()
-
                 toast.success('Job saved successfully')
             }
         } catch (error) {
@@ -61,78 +64,138 @@ const LatestJobs = () => {
 
     return (
         <section className="max-w-6xl mx-auto px-6 py-20">
-            <h2 className="text-3xl font-bold mb-3 text-foreground">🔥 Latest Job Openings</h2>
+            {/* Section header */}
+            <div className="mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                <div className="space-y-2">
+                    <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/20">
+                        Updated daily
+                    </div>
+                    <h2 className="text-3xl font-extrabold tracking-tight text-foreground leading-tight">Latest Openings</h2>
+                    <p className="text-sm text-muted-foreground">Fresh jobs posted by verified recruiters</p>
+                </div>
+                <button
+                    onClick={() => navigate('/jobs')}
+                    className="hidden md:inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline underline-offset-4 transition-colors">
+                    View all jobs <ArrowRight className="w-4 h-4" />
+                </button>
+            </div>
 
-            <p className="text-muted-foreground mb-8">Fresh jobs curated specially for you</p>
+            {/* Grid */}
+            {latestSixJobs.length === 0 ? (
+                <div className="text-center py-16 text-muted-foreground text-sm">No job openings available right now</div>
+            ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {latestSixJobs.map((job) => {
+                        const salary = formatSalary(job?.salary)
+                        const salaryDisplay = !salary || salary === '₹ 0 - 0' || salary === '₹0 - ₹0' ? 'Not Disclosed' : salary
+                        const isExternal = job?.isExternal
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {latestSixJobs.length === 0 ? (
-                    <p className="text-muted-foreground col-span-full text-center">No job openings available right now</p>
-                ) : (
-                    latestSixJobs.map((job) => (
-                        <Card
-                            key={job._id}
-                            className="relative p-5 border shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl">
-                            {/* Save Button */}
-                            <button
-                                onClick={() => handleSaveToggle(job._id)}
-                                className="absolute right-4 top-4 text-muted-foreground hover:text-primary">
-                                <Bookmark
-                                    size={22}
-                                    className="cursor-pointer"
-                                    fill={isSaved(job._id) ? 'currentColor' : 'none'}
-                                />
-                            </button>
-
-                            <CardHeader className="p-0 mb-2">
-                                <CardTitle className="text-xl font-semibold leading-snug">{job.title}</CardTitle>
-
-                                <CardDescription className="text-sm text-muted-foreground">{job?.company?.name}</CardDescription>
-                            </CardHeader>
-
-                            <CardContent className="space-y-3 p-0">
-                                {/* Location */}
-                                <div className="flex items-center text-sm text-muted-foreground gap-2">
-                                    <MapPin className="w-4 h-4" />
-                                    <span>{job.location}</span>
-                                </div>
-
-                                {/* Badges */}
-                                <div className="flex flex-wrap gap-2 mt-3">
-                                    <Badge
-                                        variant="secondary"
-                                        className="rounded-full">
-                                        {job.jobType}
-                                    </Badge>
-
-                                    <Badge className="rounded-full flex items-center gap-1">
-                                        <IndianRupee size={14} />
-                                        {formatSalary(job.salary)}
-                                    </Badge>
-
-                                    <Badge
-                                        variant="outline"
-                                        className="rounded-full">
-                                        {formatExperience(job.experience)}
-                                    </Badge>
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                {/* Footer */}
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-muted-foreground">{timeAgo(job.createdAt)}</span>
+                        return (
+                            <div
+                                key={job._id}
+                                className="group relative bg-background border border-border rounded-2xl p-5 flex flex-col gap-4 hover:border-primary/40 hover:shadow-md transition-all duration-200">
+                                {/* Top row — company + save */}
+                                <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <CompanyLogo
+                                            logo={job?.company?.logo}
+                                            name={job?.company?.companyname}
+                                        />
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-semibold text-foreground leading-tight truncate">
+                                                {job?.company?.companyname || 'Unknown Company'}
+                                            </p>
+                                            <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                                                <Clock className="w-3 h-3 shrink-0" />
+                                                {timeAgo(job?.createdAt)}
+                                            </p>
+                                        </div>
+                                    </div>
 
                                     <button
-                                        onClick={() => navigate(`/jobs/${job._id}`)}
-                                        className="flex items-center gap-1 cursor-pointer font-medium text-primary hover:underline">
-                                        View Details <ArrowRight size={16} />
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleSaveToggle(job._id)
+                                        }}
+                                        className="p-2 rounded-xl border border-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors shrink-0"
+                                        aria-label="Save job">
+                                        <Bookmark
+                                            size={16}
+                                            fill={isSaved(job._id) ? 'currentColor' : 'none'}
+                                            className={isSaved(job._id) ? 'text-primary' : ''}
+                                        />
                                     </button>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    ))
-                )}
+
+                                {/* Title + external badge */}
+                                <div className="flex items-start gap-2 flex-wrap">
+                                    <h3 className="text-base font-bold text-foreground leading-snug">{job.title}</h3>
+                                    {isExternal && (
+                                        <span className="inline-flex items-center gap-1 text-xs bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-0.5 rounded-full font-medium shrink-0">
+                                            <ExternalLink className="w-3 h-3" /> External
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Meta chips */}
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1.5">
+                                        <MapPin className="w-3 h-3" />
+                                        {job?.location ?? 'Location N/A'}
+                                    </span>
+                                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1.5">
+                                        <Briefcase className="w-3 h-3" />
+                                        {job?.jobType}
+                                    </span>
+                                    {job?.experience && (
+                                        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1.5">
+                                            {formatExperience(job.experience)}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Skills — max 3 */}
+                                {job?.skills?.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {job.skills.slice(0, 3).map((skill, idx) => (
+                                            <span
+                                                key={idx}
+                                                className="text-xs font-medium bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-full">
+                                                {skill}
+                                            </span>
+                                        ))}
+                                        {job.skills.length > 3 && (
+                                            <span className="text-xs text-muted-foreground px-2 py-1">+{job.skills.length - 3} more</span>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Bottom — salary + view */}
+                                <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
+                                    <div>
+                                        <p className="text-[10px] text-muted-foreground mb-0.5 uppercase tracking-wide font-semibold">Salary</p>
+                                        <p className="text-sm font-bold text-foreground">{salaryDisplay}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => navigate(`/jobs/${job._id}`)}
+                                        className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-xl hover:bg-primary/90 transition-colors">
+                                        View
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                                    </button>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
+
+            {/* Mobile view all */}
+            <div className="flex md:hidden justify-center mt-8">
+                <button
+                    onClick={() => navigate('/jobs')}
+                    className="flex items-center gap-2 text-sm font-medium text-primary border border-primary/30 px-6 py-2.5 rounded-xl hover:bg-primary/5 transition-colors">
+                    View all jobs <ArrowRight className="w-4 h-4" />
+                </button>
             </div>
         </section>
     )

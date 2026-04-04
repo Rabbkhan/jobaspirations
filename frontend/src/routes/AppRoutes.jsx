@@ -170,7 +170,7 @@ const AppRoutes = () => {
                 />
 
                 <Route
-                    path="/recruiter/pending-approval"
+                    path="/recruiter-pending"
                     element={
                         <ProtectedRoute>
                             <RecruiterPendingPage />

@@ -9,46 +9,53 @@ import {
   getAdminJobs,
   getJobApplicants,
   getJobFilters,
-} from "../services/job.service.js";
-import { STATUS } from "../constants/statusCodes.js";
-import { MESSAGES } from "../constants/messages.js";
-
+} from "./job.service.js";
+import { MESSAGES } from "../../constants/messages.js";
+import { STATUS } from "../../constants/statusCodes.js";
+import { syncExternalJobs } from "./job.service.js";
 
 // CREATE JOB
 export const createJobController = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(STATUS.BAD_REQUEST).json({ success: false, errors: errors.array() });
+      return res
+        .status(STATUS.BAD_REQUEST)
+        .json({ success: false, errors: errors.array() });
     }
-// if (req.body.jobType) {
-//   req.body.jobType =
-//     req.body.jobType
-//       .toLowerCase()
-//       .replace(/(^\w|\s\w)/g, m => m.toUpperCase())
-//       .replace("-", "-");
-// }
+    // if (req.body.jobType) {
+    //   req.body.jobType =
+    //     req.body.jobType
+    //       .toLowerCase()
+    //       .replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    //       .replace("-", "-");
+    // }
 
     const userId = req.user?._id;
     if (!userId)
-      return res.status(STATUS.UNAUTHORIZED).json({ success: false, message: MESSAGES.UNAUTHORIZED });
+      return res
+        .status(STATUS.UNAUTHORIZED)
+        .json({ success: false, message: MESSAGES.UNAUTHORIZED });
 
     const result = await createJob({ data: req.body, userId });
 
     return res.status(STATUS.CREATED).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message });
   }
 };
-
 
 // GET ALL JOBS
 export const getAllJobsController = async (req, res) => {
   try {
-       const result = await getAllJobs(req.query);
+    const result = await getAllJobs(req.query);
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message });
   }
 };
 
@@ -70,10 +77,11 @@ export const getJobByIdController = async (req, res) => {
     const result = await getJobById(req.params.id);
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message });
   }
 };
-
 
 // UPDATE JOB
 export const updateJobController = async (req, res) => {
@@ -86,11 +94,13 @@ export const updateJobController = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message });
   }
 };
 
-//admin job 
+//admin job
 
 export const getAdminJobsController = async (req, res) => {
   try {
@@ -100,17 +110,15 @@ export const getAdminJobsController = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      jobs: data.jobs
+      jobs: data.jobs,
     });
-
   } catch (error) {
     return res.status(error.status || 500).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 };
-
 
 export const getJobApplicantsController = async (req, res) => {
   try {
@@ -127,8 +135,6 @@ export const getJobApplicantsController = async (req, res) => {
   }
 };
 
-
-
 // DELETE JOB
 export const deleteJobController = async (req, res) => {
   try {
@@ -139,6 +145,24 @@ export const deleteJobController = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    return res.status(error.status || 500).json({ success: false, message: error.message });
+    return res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message });
+  }
+};
+
+// src/modules/job/job.controller.js
+
+// POST /api/v1/jobs/sync  ← admin only
+export const triggerJobSync = async (req, res, next) => {
+  try {
+    const result = await syncExternalJobs();
+    res.status(200).json({
+      success: true,
+      message: "Job sync completed",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
   }
 };

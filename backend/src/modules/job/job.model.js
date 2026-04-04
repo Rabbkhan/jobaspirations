@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { JOB_TYPES } from "../constants/job.constants.js";
+import { JOB_TYPES } from "../../constants/job.constants.js";
 
 const jobSchema = new mongoose.Schema(
   {
@@ -8,31 +8,32 @@ const jobSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     description: {
       type: String,
       required: true,
     },
-
     requirements: [
       {
         type: String,
         trim: true,
       },
     ],
-
-    /* ======================
-       SALARY (MIN - MAX)
-    ====================== */
+    // ← new
+    skills: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
     salary: {
       min: {
         type: Number,
-        required: true,
+        default: 0,
         min: 0,
       },
       max: {
         type: Number,
-        required: true,
+        default: 0,
         min: 0,
       },
       currency: {
@@ -45,59 +46,48 @@ const jobSchema = new mongoose.Schema(
         default: "year",
       },
     },
-
-    /* ======================
-       EXPERIENCE (IN MONTHS)
-    ====================== */
     experience: {
       min: {
         type: Number,
-        required: true,
+        default: 0,
         min: 0,
       },
       max: {
         type: Number,
-        required: true,
+        default: 0,
         min: 0,
       },
     },
-
     location: {
       type: String,
       required: true,
       trim: true,
     },
-
     industry: {
       type: String,
-      required: true,
+      default: "General",
       trim: true,
     },
-
     jobType: {
       type: String,
       required: true,
       enum: JOB_TYPES,
     },
-
     position: {
       type: Number,
-      required: true,
+      default: 1,
       min: 1,
     },
-
     company: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Company",
       required: true,
     },
-
     created_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-
     applications: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -105,11 +95,32 @@ const jobSchema = new mongoose.Schema(
         default: [],
       },
     ],
-
     status: {
       type: String,
       enum: ["Active", "Closed"],
       default: "Active",
+    },
+    // ← new external job fields
+    applyUrl: {
+      type: String,
+      default: "",
+    },
+    isExternal: {
+      type: Boolean,
+      default: false,
+    },
+    externalSource: {
+      type: String,
+      default: "manual",
+    },
+    externalId: {
+      type: String,
+      sparse: true,
+      unique: true,
+    },
+    views: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true },

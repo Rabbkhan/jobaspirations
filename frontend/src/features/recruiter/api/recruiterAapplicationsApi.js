@@ -7,7 +7,17 @@ export const recruiterApplicationApi = baseApi.injectEndpoints({
                 url: '/recruiter-applications/apply',
                 method: 'POST',
                 body: formData
-            })
+            }),
+            invalidatesTags: ['MyApplication'] // ADD THIS
+        }),
+
+        // ADD THIS
+        getMyApplication: builder.query({
+            query: () => ({
+                url: '/recruiter-applications/my-application',
+                method: 'GET'
+            }),
+            providesTags: ['MyApplication']
         }),
 
         getRecruiterApplications: builder.query({
@@ -27,15 +37,19 @@ export const recruiterApplicationApi = baseApi.injectEndpoints({
         }),
 
         rejectRecruiter: builder.mutation({
-            query: ({ id, reason }) => ({
+            query: ({ id }) => ({
                 url: `/recruiter-applications/reject/${id}`,
-                method: 'PATCH',
-                body: { reason }
+                method: 'PATCH'
             }),
             invalidatesTags: ['RecruiterApplications']
         })
     })
 })
 
-export const { useApplyRecruiterMutation, useGetRecruiterApplicationsQuery, useApproveRecruiterMutation, useRejectRecruiterMutation } =
-    recruiterApplicationApi
+export const {
+    useApplyRecruiterMutation,
+    useGetMyApplicationQuery, // ADD THIS EXPORT
+    useGetRecruiterApplicationsQuery,
+    useApproveRecruiterMutation,
+    useRejectRecruiterMutation
+} = recruiterApplicationApi

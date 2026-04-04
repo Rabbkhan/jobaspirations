@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticate } from "../middlewares/auth.middleware..js";
+import { authenticate } from "../../middlewares/auth.middleware..js";
 import {
   forgotPasswordController,
   getProfile,
@@ -7,24 +7,24 @@ import {
   resetPasswordController,
   updateProfileController,
   verifyEmail,
-} from "../controllers/auth.controller.js";
-import { updateUserValidation } from "../validations/authValidation.js";
-import { upload } from "../middlewares/multer.js";
-import { authorizeRoles } from "../middlewares/role.middleware.js";
+} from "./auth.controller.js";
+import { updateUserValidation } from "../../validations/authValidation.js";
+import { upload } from "../../middlewares/multer.js";
+import { authorizeRoles } from "../../middlewares/role.middleware.js";
 
-import { login, logout, register } from "../controllers/auth.controller.js";
 import {
   loginValidation,
   registerValidation,
-} from "../validations/authValidation.js";
+} from "../../validations/authValidation.js";
 import {
   adminLoginController,
   adminLogoutController,
   adminMeController,
   approveUser,
   getPendingUsers,
-} from "../controllers/admin.controller.js";
-import { adminAuthenticate } from "../middlewares/admin.middleware.js";
+} from "../../controllers/admin.controller.js";
+import { adminAuthenticate } from "../../middlewares/admin.middleware.js";
+import { login, logout, register } from "./auth.controller.js";
 
 const router = express.Router();
 

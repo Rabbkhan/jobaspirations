@@ -1,6 +1,6 @@
 import express from "express";
-import { authenticate } from "../middlewares/auth.middleware..js";
-import { authorizeRoles } from "../middlewares/role.middleware.js";
+import { authenticate } from "../../middlewares/auth.middleware..js";
+import { authorizeRoles } from "../../middlewares/role.middleware.js";
 
 import {
   createJobController,
@@ -11,22 +11,23 @@ import {
   getAdminJobsController,
   getJobApplicantsController,
   getJobFiltersController,
-} from "../controllers/job.controller.js";
+  triggerJobSync,
+} from "./job.controller.js";
 
 import {
   getSavedJobsController,
   saveJobController,
   unsaveJobController,
-} from "../controllers/savedJobs.controller.js";
+} from "../../controllers/savedJobs.controller.js";
 
-import {
-  createJobValidation,
-  updateJobValidation,
-} from "../validations/jobValidation.js";
+import { createJobValidation, updateJobValidation } from "./jobValidation.js";
+import { adminAuthenticate } from "../../middlewares/admin.middleware.js";
 
 const router = express.Router();
 
 /* ===================== SAVED JOBS (MUST BE FIRST) ===================== */
+// router.post("/sync", authenticate, adminAuthenticate, triggerJobSync);
+router.post("/sync", triggerJobSync);
 
 router.get(
   "/saved",

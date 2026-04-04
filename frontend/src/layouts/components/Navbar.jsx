@@ -1,25 +1,25 @@
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/shared/ui/button'
 import { Avatar, AvatarImage } from '@/shared/ui/avatar'
 import { Popover, PopoverTrigger, PopoverContent } from '@/shared/ui/popover'
-import { User, LogOut, Menu, X, Bookmark, Briefcase } from 'lucide-react'
-import { useDispatch } from 'react-redux'
+import { User, LogOut, Menu, X, Bookmark, Briefcase, ChevronRightIcon } from 'lucide-react'
+import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'sonner'
 import { logout as logoutAction } from '@/features/auth/authSlice'
 import Logo from '@/assets/images/logo.png'
-
 import { useLogoutMutation } from '@/features/auth/api/authApi'
-import { useGetUserQuery } from '@/features/profile/api/profileApi'
+import { profileApi } from '@/features/profile/api/profileApi'
+import { recruiterApplicationApi } from '@/features/recruiter/api/recruiterAapplicationsApi.js'
 
 export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false)
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const location = useLocation()
 
-    const { data: currentUser } = useGetUserQuery(undefined, {
-        refetchOnMountOrArgChange: true
-    })
+    const { user: currentUser } = useSelector((state) => state.auth)
+
     const [logout] = useLogoutMutation()
 
     const NAV_LINKS = [
@@ -28,39 +28,56 @@ export default function Navbar() {
         { to: '/blogs', label: 'Blogs' }
     ]
 
+    const isActive = (path) => {
+        if (path === '/') return location.pathname === '/'
+        return location.pathname.startsWith(path)
+    }
+
     const logoutHandler = async () => {
         try {
             await logout().unwrap()
             dispatch(logoutAction())
+            // Clear RTK Query caches
+            dispatch(profileApi.util.resetApiState())
+            dispatch(recruiterApplicationApi.util.resetApiState())
             navigate('/login')
             toast.success('Logged out successfully')
+            setMobileOpen(false)
         } catch {
             toast.error('Logout failed')
         }
     }
 
+    const menuItems = [
+        { to: '/profile', icon: User, label: 'Profile', show: true },
+        { to: '/profile/saved-jobs', icon: Bookmark, label: 'Saved jobs', show: currentUser?.role === 'student' },
+        { to: '/applied_jobs', icon: Briefcase, label: 'Applied jobs', show: currentUser?.role === 'student' }
+    ].filter((item) => item.show)
+
     return (
-        <header className="w-full border-b bg-background sticky top-0 z-40">
+        <header className="w-full border-b bg-background/95 backdrop-blur-sm sticky top-0 z-40">
             <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                 {/* Logo */}
                 <Link
                     to="/"
-                    className="inline-flex items-center gap-2 font-semibold tracking-tight shrink-0">
+                    className="inline-flex items-center gap-2 shrink-0">
                     <img
                         src={Logo}
                         alt="JobAspirations"
-                        className="w-40 sm:w-48 lg:w-60 h-auto object-contain"
+                        className="w-40 sm:w-48 lg:w-56 h-auto object-contain"
                     />
                 </Link>
 
-                {/* Desktop Links */}
+                {/* Desktop nav */}
                 <nav className="hidden md:block">
-                    <ul className="flex items-center gap-6 lg:gap-8 text-sm font-medium">
+                    <ul className="flex items-center gap-1">
                         {NAV_LINKS.map((l) => (
                             <li key={l.to}>
                                 <Link
                                     to={l.to}
-                                    className="text-foreground hover:text-primary transition-colors">
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                                        isActive(l.to) ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
+                                    }`}>
                                     {l.label}
                                 </Link>
                             </li>
@@ -68,155 +85,178 @@ export default function Navbar() {
                     </ul>
                 </nav>
 
-                {/* Right Side */}
+                {/* Desktop right */}
                 <div className="flex items-center gap-3">
-                    {/* Desktop Auth */}
                     <div className="hidden md:flex items-center gap-3">
                         {!currentUser ? (
                             <>
                                 <Link to="/login">
-                                    <Button variant="ghost">Login</Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm">
+                                        Login
+                                    </Button>
                                 </Link>
-
                                 <Link to="/register">
-                                    <Button className="bg-primary text-white">Register</Button>
+                                    <Button size="sm">Register</Button>
                                 </Link>
                             </>
                         ) : (
                             <Popover>
-                                <PopoverTrigger>
-                                    <Avatar className="cursor-pointer ring-1 ring-primary/20">
-                                        <AvatarImage src={currentUser?.profile?.profilePhoto || 'https://avatar.iran.liara.run/public/25'} />
-                                    </Avatar>
-                                </PopoverTrigger>
-
-                                <PopoverContent className="w-64 bg-card border shadow-md p-4 rounded-md">
-                                    {/* User Info */}
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <Avatar>
-                                            <AvatarImage src={currentUser?.profile?.profilePhoto || 'https://avatar.iran.liara.run/public/25'} />
+                                <PopoverTrigger asChild>
+                                    <button className="rounded-full ring-2 ring-transparent hover:ring-primary/30 transition-all">
+                                        <Avatar className="cursor-pointer w-9 h-9">
+                                            <AvatarImage
+                                                src={
+                                                    currentUser?.profile?.profilePhoto ||
+                                                    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfE8XWOVe86hLGi8m9mgPTsva_KWjTHbT9iQ&s'
+                                                }
+                                            />
                                         </Avatar>
-
-                                        <div>
-                                            <div className="font-semibold">{currentUser?.fullname}</div>
-
-                                            <div className="text-sm text-muted-foreground line-clamp-2">
-                                                {currentUser?.profile?.bio || 'No bio added'}
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-64 p-0 rounded-xl overflow-hidden shadow-lg">
+                                    <div className="px-4 py-3 border-b bg-muted/40">
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="w-9 h-9">
+                                                <AvatarImage
+                                                    src={
+                                                        currentUser?.profile?.profilePhoto ||
+                                                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfE8XWOVe86hLGi8m9mgPTsva_KWjTHbT9iQ&s'
+                                                    }
+                                                />
+                                            </Avatar>
+                                            <div className="min-w-0">
+                                                <p className="font-semibold text-sm text-foreground truncate">{currentUser?.fullname}</p>
+                                                <p className="text-xs text-muted-foreground truncate">
+                                                    {currentUser?.profile?.bio || 'No bio added'}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* Menu Actions */}
-                                    <div className="flex flex-col gap-2 text-sm">
-                                        <Link
-                                            to="/profile"
-                                            className="flex items-center gap-2 hover:text-primary">
-                                            <User className="w-4 h-4" />
-                                            Profile
-                                        </Link>
-
-                                        {currentUser?.role === 'student' && (
-                                            <>
-                                                <Link
-                                                    to="/profile/saved-jobs"
-                                                    className="flex items-center gap-2 hover:text-primary">
-                                                    <Bookmark className="w-4 h-4" />
-                                                    Saved Jobs
-                                                </Link>
-
-                                                <Link
-                                                    to="/applied_jobs"
-                                                    className="flex items-center gap-2 hover:text-primary">
-                                                    <Briefcase className="w-4 h-4" />
-                                                    Applied Jobs
-                                                </Link>
-                                            </>
-                                        )}
-
-                                        <Button
-                                            variant="ghost"
-                                            className="justify-start gap-2 text-destructive px-0"
-                                            onClick={logoutHandler}>
-                                            <LogOut className="w-4 h-4" />
-                                            Logout
-                                        </Button>
+                                    <div className="py-1.5">
+                                        {menuItems.map((item) => (
+                                            <Link
+                                                key={item.to}
+                                                to={item.to}
+                                                className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors">
+                                                <item.icon className="w-4 h-4 text-muted-foreground" />
+                                                {item.label}
+                                            </Link>
+                                        ))}
+                                        <div className="border-t mt-1 pt-1">
+                                            <button
+                                                onClick={logoutHandler}
+                                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/5 transition-colors">
+                                                <LogOut className="w-4 h-4" />
+                                                Logout
+                                            </button>
+                                        </div>
                                     </div>
                                 </PopoverContent>
                             </Popover>
                         )}
                     </div>
 
-                    {/* Mobile Menu Button */}
+                    {/* Mobile toggle */}
                     <button
-                        className="md:hidden inline-flex items-center p-2 rounded-md"
-                        onClick={() => setMobileOpen((v) => !v)}>
-                        {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+                        onClick={() => setMobileOpen((v) => !v)}
+                        aria-label="Toggle menu">
+                        {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
+            {/* ── Mobile menu ── */}
             {mobileOpen && (
-                <div className="md:hidden bg-card border-t">
-                    <div className="max-w-7xl mx-auto px-4 py-4">
-                        <ul className="flex flex-col gap-1">
-                            {NAV_LINKS.map((l) => (
-                                <li key={l.to}>
-                                    <Link
-                                        to={l.to}
-                                        onClick={() => setMobileOpen(false)}
-                                        className="block py-2 px-3 rounded hover:bg-primary/5">
-                                        {l.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="mt-4">
-                            {!currentUser ? (
-                                <div className="flex flex-col gap-2">
-                                    <Link to="/login">
-                                        <Button
-                                            variant="outline"
-                                            className="w-full">
-                                            Login
-                                        </Button>
-                                    </Link>
-
-                                    <Link to="/register">
-                                        <Button className="w-full bg-primary text-white">Register</Button>
-                                    </Link>
+                <div className="md:hidden border-t bg-background animate-in slide-in-from-top-2 duration-200">
+                    <div className="max-w-7xl mx-auto px-4 py-4 space-y-4">
+                        {/* User info card — logged in only */}
+                        {currentUser && (
+                            <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/50 border border-border">
+                                <Avatar className="w-10 h-10 shrink-0">
+                                    <AvatarImage
+                                        src={
+                                            currentUser?.profile?.profilePhoto ||
+                                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTfE8XWOVe86hLGi8m9mgPTsva_KWjTHbT9iQ&s'
+                                        }
+                                    />
+                                </Avatar>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-sm font-semibold text-foreground truncate">{currentUser?.fullname}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{currentUser?.profile?.bio || currentUser?.email}</p>
                                 </div>
+                                <span className="text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full capitalize shrink-0">
+                                    {currentUser?.role}
+                                </span>
+                            </div>
+                        )}
+
+                        {/* Nav links */}
+                        <nav className="space-y-0.5">
+                            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-1.5">Navigate</p>
+                            {NAV_LINKS.map((l) => (
+                                <Link
+                                    key={l.to}
+                                    to={l.to}
+                                    onClick={() => setMobileOpen(false)}
+                                    className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                                        isActive(l.to) ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-muted'
+                                    }`}>
+                                    {l.label}
+                                    {isActive(l.to) && <ChevronRightIcon className="w-3.5 h-3.5 opacity-60" />}
+                                </Link>
+                            ))}
+                        </nav>
+
+                        {/* Account section */}
+                        <div className="border-t border-border pt-4 space-y-0.5">
+                            {!currentUser ? (
+                                <>
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-1.5">Account</p>
+                                    <div className="flex flex-col gap-2 pt-1">
+                                        <Link
+                                            to="/login"
+                                            onClick={() => setMobileOpen(false)}>
+                                            <Button
+                                                variant="outline"
+                                                className="w-full"
+                                                size="sm">
+                                                Login
+                                            </Button>
+                                        </Link>
+                                        <Link
+                                            to="/register"
+                                            onClick={() => setMobileOpen(false)}>
+                                            <Button
+                                                className="w-full"
+                                                size="sm">
+                                                Create account
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                </>
                             ) : (
-                                <div className="flex flex-col gap-3 text-sm">
-                                    <Link
-                                        to="/profile"
-                                        className="flex items-center gap-2">
-                                        <User className="w-4 h-4" />
-                                        Profile
-                                    </Link>
-
-                                    <Link
-                                        to="/profile/saved-jobs"
-                                        className="flex items-center gap-2">
-                                        <Bookmark className="w-4 h-4" />
-                                        Saved Jobs
-                                    </Link>
-
-                                    <Link
-                                        to="/applied_jobs"
-                                        className="flex items-center gap-2">
-                                        <Briefcase className="w-4 h-4" />
-                                        Applied Jobs
-                                    </Link>
-
+                                <>
+                                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest px-3 pb-1.5">Account</p>
+                                    {menuItems.map((item) => (
+                                        <Link
+                                            key={item.to}
+                                            to={item.to}
+                                            onClick={() => setMobileOpen(false)}
+                                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-foreground hover:bg-muted transition-colors">
+                                            <item.icon className="w-4 h-4 text-muted-foreground" />
+                                            {item.label}
+                                        </Link>
+                                    ))}
                                     <button
                                         onClick={logoutHandler}
-                                        className="flex items-center gap-2 text-destructive">
+                                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-destructive hover:bg-destructive/5 transition-colors">
                                         <LogOut className="w-4 h-4" />
                                         Logout
                                     </button>
-                                </div>
+                                </>
                             )}
                         </div>
                     </div>

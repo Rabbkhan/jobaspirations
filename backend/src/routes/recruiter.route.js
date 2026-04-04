@@ -2,22 +2,25 @@ import express from "express";
 import {
   applyRecruiterController,
   approveRecruiterController,
+  getMyApplicationController,
   getRecruiterApplicationsController,
   rejectRecruiterController,
 } from "../controllers/recruiter.controller.js";
 import { authorizeRoles } from "../middlewares/role.middleware.js";
 import { upload } from "../middlewares/multer.js";
 import { adminAuthenticate } from "../middlewares/admin.middleware.js";
+import { authenticate } from "../middlewares/auth.middleware..js";
 
 const router = express.Router();
 
 // Apply to become recruiter
 router.post(
   "/apply",
-  adminAuthenticate,
+  authenticate,
   upload.single("logo"),
   applyRecruiterController,
 );
+router.get("/my-application", authenticate, getMyApplicationController);
 router.get(
   "/",
   adminAuthenticate,

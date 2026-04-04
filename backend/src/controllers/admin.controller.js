@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
+import { User } from "../modules/auth/user.model.js";
 
 export const adminLoginController = async (req, res) => {
   try {
@@ -31,7 +31,7 @@ export const adminLoginController = async (req, res) => {
     const token = jwt.sign(
       { id: admin.id, role: admin.role },
       process.env.SECRET_KEY,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.cookie("admin_token", token, {
@@ -56,10 +56,9 @@ export const adminLoginController = async (req, res) => {
   }
 };
 
-
 export const adminMeController = async (req, res) => {
   const admin = await User.findById(req.user.id).select(
-    "_id email fullname role"
+    "_id email fullname role",
   );
 
   if (!admin) {
@@ -77,9 +76,6 @@ export const adminMeController = async (req, res) => {
   });
 };
 
-
-
-
 // Logout: clear cookie
 
 export const adminLogoutController = (req, res) => {
@@ -91,9 +87,6 @@ export const adminLogoutController = (req, res) => {
 
   res.status(200).json({ success: true });
 };
-
-
-
 
 // 1️⃣ Get all pending recruiters/companies
 export const getPendingUsers = async (req, res) => {

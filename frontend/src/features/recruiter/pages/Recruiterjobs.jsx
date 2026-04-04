@@ -1,23 +1,16 @@
 import React, { useState } from 'react'
-import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
-import { Card } from '@/shared/ui/card'
-import { Badge } from '@/shared/ui/badge'
-import { Edit, Trash2, Plus } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
+import { Briefcase, Edit, Trash2, Plus, SearchIcon, Users } from 'lucide-react'
 import { toast } from 'sonner'
 import { useDeleteRecruiterJobMutation, useGetRecruiterJobsQuery } from '../api/recruiterApi.js'
 
 const RecruiterJobs = () => {
     const [search, setSearch] = useState('')
-
     const { data, isLoading, isError, error } = useGetRecruiterJobsQuery()
-
     const [deleteJob, { isLoading: isDeleting }] = useDeleteRecruiterJobMutation()
 
     const jobs = data?.jobs || []
-
     const filteredJobs = jobs.filter((job) => job.title.toLowerCase().includes(search.toLowerCase()))
 
     const handleDelete = async (jobId) => {
@@ -30,102 +23,136 @@ const RecruiterJobs = () => {
     }
 
     if (isLoading) {
-        return <div className="p-6">Loading jobs...</div>
+        return (
+            <div className="max-w-5xl mx-auto my-10 px-4 space-y-6 animate-pulse">
+                <div className="h-24 rounded-2xl bg-muted border border-border" />
+                <div className="h-12 rounded-xl bg-muted border border-border" />
+                {[...Array(4)].map((_, i) => (
+                    <div
+                        key={i}
+                        className="h-16 rounded-2xl bg-muted border border-border"
+                    />
+                ))}
+            </div>
+        )
     }
 
     if (isError) {
-        return <div className="p-6 text-red-500">{error?.data?.message || 'Error loading jobs'}</div>
+        return (
+            <div className="min-h-[40vh] flex flex-col items-center justify-center gap-3 text-center px-4">
+                <span className="text-5xl">📋</span>
+                <h2 className="text-xl font-bold text-foreground">Failed to load jobs</h2>
+                <p className="text-sm text-muted-foreground">{error?.data?.message || 'Something went wrong'}</p>
+            </div>
+        )
     }
 
     return (
-        <div className="p-6 space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold">Manage Jobs</h1>
-
-                <Link to="/recruiter/jobs/create">
-                    <Button className="flex gap-2">
-                        <Plus size={18} /> Create Job
-                    </Button>
-                </Link>
+        <div className="max-w-5xl mx-auto my-10 px-4 space-y-8">
+            {/* ── Header ── */}
+            <div className="relative border border-border rounded-2xl bg-background shadow-sm overflow-hidden">
+                <div className="h-2 w-full bg-primary/20" />
+                <div className="px-6 py-5 flex items-center justify-between">
+                    <div className="space-y-1">
+                        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-[10px] font-semibold px-2.5 py-1 rounded-full border border-primary/20 mb-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                            Job listings
+                        </div>
+                        <h1 className="text-xl font-bold text-foreground leading-tight">Manage Jobs</h1>
+                        <p className="text-xs text-muted-foreground">
+                            {jobs.length} job{jobs.length !== 1 ? 's' : ''} posted
+                        </p>
+                    </div>
+                    <Link
+                        to="/recruiter/jobs/create"
+                        className="inline-flex items-center gap-2 bg-primary text-primary-foreground text-xs font-semibold px-4 py-2 rounded-xl hover:opacity-90 transition-opacity">
+                        <Plus className="w-3.5 h-3.5" />
+                        Post a job
+                    </Link>
+                </div>
             </div>
 
-            {/* Search */}
-            <Card className="p-4">
+            {/* ── Search ── */}
+            <div className="relative">
+                <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                     placeholder="Search job titles..."
-                    className="w-full md:w-1/3"
+                    className="pl-9 bg-background border-border rounded-xl"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
-            </Card>
+            </div>
 
-            {/* Table */}
-            <Card className="p-0">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Job Title</TableHead>
-                            <TableHead>Company</TableHead>
-                            <TableHead>Location</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Applicants</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
+            {/* ── Section divider ── */}
+            <div className="flex items-center gap-3">
+                <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase whitespace-nowrap">
+                    {filteredJobs.length} result{filteredJobs.length !== 1 ? 's' : ''}
+                </p>
+                <div className="flex-1 h-px bg-border" />
+            </div>
 
-                    <TableBody>
-                        {filteredJobs.map((job) => (
-                            <TableRow key={job._id}>
-                                <TableCell className="font-medium">{job.title}</TableCell>
-                                <TableCell>{job.company?.companyname}</TableCell>
-                                <TableCell>{job.location}</TableCell>
-                                <TableCell>
-                                    <Badge variant="secondary">{job.jobType}</Badge>
-                                </TableCell>
-                                <TableCell>
-                                    <Link to={`/recruiter/jobs/${job._id}/applications`}>
-                                        <Button
-                                            size="sm"
-                                            variant="outline">
-                                            View ({job.applications?.length || 0})
-                                        </Button>
-                                    </Link>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-3">
-                                        <Link to={`/recruiter/jobs/edit/${job._id}`}>
-                                            <Button
-                                                size="sm"
-                                                variant="outline">
-                                                <Edit size={16} />
-                                            </Button>
-                                        </Link>
+            {/* ── Jobs list ── */}
+            {filteredJobs.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-3 py-16 border border-border rounded-2xl bg-background">
+                    <div className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center">
+                        <Briefcase className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">No jobs found</p>
+                    <p className="text-xs text-muted-foreground">{search ? 'Try a different search term' : 'Post your first job to get started'}</p>
+                </div>
+            ) : (
+                <div className="border border-border rounded-2xl bg-background overflow-hidden shadow-sm">
+                    {filteredJobs.map((job, idx) => (
+                        <div
+                            key={job._id}
+                            className={`flex items-center gap-4 px-5 py-4 hover:bg-primary/5 transition-colors ${
+                                idx !== filteredJobs.length - 1 ? 'border-b border-border' : ''
+                            }`}>
+                            {/* Icon */}
+                            <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                                <Briefcase className="w-4 h-4 text-primary" />
+                            </div>
 
-                                        <Button
-                                            size="sm"
-                                            variant="destructive"
-                                            disabled={isDeleting}
-                                            onClick={() => handleDelete(job._id)}>
-                                            <Trash2 size={16} />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-foreground truncate">{job.title}</p>
+                                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                    <span className="text-xs text-muted-foreground">{job.company?.companyname}</span>
+                                    <span className="w-1 h-1 rounded-full bg-border" />
+                                    <span className="text-xs text-muted-foreground">{job.location}</span>
+                                    <span className="w-1 h-1 rounded-full bg-border" />
+                                    <span className="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                                        {job.jobType}
+                                    </span>
+                                </div>
+                            </div>
 
-                        {filteredJobs.length === 0 && (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={6}
-                                    className="text-center py-6">
-                                    No jobs found.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </Card>
+                            {/* Applicants */}
+                            <Link
+                                to={`/recruiter/jobs/${job._id}/applications`}
+                                className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary border border-border hover:border-primary/40 px-3 py-1.5 rounded-xl transition-colors">
+                                <Users className="w-3.5 h-3.5" />
+                                {job.applications?.length || 0} applicant{job.applications?.length !== 1 ? 's' : ''}
+                            </Link>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-2 shrink-0">
+                                <Link
+                                    to={`/recruiter/jobs/edit/${job._id}`}
+                                    className="w-8 h-8 rounded-xl border border-border flex items-center justify-center hover:border-primary/40 hover:bg-primary/5 transition-colors">
+                                    <Edit className="w-3.5 h-3.5 text-muted-foreground" />
+                                </Link>
+                                <button
+                                    disabled={isDeleting}
+                                    onClick={() => handleDelete(job._id)}
+                                    className="w-8 h-8 rounded-xl border border-red-500/20 flex items-center justify-center hover:bg-red-500/5 hover:border-red-500/40 transition-colors disabled:opacity-50">
+                                    <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

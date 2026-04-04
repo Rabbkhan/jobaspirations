@@ -1,109 +1,104 @@
 import React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card'
-import { Separator } from '@/shared/ui/separator'
+import { ScrollTextIcon } from 'lucide-react'
+
+const sections = [
+    {
+        title: '1. User Responsibilities',
+        list: [
+            'Provide accurate and up-to-date information',
+            'Maintain confidentiality of account credentials',
+            'Use the platform for lawful purposes only'
+        ]
+    },
+    {
+        title: '2. Recruiter Responsibilities',
+        list: ['Ensure job postings are genuine and accurate', 'Comply with applicable employment laws', 'Handle candidate data responsibly']
+    },
+    {
+        title: '3. Job Applications',
+        text: 'We are not responsible for hiring decisions, interview outcomes, or employment agreements made between users and recruiters.'
+    },
+    {
+        title: '4. Account Suspension',
+        text: 'We reserve the right to suspend or terminate accounts that violate these terms or engage in harmful activities.'
+    },
+    {
+        title: '5. Intellectual Property',
+        text: 'All content, branding, and intellectual property on this platform are owned by Job Aspirations and may not be used without permission.'
+    },
+    {
+        title: '6. Limitation of Liability',
+        text: 'Job Aspirations shall not be liable for any direct, indirect, or consequential damages arising from platform usage.'
+    },
+    {
+        title: '7. Changes to Terms',
+        text: 'We may update these terms at any time. Continued use of the platform indicates acceptance of the updated terms.'
+    }
+]
 
 const TermsAndConditions = () => {
     return (
-        <div className="min-h-screen bg-background py-12 px-4">
-            <div className="max-w-4xl mx-auto">
-                {/* Page Title */}
-                <div className="mb-8 text-center">
-                    <h1 className="text-4xl font-bold tracking-tight">Terms & Conditions</h1>
-                    <p className="mt-2 text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
+        <div className="min-h-screen bg-muted/40 py-12 px-4">
+            <div className="max-w-3xl mx-auto space-y-6">
+                {/* Page Header */}
+                <div className="text-center space-y-2 mb-10">
+                    <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-[10px] font-semibold px-3 py-1.5 rounded-full border border-primary/20">
+                        <ScrollTextIcon className="w-3 h-3" />
+                        Legal
+                    </div>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Terms & Conditions</h1>
+                    <p className="text-xs text-muted-foreground">Last updated: {new Date().toLocaleDateString()}</p>
                 </div>
 
-                <Card className="rounded-2xl shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-xl">Agreement to Use Our Platform</CardTitle>
-                    </CardHeader>
+                {/* Intro card */}
+                <div className="border border-border rounded-2xl bg-background shadow-sm overflow-hidden">
+                    <div className="px-6 py-4 border-b border-border bg-muted/40">
+                        <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase">Overview</p>
+                        <h2 className="text-sm font-semibold text-foreground mt-0.5">Agreement to Use Our Platform</h2>
+                    </div>
+                    <div className="px-6 py-5 text-sm text-muted-foreground leading-relaxed">
+                        By accessing or using <span className="font-semibold text-foreground">Job Aspirations</span>, you agree to be bound by these
+                        Terms & Conditions. If you do not agree, please do not use our platform.
+                    </div>
+                </div>
 
-                    <CardContent className="space-y-8 text-sm leading-relaxed text-muted-foreground">
-                        {/* Intro */}
-                        <p>
-                            By accessing or using <span className="font-medium text-foreground">Job Aspirations</span>, you agree to be bound by these
-                            Terms & Conditions. If you do not agree, please do not use our platform.
-                        </p>
+                {/* Sections */}
+                {sections.map((section, i) => (
+                    <div
+                        key={i}
+                        className="border border-border rounded-2xl bg-background shadow-sm overflow-hidden">
+                        <div className="px-6 py-4 border-b border-border bg-muted/40">
+                            <h2 className="text-sm font-semibold text-foreground">{section.title}</h2>
+                        </div>
+                        <div className="px-6 py-5 text-sm text-muted-foreground leading-relaxed">
+                            {section.list ? (
+                                <ul className="space-y-2">
+                                    {section.list.map((item, j) => (
+                                        <li
+                                            key={j}
+                                            className="flex items-start gap-2.5">
+                                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>{section.text}</p>
+                            )}
+                        </div>
+                    </div>
+                ))}
 
-                        <Separator />
-
-                        {/* Section 1 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">1. User Responsibilities</h2>
-                            <ul className="list-disc pl-6 space-y-1">
-                                <li>Provide accurate and up-to-date information</li>
-                                <li>Maintain confidentiality of account credentials</li>
-                                <li>Use the platform for lawful purposes only</li>
-                            </ul>
-                        </section>
-
-                        <Separator />
-
-                        {/* Section 2 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">2. Recruiter Responsibilities</h2>
-                            <ul className="list-disc pl-6 space-y-1">
-                                <li>Ensure job postings are genuine and accurate</li>
-                                <li>Comply with applicable employment laws</li>
-                                <li>Handle candidate data responsibly</li>
-                            </ul>
-                        </section>
-
-                        <Separator />
-
-                        {/* Section 3 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">3. Job Applications</h2>
-                            <p>
-                                We are not responsible for hiring decisions, interview outcomes, or employment agreements made between users and
-                                recruiters.
-                            </p>
-                        </section>
-
-                        <Separator />
-
-                        {/* Section 4 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">4. Account Suspension</h2>
-                            <p>We reserve the right to suspend or terminate accounts that violate these terms or engage in harmful activities.</p>
-                        </section>
-
-                        <Separator />
-
-                        {/* Section 5 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">5. Intellectual Property</h2>
-                            <p>
-                                All content, branding, and intellectual property on this platform are owned by Job Aspirations and may not be used
-                                without permission.
-                            </p>
-                        </section>
-
-                        <Separator />
-
-                        {/* Section 6 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">6. Limitation of Liability</h2>
-                            <p>Job Aspirations shall not be liable for any direct, indirect, or consequential damages arising from platform usage.</p>
-                        </section>
-
-                        <Separator />
-
-                        {/* Section 7 */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">7. Changes to Terms</h2>
-                            <p>We may update these terms at any time. Continued use of the platform indicates acceptance of the updated terms.</p>
-                        </section>
-
-                        <Separator />
-
-                        {/* Contact */}
-                        <section>
-                            <h2 className="text-lg font-semibold text-foreground mb-2">8. Contact Information</h2>
-                            <p>If you have any questions regarding these Terms & Conditions, contact us at:</p>
-                            <p className="mt-1 font-medium text-foreground">info@jobaspirations.in</p>
-                        </section>
-                    </CardContent>
-                </Card>
+                {/* Contact */}
+                <div className="border border-border rounded-2xl bg-background shadow-sm overflow-hidden">
+                    <div className="px-6 py-4 border-b border-border bg-muted/40">
+                        <h2 className="text-sm font-semibold text-foreground">8. Contact Information</h2>
+                    </div>
+                    <div className="px-6 py-5 text-sm text-muted-foreground leading-relaxed">
+                        If you have any questions regarding these Terms & Conditions, contact us at:
+                        <p className="mt-2 font-semibold text-primary">info@jobaspirations.in</p>
+                    </div>
+                </div>
             </div>
         </div>
     )
