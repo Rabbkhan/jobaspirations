@@ -79,7 +79,13 @@ const JobList = () => {
                 resetFilters={resetFilters}
             />
 
-            <div className="space-y-4 mt-4">
+            {/* Job count */}
+            {!isLoading && data?.total > 0 && <p className="text-sm text-muted-foreground mt-4">{data.total} jobs found</p>}
+
+            {/* No results */}
+            {!isLoading && jobs.length === 0 && <p className="text-center text-muted-foreground mt-10">No jobs found. Try adjusting your filters.</p>}
+
+            <div className="space-y-4 mt-2">
                 {jobs.map((job) => (
                     <JobCard
                         key={job._id}

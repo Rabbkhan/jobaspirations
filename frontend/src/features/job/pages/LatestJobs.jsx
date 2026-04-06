@@ -98,8 +98,8 @@ const LatestJobs = () => {
                                 <div className="flex items-start justify-between gap-3">
                                     <div className="flex items-center gap-3 min-w-0">
                                         <CompanyLogo
-                                            logo={job?.company?.logo}
-                                            name={job?.company?.companyname}
+                                            logo={job?.company?.companyname?.logo}
+                                            name={job?.company?.companyname?.companyname}
                                         />
                                         <div className="min-w-0">
                                             <p className="text-sm font-semibold text-foreground leading-tight truncate">
@@ -141,7 +141,7 @@ const LatestJobs = () => {
                                 <div className="flex flex-wrap gap-2">
                                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1.5">
                                         <MapPin className="w-3 h-3" />
-                                        {job?.location ?? 'Location N/A'}
+                                        {job?.company?.location ?? 'Location N/A'}
                                     </span>
                                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground bg-muted rounded-full px-3 py-1.5">
                                         <Briefcase className="w-3 h-3" />

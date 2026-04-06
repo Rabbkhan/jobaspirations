@@ -88,6 +88,10 @@ const jobSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    postedAt: {
+      type: Date,
+      default: Date.now,
+    },
     applications: [
       {
         type: mongoose.Schema.Types.ObjectId,

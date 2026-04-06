@@ -112,8 +112,9 @@ export const getAllJobs = async (query) => {
 
   const filter = {};
 
-  if (location) filter.location = location;
-  if (industry) filter.industry = industry;
+  if (location) filter.location = { $regex: location, $options: "i" };
+  if (industry) filter.industry = { $regex: industry, $options: "i" };
+  // if (jobTypes) filter.jobType = { $regex: jobType, $options: "i" };
 
   if (salary) {
     const [min, max] = salary.split("-").map(Number);
@@ -125,7 +126,7 @@ export const getAllJobs = async (query) => {
   }
 
   const jobs = await Job.find(filter)
-    .populate("company", "name location")
+    .populate("company", "companyname location")
     .populate("created_by", "fullname email")
     .sort({ createdAt: -1 })
     .skip(skip)
@@ -395,7 +396,7 @@ const upsertJob = async (apiJob, companyId) => {
 
 // ─── delete old external jobs ─────────────────────────────
 const deleteOldJobs = async () => {
-  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const thirtyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
   await Job.deleteMany({
     isExternal: true,
     createdAt: { $lt: thirtyDaysAgo },

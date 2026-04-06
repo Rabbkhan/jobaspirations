@@ -1,4 +1,5 @@
 export const ALLOWED_LOCATIONS = [
+  // existing
   "Bangalore",
   "Hyderabad",
   "Mumbai",
@@ -13,8 +14,30 @@ export const ALLOWED_LOCATIONS = [
   "Jaipur",
   "Indore",
   "Coimbatore",
-  "AndhraPradesh",
   "Remote",
+
+  // West Bengal
+  "Howrah",
+  "Hooghly",
+  "Kharagpur",
+  "Durgapur",
+  "Bardhaman",
+  "Haldia",
+
+  // States
+  "Assam",
+  "Andhra Pradesh",
+  "Bihar",
+  "Odisha",
+  "Bhubaneswar",
+  "Goa",
+  "Jharkhand",
+  "Pan India",
+
+  // New
+  "Nagpur",
+  "Kochi",
+  "Lucknow",
 ];
 
 export const ALLOWED_INDUSTRIES = [
