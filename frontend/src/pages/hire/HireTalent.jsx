@@ -135,7 +135,7 @@ export default function HireTalent() {
             return
         }
         if (user.role === 'recruiter') {
-            navigate('/recruiter/dashboard')
+            navigate('/recruiter')
             return
         }
         if (applicationStatus === 'pending') {

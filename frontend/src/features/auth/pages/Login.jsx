@@ -32,7 +32,6 @@ const Login = () => {
             const role = res.safeUser.role
             if (role === 'student') navigate('/profile')
             else if (role === 'recruiter') navigate('/recruiter')
-            else if (role === 'admin') navigate('/admin')
             else toast.error('Unauthorized role')
         } catch (error) {
             const msg = error?.data?.message || 'Login failed'

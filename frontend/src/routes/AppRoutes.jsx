@@ -14,9 +14,8 @@ import AdminLayout from '@/layouts/AdminLayout'
 import ProtectedRoute from '@/shared/routes/ProtectedRoute'
 import StudentRoute from '@/shared/routes/StudentRoute'
 import AdminRoute from '@/shared/routes/AdminRoute'
-import GuestOrStudentRoute from '@/shared/routes/GuestOrStudentRoute'
-import RecruiterRoute from '@/shared/routes/RecruiterRoute .jsx'
-
+import GuestOrStudentRoute from '@/shared/routes/GuestOrStudentRoute.jsx'
+import RecruiterRoute from '@/shared/routes/RecruiterRoute.jsx' // ✅ fixed typo
 /* =======================
    AUTH (Public / Pre-login)
 ======================= */
@@ -45,6 +44,7 @@ import Unauthorized from '@/pages/Unauthorized'
 import Profile from '@/features/profile/pages/ProfilePage'
 import AppliedJobs from '@/features/profile/pages/AppliedJobs'
 import CareerGuidance from '@/pages/static/CareerGuidance'
+import Savedjob from '@/features/job/pages/Savedjobs.jsx'
 
 /* =======================
    RECRUITER PAGES
@@ -58,6 +58,9 @@ import CompanyList from '@/features/company/pages/CompanyList'
 import CompanyDetails from '@/features/company/pages/CompanyDetails'
 import Companycreate from '@/features/company/pages/Companycreate'
 import CompanyEdit from '@/features/company/pages/CompanyEdit'
+import RecruiterOnboarding from '@/pages/recruiter/RecruiterOnboarding.jsx'
+import RecruiterPendingPage from '@/pages/recruiter/RecruiterPendingPage.jsx'
+import HireApply from '@/features/recruiter/pages/RecruiterApplyPage.jsx'
 
 /* =======================
    ADMIN PAGES
@@ -71,11 +74,7 @@ import Blogs from '@/features/blog/admin/Blogs'
 import BlogCategories from '@/features/blog/admin/Blogcategories'
 import BlogEditorPage from '@/features/blog/admin/BlogEditorPage'
 import Settings from '@/features/admin/pages/Settings'
-import Savedjob from '@/features/job/pages/Savedjobs.jsx'
-import HireApply from '@/features/recruiter/pages/RecruiterApplyPage.jsx'
 import PendingApproval from '@/pages/static/PendingApproval.jsx'
-import RecruiterOnboarding from '@/pages/recruiter/RecruiterOnboarding.jsx'
-import RecruiterPendingPage from '@/pages/recruiter/RecruiterPendingPage.jsx'
 
 const AppRoutes = () => {
     return (
@@ -114,7 +113,6 @@ const AppRoutes = () => {
                         </GuestOrStudentRoute>
                     }
                 />
-
                 <Route
                     path="/jobs"
                     element={
@@ -123,7 +121,6 @@ const AppRoutes = () => {
                         </GuestOrStudentRoute>
                     }
                 />
-
                 <Route
                     path="/jobs/:id"
                     element={
@@ -132,7 +129,6 @@ const AppRoutes = () => {
                         </GuestOrStudentRoute>
                     }
                 />
-
                 <Route
                     path="/profile"
                     element={
@@ -141,9 +137,15 @@ const AppRoutes = () => {
                         </StudentRoute>
                     }
                 />
+
+                {/* ✅ fixed — added StudentRoute guard */}
                 <Route
                     path="/profile/saved-jobs"
-                    element={<Savedjob />}
+                    element={
+                        <StudentRoute>
+                            <Savedjob />
+                        </StudentRoute>
+                    }
                 />
 
                 <Route
@@ -159,26 +161,27 @@ const AppRoutes = () => {
                     element={<HireTalent />}
                 />
 
-                {/* recruiter onboarding */}
+                {/* ✅ fixed — added StudentOrGuestRoute to block recruiters */}
                 <Route
                     path="/become-recruiter"
                     element={
                         <ProtectedRoute>
-                            <RecruiterOnboarding />
+                            <GuestOrStudentRoute>
+                                <RecruiterOnboarding />
+                            </GuestOrStudentRoute>
                         </ProtectedRoute>
                     }
                 />
-
                 <Route
                     path="/recruiter-pending"
                     element={
                         <ProtectedRoute>
-                            <RecruiterPendingPage />
+                            <GuestOrStudentRoute>
+                                <RecruiterPendingPage />
+                            </GuestOrStudentRoute>
                         </ProtectedRoute>
                     }
                 />
-
-                {/* ... other public/student routes */}
 
                 <Route
                     path="/blogs"
@@ -202,10 +205,12 @@ const AppRoutes = () => {
                 />
             </Route>
 
+            {/* ================= ADMIN LOGIN ================= */}
             <Route
                 path="/admin/login"
                 element={<AdminLogin />}
             />
+
             {/* ================= RECRUITER ================= */}
             <Route
                 path="/recruiter"
@@ -264,7 +269,6 @@ const AppRoutes = () => {
                             />
                         }
                     />
-
                     <Route
                         path="dashboard"
                         element={<AdminDashboardPage />}

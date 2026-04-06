@@ -1,20 +1,19 @@
+// src/shared/routes/GuestOrStudentRoute.jsx
 import { useSelector } from 'react-redux'
 import { Navigate } from 'react-router-dom'
 
 const GuestOrStudentRoute = ({ children }) => {
     const { user } = useSelector((state) => state.auth)
 
-    // If logged in AND recruiter/admin → block
-    if (user && user.role !== 'student') {
+    if (user?.role === 'recruiter') {
         return (
             <Navigate
-                to="/unauthorized"
+                to="/recruiter"
                 replace
             />
         )
     }
 
-    // Guest OR student → allowed
     return children
 }
 
