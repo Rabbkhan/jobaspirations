@@ -32,14 +32,15 @@ import cookieParser from "cookie-parser";
 
 // Routes
 import userRoutes from "./src/modules/auth/user.routes.js";
-import companyRoutes from "./src/routes/company.routes.js";
+import companyRoutes from "./src/modules/company/company.routes.js";
 import jobRoutes from "./src/modules/job/job.routes.js";
-import applicationRoutes from "./src/routes/application.routes.js";
-import dashboardRoutes from "./src/routes/dashboard.route.js";
-import adminblogRoutes from "./src/routes/admin.blog.routes.js";
-import BlogcategoryRoutes from "./src/routes/category.routes.js";
-import publicblogRoutes from "./src/routes/blog.routes.js";
-import RecruiterRoutes from "./src/routes/recruiter.route.js";
+import applicationRoutes from "./src/modules/application/application.routes.js";
+import dashboardRoutes from "./src/modules/dashboard/dashboard.routes.js";
+import adminblogRoutes from "./src/modules/blog/admin.blog.routes.js";
+import BlogcategoryRoutes from "./src/modules/blog-category/category.routes.js";
+import publicblogRoutes from "./src/modules/blog/blog.routes.js";
+import RecruiterRoutes from "./src/modules/recruiter/recruiter.routes.js";
+import JobsavedRoutes from "./src/modules/saved-jobs/savedjob.routes.js";
 
 // Infrastructure
 import connectDb from "./src/config/db.js";
@@ -137,6 +138,8 @@ app.get("/health", (req, res) => {
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/job", jobRoutes);
+app.use("/api/v1/job", JobsavedRoutes);
+
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
 app.use("/api/v1/adminblog", adminblogRoutes);

@@ -1,19 +1,19 @@
 // services/job.service.js
 import mongoose from "mongoose";
 import { Job } from "./job.model.js";
-import { Company } from "../../models/company.model.js";
-import { MESSAGES } from "../../constants/messages.js";
-import { STATUS } from "../../constants/statusCodes.js";
+import { Company } from "#modules/company/company.model.js";
+import { MESSAGES } from "#constants/messages.js";
+import { STATUS } from "#constants/statusCodes.js";
 import {
   ALLOWED_INDUSTRIES,
   ALLOWED_LOCATIONS,
   JOB_TYPES,
-} from "../../constants/job.constants.js";
+} from "#constants/job.constants.js";
 import axios from "axios";
 import { mapJSearchToCompany, mapJSearchToJob } from "./job.mapper.js";
-import { User } from "../auth/user.model.js";
-import { sendNewJobAlert } from "../../middlewares/Email.js";
-import { FRONTEND_URL } from "../../config/env.js";
+import { User } from "#modules/auth/user.model.js";
+import { sendNewJobAlert } from "#config/email/email.service.js";
+import { FRONTEND_URL } from "#config/env.js";
 
 // =============================
 // CREATE JOB

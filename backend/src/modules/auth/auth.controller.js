@@ -1,16 +1,15 @@
-import { MESSAGES } from "../../constants/messages.js";
-import { STATUS } from "../../constants/statusCodes.js";
+import { MESSAGES } from "#constants/messages.js";
+import { STATUS } from "#constants/statusCodes.js";
+import { validationResult } from "express-validator";
 import {
   forgotPasswordService,
   loginUser,
   registerUser,
   requestVerificationCodeService,
   resetPasswordService,
-} from "../../services/auth.service.js";
-import { validationResult } from "express-validator";
+  verifyEmailService,
+} from "./auth.service.js";
 import { getProfileService, updateProfile } from "./user.service.js";
-import { verifyEmailService } from "../../services/auth.service.js";
-
 // import crypto from "crypto";
 // import { User } from "../models/user.model.js";
 
