@@ -4,11 +4,6 @@ import { uploadToCloud } from "../utils/uploadToCloud.js";
 import { User } from "../modules/auth/user.model.js";
 import { sendRecruiterApprovedEmail } from "../middlewares/Email.js";
 
-const CLIENT_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_URL_LIVE
-    : process.env.FRONTEND_URL_LOCAL;
-
 export const applyRecruiter = async (userId, companyData, file) => {
   // Check if user already applied
   const existing = await RecruiterApplication.findOne({ userId });
@@ -69,7 +64,7 @@ export const approveRecruiter = async (applicationId) => {
 
   // Trigger 7 — notify recruiter they're approved
   await sendRecruiterApprovedEmail(user.email, user.fullname).catch((err) =>
-    console.error("Trigger 7 email failed:", err),
+    console.error("Trigger 7 email failed:", err)
   );
 
   return application;
@@ -105,8 +100,5 @@ export const rejectRecruiter = async (applicationId, reason = "") => {
 };
 
 export const getMyApplication = async (userId) => {
-  return await RecruiterApplication.findOne({ userId }).populate(
-    "companyId",
-    "companyname logo",
-  );
+  return await RecruiterApplication.findOne({ userId }).populate("companyId", "companyname logo");
 };

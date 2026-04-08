@@ -25,6 +25,7 @@ export default function Navbar() {
     const NAV_LINKS = [
         { to: '/', label: 'Home' },
         { to: '/jobs', label: 'Jobs' },
+        { to: '/reviews', label: 'Reviews' },
         { to: '/blogs', label: 'Blogs' }
     ]
 

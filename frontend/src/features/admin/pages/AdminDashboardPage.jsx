@@ -6,7 +6,8 @@ import { useAdminLogoutMutation } from '@/features/admin/api/adminAuthApi'
 import { baseApi } from '@/app/api/baseApi'
 import { toast } from 'sonner'
 import { useSelector } from 'react-redux'
-import { LogOutIcon, UsersIcon, ClockIcon, FileTextIcon, BriefcaseIcon, TrendingUpIcon, ActivityIcon, ShieldIcon } from 'lucide-react'
+import { LogOutIcon, UsersIcon, ClockIcon, FileTextIcon, BriefcaseIcon, TrendingUpIcon, ActivityIcon, ShieldIcon, StarIcon } from 'lucide-react'
+import { useGetAllReviewsAdminQuery, useGetReviewStatsQuery } from '@/features/review/api/reviewApi'
 
 const metrics = [
     { label: 'Total recruiters', value: '120', icon: UsersIcon, trend: '+12 this month' },
@@ -21,6 +22,10 @@ const AdminDashboardPage = () => {
     const { admin } = useSelector((state) => state.adminAuth)
 
     const [adminLogout] = useAdminLogoutMutation()
+    const { data: allReviewsData } = useGetAllReviewsAdminQuery('all')
+    const { data: reviewStatsData } = useGetReviewStatsQuery()
+    const totalReviews = allReviewsData?.reviews?.length || 0
+    const totalPlaced = reviewStatsData?.stats?.totalPlaced || 0
 
     const handleLogout = async () => {
         try {
@@ -57,6 +62,21 @@ const AdminDashboardPage = () => {
                         Logout
                     </button>
                 </div>
+            </div>
+
+            {/* ── Quick access: placement & reviews ── */}
+            <div className="border border-primary/20 rounded-2xl bg-primary/5 px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div>
+                    <p className="text-[10px] font-semibold text-primary tracking-widest uppercase">Placement & Reviews</p>
+                    <p className="text-sm font-semibold text-foreground mt-1">Manage placed students and review moderation</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Go to Reviews page to approve/reject and mark students as placed.</p>
+                </div>
+                <button
+                    onClick={() => navigate('/admin/reviews')}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-semibold hover:opacity-90 transition-opacity shrink-0">
+                    <StarIcon className="w-3.5 h-3.5" />
+                    Open Reviews Panel
+                </button>
             </div>
 
             {/* ── Metrics ── */}
@@ -137,6 +157,35 @@ const AdminDashboardPage = () => {
                         <ActivityIcon className="w-4 h-4 text-muted-foreground" />
                         <p className="text-xs text-muted-foreground">Connect your activity feed API to show live events</p>
                     </div>
+                </div>
+            </div>
+
+            {/* ── Reviews & Placement ── */}
+            <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                    <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase whitespace-nowrap">Reviews</p>
+                    <div className="flex-1 h-px bg-border" />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="border border-border rounded-2xl bg-background px-5 py-4 space-y-2">
+                        <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase">Total placed students</p>
+                        <p className="text-2xl font-extrabold text-foreground">{totalPlaced}</p>
+                    </div>
+                    <div className="border border-border rounded-2xl bg-background px-5 py-4 space-y-2">
+                        <p className="text-[10px] font-semibold text-muted-foreground tracking-widest uppercase">Reviews in system</p>
+                        <p className="text-2xl font-extrabold text-foreground">{totalReviews}</p>
+                    </div>
+                    <button
+                        onClick={() => navigate('/admin/reviews')}
+                        className="text-left border border-primary/20 rounded-2xl bg-primary/5 px-5 py-4 hover:bg-primary/10 transition-colors">
+                        <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-primary tracking-widest uppercase">
+                            <StarIcon className="w-3.5 h-3.5" />
+                            Review moderation
+                        </div>
+                        <p className="text-sm font-semibold text-foreground mt-2">Manage placement + reviews</p>
+                        <p className="text-xs text-muted-foreground mt-1">Approve, reject, and mark students as placed</p>
+                    </button>
                 </div>
             </div>
         </div>

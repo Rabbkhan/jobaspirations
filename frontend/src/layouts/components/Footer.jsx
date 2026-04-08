@@ -70,6 +70,13 @@ const Footer = () => {
                                     Find Jobs
                                 </Link>
                             </li>
+                            <li>
+                                <Link
+                                    to="/reviews"
+                                    className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                                    Student Reviews
+                                </Link>
+                            </li>
                             {/* {user?.role !== 'student' && ( */}
                             <li>
                                 <Link
@@ -141,6 +148,13 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="border-t border-border mt-10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2">
                     <p className="text-xs text-muted-foreground">&copy; {new Date().getFullYear()} Job Aspirations - All Rights Reserved.</p>
+                    <a
+                        href="https://rabbil.vercel.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] text-muted-foreground hover:text-primary transition-colors">
+                        Built & maintained by Rabbil Khan
+                    </a>
                     <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-[10px] font-semibold px-2.5 py-1 rounded-full border border-primary/20">
                         <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                         Actively placing candidates

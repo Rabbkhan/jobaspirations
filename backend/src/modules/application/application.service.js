@@ -41,7 +41,7 @@ export const applyForJob = async ({ jobId, userId }) => {
 
   if (missingFields.length > 0) {
     const err = new Error(
-      `Please complete your profile before applying. Missing: ${missingFields.join(", ")}`,
+      `Please complete your profile before applying. Missing: ${missingFields.join(", ")}`
     );
     err.status = STATUS.BAD_REQUEST;
     throw err;
@@ -72,7 +72,7 @@ export const applyForJob = async ({ jobId, userId }) => {
     user.fullname,
     job.title,
     job.company?.companyname || "",
-    new Date().toLocaleDateString("en-IN"),
+    new Date().toLocaleDateString("en-IN")
   ).catch((err) => console.error("Trigger 4 email failed:", err));
 
   // Trigger 5 — alert recruiter
@@ -82,7 +82,7 @@ export const applyForJob = async ({ jobId, userId }) => {
       job.created_by.fullname,
       user.fullname,
       job.title,
-      `${FRONTEND_URL}/recruiter/jobs/${job._id}/applications`,
+      `${FRONTEND_URL}/recruiter/jobs/${job._id}/applications`
     ).catch((err) => console.error("Trigger 5 email failed:", err));
   }
 
@@ -126,14 +126,21 @@ export const getMyApplications = async (userId, page = 1, limit = 10) => {
   };
 };
 
-export const updateApplicationStatus = async (appId, status) => {
+export const updateApplicationStatus = async (appId, status, recruiterId) => {
   if (!mongoose.Types.ObjectId.isValid(appId)) {
     throw { status: 400, message: "Invalid application ID" };
   }
 
-  const application = await Application.findById(appId);
+  const application = await Application.findById(appId).populate("job", "created_by");
   if (!application) {
     throw { status: 404, message: "Application not found" };
+  }
+
+  if (!application.job || application.job.created_by.toString() !== recruiterId.toString()) {
+    throw {
+      status: 403,
+      message: "You are not allowed to update this application",
+    };
   }
 
   application.status = status;

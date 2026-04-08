@@ -51,6 +51,18 @@ const userSchema = new mongoose.Schema(
       resumeOriginalName: String,
       profilePhoto: { type: String, default: "" },
     },
+    isPlaced: {
+      type: Boolean,
+      default: false,
+    },
+    placedAt: {
+      type: Date,
+      default: null,
+    },
+    hasReviewed: {
+      type: Boolean,
+      default: false,
+    },
 
     savedJobs: [
       {

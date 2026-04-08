@@ -12,14 +12,11 @@ import dotenv from "dotenv";
 import path from "path";
 
 // Decide environment BEFORE reading any env values
-const isProduction =
-  process.env.NODE_ENV === "production" || process.env.FORCE_PROD === "true";
+const isProduction = process.env.NODE_ENV === "production" || process.env.FORCE_PROD === "true";
 
 // Load correct env file
 dotenv.config({
-  path: isProduction
-    ? path.resolve("./.env.production")
-    : path.resolve("./.env.development"),
+  path: isProduction ? path.resolve("./.env.production") : path.resolve("./.env.development"),
 });
 
 /* ===========================
@@ -29,6 +26,8 @@ dotenv.config({
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 // Routes
 import userRoutes from "./src/modules/auth/user.routes.js";
@@ -41,12 +40,14 @@ import BlogcategoryRoutes from "./src/modules/blog-category/category.routes.js";
 import publicblogRoutes from "./src/modules/blog/blog.routes.js";
 import RecruiterRoutes from "./src/modules/recruiter/recruiter.routes.js";
 import JobsavedRoutes from "./src/modules/saved-jobs/savedjob.routes.js";
+import reviewRoutes from "./src/review/review.routes.js";
 
 // Infrastructure
 import connectDb from "./src/config/db.js";
 import { FRONTEND_URL, FRONTEND_ALLOWED_ORIGINS } from "./src/config/env.js";
 import { globalErrorHandler } from "./src/middlewares/error.middleware.js";
 import { initCronJobs } from "./src/config/cron.js";
+import { sanitizeRequest } from "#middlewares/sanitize.middleware.js";
 
 /* ===========================
    3. HARD ENV VALIDATION
@@ -64,10 +65,7 @@ if (!FRONTEND_URL) {
   process.exit(1);
 }
 
-if (
-  !Array.isArray(FRONTEND_ALLOWED_ORIGINS) ||
-  FRONTEND_ALLOWED_ORIGINS.length === 0
-) {
+if (!Array.isArray(FRONTEND_ALLOWED_ORIGINS) || FRONTEND_ALLOWED_ORIGINS.length === 0) {
   console.error("❌ FATAL: FRONTEND_ALLOWED_ORIGINS is empty");
   process.exit(1);
 }
@@ -108,16 +106,49 @@ app.use(
       return callback(null, false);
     },
     credentials: true,
-  }),
+  })
 );
 
 /* ===========================
    6. MIDDLEWARES
    =========================== */
 
-app.use(express.json({ limit: "10mb" })); // For JSON content
-app.use(express.urlencoded({ limit: "10mb", extended: true })); // For form submissions
+app.use(helmet());
+app.use(sanitizeRequest);
+app.use(express.json({ limit: "2mb" }));
+app.use(express.urlencoded({ limit: "2mb", extended: true }));
 app.use(cookieParser());
+// app.set('trust proxy', 1) // uncomment when Cloudflare added
+
+const csrfGuard = (req, res, next) => {
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
+  const hasSessionCookie = Boolean(req.cookies?.token || req.cookies?.admin_token);
+  if (!hasSessionCookie) return next();
+
+  const origin = req.headers.origin;
+  if (!origin || FRONTEND_ALLOWED_ORIGINS.includes(origin)) return next();
+
+  return res.status(403).json({
+    success: false,
+    message: "Blocked by origin policy",
+  });
+};
+app.use(csrfGuard);
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  message: { success: false, message: "Too many requests" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: { success: false, message: "Too many attempts" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 /* ===========================
    7. HEALTH CHECK (NGINX SAFE)
@@ -135,6 +166,16 @@ app.get("/health", (req, res) => {
    8. ROUTES
    =========================== */
 
+app.use("/api", globalLimiter); // global limit
+
+app.use("/api/v1/user/login", authLimiter); // auth limits
+app.use("/api/v1/user/register", authLimiter);
+app.use("/api/v1/user/forgot-password", authLimiter);
+app.use("/api/v1/user/reset-password", authLimiter);
+app.use("/api/v1/user/verifyemail", authLimiter);
+app.use("/api/v1/user/verifyemail/request", authLimiter);
+app.use("/api/v1/user/admin/login", authLimiter);
+
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/company", companyRoutes);
 app.use("/api/v1/job", jobRoutes);
@@ -146,6 +187,7 @@ app.use("/api/v1/adminblog", adminblogRoutes);
 app.use("/api/v1/blogcategory", BlogcategoryRoutes);
 app.use("/api/v1/blog", publicblogRoutes);
 app.use("/api/v1/recruiter-applications", RecruiterRoutes);
+app.use("/api/v1/reviews", reviewRoutes); // ADD THIS
 
 // Root sanity check
 app.get("/", (req, res) => {
@@ -188,7 +230,19 @@ startServer();
 // Crash fast — PM2 should restart
 process.on("unhandledRejection", (reason) => {
   console.error("❌ Unhandled Rejection:", reason);
-  process.exit(1);
+  const isProd = process.env.NODE_ENV === "production";
+  const timeoutName = reason?.error?.name || reason?.name;
+  const isTimeout = timeoutName === "TimeoutError";
+
+  // In development, avoid crashing on transient external timeouts.
+  if (!isProd && isTimeout) {
+    console.warn("⚠️ Ignoring transient timeout rejection in development");
+    return;
+  }
+
+  if (isProd) {
+    process.exit(1);
+  }
 });
 
 process.on("uncaughtException", (error) => {

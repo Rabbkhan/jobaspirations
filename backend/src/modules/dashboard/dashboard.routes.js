@@ -9,7 +9,7 @@ router.get(
   "/recruiter",
   authenticate,
   authorizeRoles("recruiter"),
-  getRecruiterDashboardController,
+  getRecruiterDashboardController
 );
 
 export default router;

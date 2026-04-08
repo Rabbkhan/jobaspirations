@@ -6,10 +6,7 @@ import { Job } from "../modules/job/job.model.js";
 import { STATUS } from "../constants/statusCodes.js";
 import { MESSAGES } from "../constants/messages.js";
 import { User } from "../modules/auth/user.model.js";
-import {
-  sendJobApplicationConfirmation,
-  sendNewApplicationAlert,
-} from "../middlewares/Email.js";
+import { sendJobApplicationConfirmation, sendNewApplicationAlert } from "../middlewares/Email.js";
 import { FRONTEND_URL } from "../config/env.js";
 
 // APPLY FOR A JOB
@@ -43,7 +40,7 @@ export const applyForJob = async ({ jobId, userId }) => {
 
   if (missingFields.length > 0) {
     const err = new Error(
-      `Please complete your profile before applying. Missing: ${missingFields.join(", ")}`,
+      `Please complete your profile before applying. Missing: ${missingFields.join(", ")}`
     );
     err.status = STATUS.BAD_REQUEST;
     throw err;
@@ -74,7 +71,7 @@ export const applyForJob = async ({ jobId, userId }) => {
     user.fullname,
     job.title,
     job.company?.companyname || "",
-    new Date().toLocaleDateString("en-IN"),
+    new Date().toLocaleDateString("en-IN")
   ).catch((err) => console.error("Trigger 4 email failed:", err));
 
   // Trigger 5 — alert recruiter
@@ -84,7 +81,7 @@ export const applyForJob = async ({ jobId, userId }) => {
       job.created_by.fullname,
       user.fullname,
       job.title,
-      `${FRONTEND_URL}/recruiter/jobs/${job._id}/applications`,
+      `${FRONTEND_URL}/recruiter/jobs/${job._id}/applications`
     ).catch((err) => console.error("Trigger 5 email failed:", err));
   }
 

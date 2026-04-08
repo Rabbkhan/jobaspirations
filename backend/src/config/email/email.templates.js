@@ -212,7 +212,7 @@ export const jobApplicationConfirmationTemplate = (
   candidateName,
   jobTitle,
   companyName,
-  appliedDate,
+  appliedDate
 ) => `
 <!DOCTYPE html>
 <html>
@@ -295,7 +295,7 @@ export const newApplicationAlertTemplate = (
   recruiterName,
   candidateName,
   jobTitle,
-  recruiterPanelUrl,
+  recruiterPanelUrl
 ) => `
 <!DOCTYPE html>
 <html>
@@ -375,7 +375,7 @@ export const newJobAlertTemplate = (
   companyName,
   location,
   jobType,
-  jobUrl,
+  jobUrl
 ) => `
 <!DOCTYPE html>
 <html>
@@ -517,6 +517,242 @@ export const recruiterApprovedTemplate = (recruiterName) => `
 
         </table>
         <p style="font-size:11px; color:#999; margin-top:10px;">© Job Aspirations — All Rights Reserved</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+// EMAIL 5: Student marked as placed → send to student
+export const placementCongratulationsTemplate = (studentName, writeReviewUrl) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Congratulations on Your Placement!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0; padding:0; background:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" style="padding:30px 10px;">
+        <table width="600" cellspacing="0" cellpadding="0" style="background:#ffffff; border-radius:8px; padding:25px;">
+
+          <tr>
+            <td align="center">
+              <h2 style="color:#333; margin-bottom:5px;">Congratulations! 🎉</h2>
+              <p style="color:#555; font-size:14px; margin-top:0;">
+                Hey <strong>${studentName || "Student"}</strong>,<br/>
+                We're thrilled to share that you've been marked as 
+                <strong>successfully placed</strong> by our team at 
+                <strong>Job Aspirations</strong>!
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:15px 0;">
+              <p style="font-size:14px; color:#555; line-height:1.6; text-align:center;">
+                Your hard work and dedication paid off. 
+                We're proud to have been part of your journey. 🌟
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:10px 0;">
+              <table width="100%" cellspacing="0" cellpadding="0" 
+                style="background:#f9fafb; border-radius:6px; padding:15px; text-align:center;">
+                <tr>
+                  <td style="font-size:14px; color:#555;">
+                    Your story can inspire other students just like you.<br/>
+                    <strong>Share your experience and help others trust their journey.</strong>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:15px 0;">
+              <a href="${writeReviewUrl}" target="_blank" rel="noopener noreferrer"
+                style="background:#007bff; color:white; padding:12px 24px;
+                text-decoration:none; border-radius:5px; display:inline-block; font-size:14px;">
+                Share Your Success Story ✨
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><hr style="border:none; border-top:1px solid #eee; margin-top:20px;"></td>
+          </tr>
+
+          <tr>
+            <td align="center">
+              <p style="font-size:12px; color:#999;">
+                Thank you for trusting Job Aspirations with your career journey.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <p style="font-size:11px; color:#999; margin-top:10px;">
+          © Job Aspirations — All Rights Reserved
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+// EMAIL 6: Admin approves review → send to student
+export const reviewApprovedTemplate = (studentName, reviewUrl) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Review is Live!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0; padding:0; background:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" style="padding:30px 10px;">
+        <table width="600" cellspacing="0" cellpadding="0" style="background:#ffffff; border-radius:8px; padding:25px;">
+
+          <tr>
+            <td align="center">
+              <h2 style="color:#333; margin-bottom:5px;">Your Review is Live! 🌟</h2>
+              <p style="color:#555; font-size:14px; margin-top:0;">
+                Hey <strong>${studentName || "Student"}</strong>,<br/>
+                Great news! Your review has been <strong>approved</strong> by our 
+                team and is now live on <strong>Job Aspirations</strong>.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:10px 0;">
+              <p style="font-size:14px; color:#555; line-height:1.6; text-align:center;">
+                Your story is now inspiring other students 
+                who are on their career journey. Thank you 
+                for taking the time to share your experience! 💙
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:15px 0;">
+              <a href="${reviewUrl}" target="_blank" rel="noopener noreferrer"
+                style="background:#28a745; color:white; padding:12px 24px;
+                text-decoration:none; border-radius:5px; display:inline-block; font-size:14px;">
+                View Your Review
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><hr style="border:none; border-top:1px solid #eee; margin-top:20px;"></td>
+          </tr>
+
+          <tr>
+            <td align="center">
+              <p style="font-size:12px; color:#999;">
+                Thank you for being part of the Job Aspirations community.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <p style="font-size:11px; color:#999; margin-top:10px;">
+          © Job Aspirations — All Rights Reserved
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+// EMAIL 7: Admin rejects review → send to student
+export const reviewRejectedTemplate = (studentName, reason, writeReviewUrl) => `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Review Update</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="margin:0; padding:0; background:#f4f6f8; font-family:Arial, Helvetica, sans-serif;">
+  <table width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" style="padding:30px 10px;">
+        <table width="600" cellspacing="0" cellpadding="0" style="background:#ffffff; border-radius:8px; padding:25px;">
+
+          <tr>
+            <td align="center">
+              <h2 style="color:#333; margin-bottom:5px;">Review Update</h2>
+              <p style="color:#555; font-size:14px; margin-top:0;">
+                Hey <strong>${studentName || "Student"}</strong>,<br/>
+                Thank you for submitting your review on 
+                <strong>Job Aspirations</strong>. Unfortunately, 
+                our team was unable to approve it at this time.
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:15px 0;">
+              <table width="100%" cellspacing="0" cellpadding="0" 
+                style="background:#fff3f3; border-radius:6px; padding:15px; border-left:4px solid #dc3545;">
+                <tr>
+                  <td style="font-size:14px; color:#555;">
+                    <strong>Reason:</strong><br/>
+                    ${reason || "Your review did not meet our community guidelines."}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:10px 0;">
+              <p style="font-size:14px; color:#555; line-height:1.6; text-align:center;">
+                Don't worry — you can edit your review and 
+                resubmit it for approval. We'd love to share 
+                your story with our community!
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding:15px 0;">
+              <a href="${writeReviewUrl}" target="_blank" rel="noopener noreferrer"
+                style="background:#007bff; color:white; padding:12px 24px;
+                text-decoration:none; border-radius:5px; display:inline-block; font-size:14px;">
+                Edit & Resubmit Review
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td><hr style="border:none; border-top:1px solid #eee; margin-top:20px;"></td>
+          </tr>
+
+          <tr>
+            <td align="center">
+              <p style="font-size:12px; color:#999;">
+                If you have any questions, feel free to contact our support team.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+        <p style="font-size:11px; color:#999; margin-top:10px;">
+          © Job Aspirations — All Rights Reserved
+        </p>
       </td>
     </tr>
   </table>

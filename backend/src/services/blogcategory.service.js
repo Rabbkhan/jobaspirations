@@ -30,9 +30,7 @@ export const deleteCategoryService = async (id) => {
   const blogCount = await Blog.countDocuments({ category: id });
 
   if (blogCount > 0) {
-    const err = new Error(
-      "Cannot delete category with existing blogs"
-    );
+    const err = new Error("Cannot delete category with existing blogs");
     err.status = 400;
     throw err;
   }

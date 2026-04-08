@@ -4,16 +4,14 @@ import { Job } from "./job.model.js";
 import { Company } from "#modules/company/company.model.js";
 import { MESSAGES } from "#constants/messages.js";
 import { STATUS } from "#constants/statusCodes.js";
-import {
-  ALLOWED_INDUSTRIES,
-  ALLOWED_LOCATIONS,
-  JOB_TYPES,
-} from "#constants/job.constants.js";
+import { ALLOWED_INDUSTRIES, ALLOWED_LOCATIONS, JOB_TYPES } from "#constants/job.constants.js";
 import axios from "axios";
 import { mapJSearchToCompany, mapJSearchToJob } from "./job.mapper.js";
 import { User } from "#modules/auth/user.model.js";
 import { sendNewJobAlert } from "#config/email/email.service.js";
 import { FRONTEND_URL } from "#config/env.js";
+
+const escapeRegex = (value = "") => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // =============================
 // CREATE JOB
@@ -53,14 +51,11 @@ export const createJob = async ({ data, userId }) => {
     throw err;
   }
 
-  if (!salary?.min || !salary?.max)
-    throw new Error("Salary min and max are required");
-  if (salary.max < salary.min)
-    throw new Error("Max salary must be greater than min salary");
+  if (!salary?.min || !salary?.max) throw new Error("Salary min and max are required");
+  if (salary.max < salary.min) throw new Error("Max salary must be greater than min salary");
   if (experience?.min === undefined || experience?.max === undefined)
     throw new Error("Experience min and max are required");
-  if (experience.max < experience.min)
-    throw new Error("Max experience must be >= min experience");
+  if (experience.max < experience.min) throw new Error("Max experience must be >= min experience");
 
   const job = await Job.create({
     ...data,
@@ -85,11 +80,9 @@ export const createJob = async ({ data, userId }) => {
           existingCompany.companyname,
           job.location,
           job.jobType,
-          `${FRONTEND_URL}/jobs/${job._id}`,
-        ).catch((err) =>
-          console.error(`Job alert failed for ${candidate.email}:`, err),
-        ),
-      ),
+          `${FRONTEND_URL}/jobs/${job._id}`
+        ).catch((err) => console.error(`Job alert failed for ${candidate.email}:`, err))
+      )
     );
   }
 
@@ -112,8 +105,14 @@ export const getAllJobs = async (query) => {
 
   const filter = {};
 
-  if (location) filter.location = { $regex: location, $options: "i" };
-  if (industry) filter.industry = { $regex: industry, $options: "i" };
+  if (location) {
+    const safeLocation = escapeRegex(location).slice(0, 100);
+    filter.location = { $regex: safeLocation, $options: "i" };
+  }
+  if (industry) {
+    const safeIndustry = escapeRegex(industry).slice(0, 100);
+    filter.industry = { $regex: safeIndustry, $options: "i" };
+  }
   // if (jobTypes) filter.jobType = { $regex: jobType, $options: "i" };
 
   if (salary) {
@@ -265,7 +264,7 @@ export const updateJob = async ({ jobId, data, userId }) => {
   const updatedJob = await Job.findByIdAndUpdate(
     jobId,
     { $set: data },
-    { new: true, runValidators: true },
+    { new: true, runValidators: true }
   );
 
   return {
@@ -297,9 +296,11 @@ export const getAdminJobs = async (userId) => {
 // Applied applicants details
 // =============================
 
-export const getJobApplicants = async (jobId) => {
+export const getJobApplicants = async (jobId, recruiterId) => {
   if (!mongoose.Types.ObjectId.isValid(jobId)) {
-    throw new Error("Invalid Job ID");
+    const err = new Error("Invalid Job ID");
+    err.status = STATUS.BAD_REQUEST;
+    throw err;
   }
 
   const job = await Job.findById(jobId).populate({
@@ -311,7 +312,15 @@ export const getJobApplicants = async (jobId) => {
   });
 
   if (!job) {
-    throw new Error("Job not found");
+    const err = new Error("Job not found");
+    err.status = STATUS.NOT_FOUND;
+    throw err;
+  }
+
+  if (!recruiterId || job.created_by.toString() !== recruiterId.toString()) {
+    const err = new Error("You are not allowed to access applicants for this job");
+    err.status = STATUS.FORBIDDEN;
+    throw err;
   }
 
   return {
@@ -380,7 +389,7 @@ const upsertCompany = async (apiJob) => {
   const company = await Company.findOneAndUpdate(
     { normalizedName: companyData.normalizedName },
     companyData,
-    { upsert: true, new: true },
+    { upsert: true, new: true }
   );
   return company;
 };
@@ -442,8 +451,7 @@ export const syncExternalJobs = async () => {
           // skip if no job id
           if (!apiJob.job_id) continue;
           if (!apiJob.job_title) continue;
-          if (!apiJob.job_description || apiJob.job_description.trim() === "")
-            continue;
+          if (!apiJob.job_description || apiJob.job_description.trim() === "") continue;
           if (!apiJob.employer_name) continue;
           // upsert company
           const company = await upsertCompany(apiJob);

@@ -21,28 +21,18 @@ router.post(
   upload.single("logo"),
   companyValidation, // Validate fields
 
-  createCompanyController,
+  createCompanyController
 );
 
 // ===============================
 // 📌 GET ALL COMPANIES
 // ===============================
-router.get(
-  "/",
-  authenticate,
-  authorizeRoles("recruiter"),
-  getAllCompaniesController,
-);
+router.get("/", authenticate, authorizeRoles("recruiter"), getAllCompaniesController);
 
 // ===============================
 // 📌 GET SINGLE COMPANY BY ID
 // ===============================
-router.get(
-  "/:id",
-  authenticate,
-  authorizeRoles("recruiter"),
-  getCompanyByIdController,
-);
+router.get("/:id", authenticate, authorizeRoles("recruiter"), getCompanyByIdController);
 
 // ===============================
 // 📌 UPDATE COMPANY (Only owner / recruiter)
@@ -54,17 +44,12 @@ router.put(
   upload.single("logo"),
 
   companyValidation, // optional: only if you want validation on update
-  updateCompanyController,
+  updateCompanyController
 );
 
 // ===============================
 // ❌ DELETE COMPANY (Only owner / recruiter)
 // ===============================
-router.delete(
-  "/:id/status",
-  authenticate,
-  authorizeRoles("recruiter"),
-  deleteCompanyController,
-);
+router.delete("/:id/status", authenticate, authorizeRoles("recruiter"), deleteCompanyController);
 
 export default router;

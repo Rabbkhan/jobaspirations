@@ -11,7 +11,8 @@ const NAV = [
             { to: '/admin/dashboard', icon: LayoutDashboardIcon, label: 'Dashboard' },
             { to: '/admin/recruiters', icon: UsersIcon, label: 'Recruiters' },
             { to: '/admin/jobs', icon: BriefcaseIcon, label: 'Jobs' },
-            { to: '/admin/users', icon: UsersIcon, label: 'Users' }
+            { to: '/admin/users', icon: UsersIcon, label: 'Users' },
+            { to: '/admin/reviews', icon: UsersIcon, label: 'Reviews' }
         ]
     },
     {

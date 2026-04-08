@@ -19,9 +19,7 @@ export const createJobController = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res
-        .status(STATUS.BAD_REQUEST)
-        .json({ success: false, errors: errors.array() });
+      return res.status(STATUS.BAD_REQUEST).json({ success: false, errors: errors.array() });
     }
     // if (req.body.jobType) {
     //   req.body.jobType =
@@ -41,9 +39,7 @@ export const createJobController = async (req, res) => {
 
     return res.status(STATUS.CREATED).json(result);
   } catch (error) {
-    return res
-      .status(error.status || 500)
-      .json({ success: false, message: error.message });
+    return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 
@@ -53,9 +49,9 @@ export const getAllJobsController = async (req, res) => {
     const result = await getAllJobs(req.query);
     return res.status(200).json(result);
   } catch (error) {
-    return res
-      .status(error.status || 500)
-      .json({ success: false, message: error.message });
+    console.error("GET ALL JOBS ERROR:", error); // ADD THIS
+
+    return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 
@@ -63,7 +59,7 @@ export const getJobFiltersController = async (req, res) => {
   try {
     const result = await getJobFilters();
     return res.status(200).json(result);
-  } catch (error) {
+  } catch {
     return res.status(500).json({
       success: false,
       message: "Failed to fetch job filters",
@@ -77,9 +73,7 @@ export const getJobByIdController = async (req, res) => {
     const result = await getJobById(req.params.id);
     return res.status(200).json(result);
   } catch (error) {
-    return res
-      .status(error.status || 500)
-      .json({ success: false, message: error.message });
+    return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 
@@ -94,9 +88,7 @@ export const updateJobController = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    return res
-      .status(error.status || 500)
-      .json({ success: false, message: error.message });
+    return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 
@@ -123,12 +115,13 @@ export const getAdminJobsController = async (req, res) => {
 export const getJobApplicantsController = async (req, res) => {
   try {
     const { jobId } = req.params;
+    const recruiterId = req.user?._id;
 
-    const result = await getJobApplicants(jobId);
+    const result = await getJobApplicants(jobId, recruiterId);
 
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({
+    res.status(error.status || 500).json({
       success: false,
       message: error.message,
     });
@@ -145,9 +138,7 @@ export const deleteJobController = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    return res
-      .status(error.status || 500)
-      .json({ success: false, message: error.message });
+    return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 

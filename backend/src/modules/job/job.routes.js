@@ -1,9 +1,5 @@
 import express from "express";
-import {
-  authenticate,
-  adminAuthenticate,
-  authorizeRoles,
-} from "#middlewares/index.js";
+import { authenticate, adminAuthenticate, authorizeRoles } from "#middlewares/index.js";
 import {
   createJobController,
   getAllJobsController,
@@ -20,7 +16,7 @@ import { createJobValidation, updateJobValidation } from "./jobValidation.js";
 
 const router = express.Router();
 
-router.post("/sync", triggerJobSync);
+router.post("/sync", adminAuthenticate, authorizeRoles("admin"), triggerJobSync);
 
 router.get("/filters", getJobFiltersController);
 router.get("/", getAllJobsController);
@@ -29,19 +25,14 @@ router.post(
   authenticate,
   authorizeRoles("recruiter"),
   createJobValidation,
-  createJobController,
+  createJobController
 );
-router.get(
-  "/getrecruiterJobs",
-  authenticate,
-  authorizeRoles("recruiter"),
-  getAdminJobsController,
-);
+router.get("/getrecruiterJobs", authenticate, authorizeRoles("recruiter"), getAdminJobsController);
 router.get(
   "/:jobId/applications",
   authenticate,
   authorizeRoles("recruiter"),
-  getJobApplicantsController,
+  getJobApplicantsController
 );
 router.get("/:id", getJobByIdController);
 router.put(
@@ -49,13 +40,8 @@ router.put(
   authenticate,
   authorizeRoles("recruiter"),
   updateJobValidation,
-  updateJobController,
+  updateJobController
 );
-router.delete(
-  "/:id",
-  authenticate,
-  authorizeRoles("recruiter"),
-  deleteJobController,
-);
+router.delete("/:id", authenticate, authorizeRoles("recruiter"), deleteJobController);
 
 export default router;

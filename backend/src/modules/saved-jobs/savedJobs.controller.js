@@ -1,8 +1,4 @@
-import {
-  getSavedJobsService,
-  saveJobService,
-  unsaveJobService,
-} from "./savedJob.service.js";
+import { getSavedJobsService, saveJobService, unsaveJobService } from "./savedJob.service.js";
 import { STATUS } from "#constants/statusCodes.js";
 
 export const getSavedJobsController = async (req, res) => {

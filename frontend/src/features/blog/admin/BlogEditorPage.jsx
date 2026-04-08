@@ -78,11 +78,18 @@ const BlogEditorPage = () => {
         }
         try {
             setSaving(true)
+            const formData = new FormData()
+            formData.append('title', form.title)
+            formData.append('content', form.content)
+            formData.append('category', form.category)
+            formData.append('published', String(form.published))
+            if (form.image) formData.append('image', form.image)
+
             if (isEditing) {
-                await updateBlog({ id: existingBlog._id, formData: form }).unwrap()
+                await updateBlog({ id: existingBlog._id, data: formData }).unwrap()
                 toast.success('Blog updated')
             } else {
-                await createBlog(form).unwrap()
+                await createBlog(formData).unwrap()
                 toast.success('Blog created')
             }
             navigate('/admin/blogs')

@@ -3,6 +3,9 @@ import jwt from "jsonwebtoken";
 import { STATUS } from "../constants/statusCodes.js";
 import { MESSAGES } from "../constants/messages.js";
 
+const JWT_ISSUER = process.env.JWT_ISSUER || "jobaspirations-api";
+const JWT_AUDIENCE = process.env.JWT_AUDIENCE || "jobaspirations-client";
+
 export const authenticate = (req, res, next) => {
   try {
     let token = req.cookies?.token;
@@ -20,7 +23,10 @@ export const authenticate = (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.SECRET_KEY, {
+      issuer: JWT_ISSUER,
+      audience: JWT_AUDIENCE,
+    });
 
     // ✅ SAFETY CHECK
     if (!decoded?.userId || !decoded?.role) {
@@ -53,5 +59,3 @@ export const authenticate = (req, res, next) => {
     });
   }
 };
-
-

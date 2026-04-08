@@ -19,7 +19,10 @@ export const createBlogController = async (req, res) => {
 };
 
 export const getAllBlogsController = async (req, res) => {
-  const blogs = await getAllBlogsService();
+  const blogs = await getAllBlogsService({
+    includeDrafts: true,
+    limit: 0,
+  });
   res.status(200).json(blogs);
 };
 

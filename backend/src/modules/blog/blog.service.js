@@ -26,7 +26,7 @@ export const createBlogService = async (data, userId, file) => {
     ADD_ATTR: ["target", "class", "style"],
   });
 
-  const slug = (data.title, { lower: true, strict: true }) + "-" + Date.now();
+  const slug = slugify(data.title, { lower: true, strict: true }) + "-" + Date.now();
 
   const blog = await Blog.create({
     title: data.title,
@@ -48,21 +48,26 @@ export const getAllBlogsService = async ({
   limit = 10,
   category,
   search,
+  includeDrafts = false,
 } = {}) => {
-  const query = { published: true };
+  const query = includeDrafts ? {} : { published: true };
 
   if (category) query.category = category;
   if (search) query.title = { $regex: search, $options: "i" };
 
-  const skip = (page - 1) * limit;
+  const shouldPaginate = Number.isFinite(Number(limit)) && Number(limit) > 0;
+  const pageNumber = Number(page) || 1;
+  const limitNumber = Number(limit) || 0;
+  const skip = shouldPaginate ? (pageNumber - 1) * limitNumber : 0;
 
-  const blogs = await Blog.find(query)
+  let blogsQuery = Blog.find(query)
     .populate("category", "name slug")
     .populate("author", "name fullname")
     .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit)
-    .lean();
+    .skip(skip);
+  if (shouldPaginate) blogsQuery = blogsQuery.limit(limitNumber);
+
+  const blogs = await blogsQuery.lean();
 
   const total = await Blog.countDocuments(query);
 
@@ -70,10 +75,10 @@ export const getAllBlogsService = async ({
     blogs,
     pagination: {
       total,
-      page,
-      pages: Math.ceil(total / limit),
-      hasNext: page * limit < total,
-      hasPrev: page > 1,
+      page: pageNumber,
+      pages: shouldPaginate ? Math.ceil(total / limitNumber) : 1,
+      hasNext: shouldPaginate ? pageNumber * limitNumber < total : false,
+      hasPrev: shouldPaginate ? pageNumber > 1 : false,
     },
   };
 };
@@ -82,9 +87,7 @@ export const getAllBlogsService = async ({
    GET SINGLE BLOG
 ========================= */
 export const getSingleBlogService = async (idOrSlug) => {
-  const query = mongoose.Types.ObjectId.isValid(idOrSlug)
-    ? { _id: idOrSlug }
-    : { slug: idOrSlug };
+  const query = mongoose.Types.ObjectId.isValid(idOrSlug) ? { _id: idOrSlug } : { slug: idOrSlug };
 
   const blog = await Blog.findOne(query)
     .populate("category", "name slug")
@@ -98,23 +101,20 @@ export const getSingleBlogService = async (idOrSlug) => {
    UPDATE BLOG
 ========================= */
 export const updateBlogService = async (blogId, data, file) => {
-  if (!mongoose.Types.ObjectId.isValid(blogId))
-    throw new Error("Invalid blog ID");
+  if (!mongoose.Types.ObjectId.isValid(blogId)) throw new Error("Invalid blog ID");
 
   const blog = await Blog.findById(blogId);
   if (!blog) throw new Error("Blog not found");
 
   if (file) {
-    if (blog.featuredImage?.public_id)
-      await deleteFromCloud(blog.featuredImage.public_id);
+    if (blog.featuredImage?.public_id) await deleteFromCloud(blog.featuredImage.public_id);
     const uploaded = await uploadToCloud(file, "image");
     blog.featuredImage = { url: uploaded.url, public_id: uploaded.public_id };
   }
 
   if (data.title) {
     blog.title = data.title;
-    blog.slug =
-      slugify(data.title, { lower: true, strict: true }) + "-" + Date.now();
+    blog.slug = slugify(data.title, { lower: true, strict: true }) + "-" + Date.now();
   }
 
   if (data.content) {
@@ -136,8 +136,7 @@ export const updateBlogService = async (blogId, data, file) => {
    DELETE BLOG
 ========================= */
 export const deleteBlogService = async (blogId) => {
-  if (!mongoose.Types.ObjectId.isValid(blogId))
-    throw { status: 400, message: "Invalid blog ID" };
+  if (!mongoose.Types.ObjectId.isValid(blogId)) throw { status: 400, message: "Invalid blog ID" };
 
   const blog = await Blog.findById(blogId);
   if (!blog) throw { status: 404, message: "Blog not found" };

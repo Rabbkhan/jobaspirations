@@ -118,6 +118,9 @@ export const login = async (req, res) => {
       email: user.email,
       phoneNumber: user.phoneNumber,
       role: user.role,
+      isPlaced: Boolean(user.isPlaced),
+      hasReviewed: Boolean(user.hasReviewed),
+      placedAt: user.placedAt || null,
       profile: user.profile,
     };
 
@@ -130,7 +133,7 @@ export const login = async (req, res) => {
     console.error("Login Error:", error.message);
     res.status(error.status || STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message: error.message || "Server error",
+      message: error.status === STATUS.UNAUTHORIZED ? "Invalid email or password" : "Server error",
     });
   }
 };

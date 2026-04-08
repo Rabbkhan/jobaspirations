@@ -37,11 +37,11 @@ const recruiterApplicationSchema = new mongoose.Schema(
 
     adminNotes: String,
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 // ✅ Export the model
 export const RecruiterApplication = mongoose.model(
   "RecruiterApplication",
-  recruiterApplicationSchema,
+  recruiterApplicationSchema
 );

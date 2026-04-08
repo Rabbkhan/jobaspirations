@@ -1,10 +1,5 @@
 import express from "express";
-import {
-  authenticate,
-  adminAuthenticate,
-  authorizeRoles,
-  upload,
-} from "#middlewares/index.js";
+import { authenticate, adminAuthenticate, authorizeRoles, upload } from "#middlewares/index.js";
 import {
   applyRecruiterController,
   approveRecruiterController,
@@ -15,30 +10,15 @@ import {
 
 const router = express.Router();
 
-router.post(
-  "/apply",
-  authenticate,
-  upload.single("logo"),
-  applyRecruiterController,
-);
+router.post("/apply", authenticate, upload.single("logo"), applyRecruiterController);
 router.get("/my-application", authenticate, getMyApplicationController);
-router.get(
-  "/",
-  adminAuthenticate,
-  authorizeRoles("admin"),
-  getRecruiterApplicationsController,
-);
+router.get("/", adminAuthenticate, authorizeRoles("admin"), getRecruiterApplicationsController);
 router.patch(
   "/approve/:id",
   adminAuthenticate,
   authorizeRoles("admin"),
-  approveRecruiterController,
+  approveRecruiterController
 );
-router.patch(
-  "/reject/:id",
-  adminAuthenticate,
-  authorizeRoles("admin"),
-  rejectRecruiterController,
-);
+router.patch("/reject/:id", adminAuthenticate, authorizeRoles("admin"), rejectRecruiterController);
 
 export default router;

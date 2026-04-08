@@ -1,4 +1,4 @@
-import Blog from '../models/blog.model.js'
+import Blog from "../models/blog.model.js";
 
 export const getPublicBlogBySlugService = async (slug) => {
   const blog = await Blog.findOne({
@@ -17,6 +17,3 @@ export const getPublicBlogBySlugService = async (slug) => {
 
   return blog;
 };
-
-
-

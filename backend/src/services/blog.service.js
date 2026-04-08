@@ -43,12 +43,7 @@ export const createBlogService = async (data, userId, file) => {
 /* =========================
    GET ALL BLOGS WITH PAGINATION
 ========================= */
-export const getAllBlogsService = async ({
-  page = 1,
-  limit = 10,
-  category,
-  search,
-} = {}) => {
+export const getAllBlogsService = async ({ page = 1, limit = 10, category, search } = {}) => {
   const query = { published: true };
 
   if (category) query.category = category;
@@ -82,9 +77,7 @@ export const getAllBlogsService = async ({
    GET SINGLE BLOG
 ========================= */
 export const getSingleBlogService = async (idOrSlug) => {
-  const query = mongoose.Types.ObjectId.isValid(idOrSlug)
-    ? { _id: idOrSlug }
-    : { slug: idOrSlug };
+  const query = mongoose.Types.ObjectId.isValid(idOrSlug) ? { _id: idOrSlug } : { slug: idOrSlug };
 
   const blog = await Blog.findOne(query)
     .populate("category", "name slug")
@@ -133,8 +126,7 @@ export const updateBlogService = async (blogId, data, file) => {
    DELETE BLOG
 ========================= */
 export const deleteBlogService = async (blogId) => {
-  if (!mongoose.Types.ObjectId.isValid(blogId))
-    throw { status: 400, message: "Invalid blog ID" };
+  if (!mongoose.Types.ObjectId.isValid(blogId)) throw { status: 400, message: "Invalid blog ID" };
 
   const blog = await Blog.findById(blogId);
   if (!blog) throw { status: 404, message: "Blog not found" };

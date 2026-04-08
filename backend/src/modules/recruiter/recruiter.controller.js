@@ -35,7 +35,7 @@ export const applyRecruiterController = async (req, res) => {
         description,
         linkedinProfile,
       },
-      file,
+      file
     );
 
     res.json({ success: true, application });

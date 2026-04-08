@@ -159,7 +159,7 @@ export const requestVerificationCodeService = async (email) => {
   };
 };
 
-export const loginUser = async ({ email, password, role }) => {
+export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) {
     const err = new Error("User not found");
@@ -208,10 +208,7 @@ export const forgotPasswordService = async (email) => {
 
   const resetToken = crypto.randomBytes(32).toString("hex");
 
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(resetToken)
-    .digest("hex");
+  const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
 
   user.passwordResetToken = hashedToken;
   user.passwordResetExpires = Date.now() + 15 * 60 * 1000;

@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs";
 
 const SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS, 10) || 12;
 
-
 export const hashPassword = async (plainPassword) => {
   if (!plainPassword || typeof plainPassword !== "string") {
     throw new Error("Invalid password input — must be a non-empty string.");

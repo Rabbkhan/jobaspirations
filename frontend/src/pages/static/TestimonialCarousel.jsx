@@ -1,7 +1,9 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
 import { QuoteIcon } from 'lucide-react'
+import { useGetApprovedReviewsQuery } from '@/features/review/api/reviewApi'
 
 const testimonials = [
     {
@@ -43,6 +45,15 @@ const testimonials = [
 ]
 
 const TestimonialCarousel = () => {
+    const { data: reviewsData } = useGetApprovedReviewsQuery({ page: 1, limit: 12 })
+
+    const reviewTestimonials = (reviewsData?.reviews || []).map((review) => ({
+        feedback: review.review,
+        tag: review.student?.fullname || 'Verified Student'
+    }))
+
+    const allTestimonials = [...reviewTestimonials, ...testimonials]
+
     return (
         <section className="py-20 bg-background border-y border-border">
             <div className="max-w-6xl mx-auto px-6">
@@ -58,7 +69,14 @@ const TestimonialCarousel = () => {
                             Early feedback from students who interacted with our career guidance team.
                         </p>
                     </div>
-                    <p className="text-[11px] text-muted-foreground shrink-0 self-end pb-1">{testimonials.length} reviews</p>
+                    <div className="flex items-center gap-3 shrink-0 self-end pb-1">
+                        <p className="text-[11px] text-muted-foreground">{allTestimonials.length} reviews</p>
+                        <Link
+                            to="/reviews"
+                            className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-semibold text-primary hover:bg-primary/10 transition-colors">
+                            See all reviews
+                        </Link>
+                    </div>
                 </div>
 
                 {/* Carousel */}
@@ -66,7 +84,7 @@ const TestimonialCarousel = () => {
                     opts={{ align: 'start', loop: true }}
                     plugins={[Autoplay({ delay: 4500 })]}>
                     <CarouselContent>
-                        {testimonials.map((t, idx) => (
+                        {allTestimonials.map((t, idx) => (
                             <CarouselItem
                                 key={idx}
                                 className="md:basis-1/2 lg:basis-1/3 pl-4">
@@ -99,6 +117,14 @@ const TestimonialCarousel = () => {
                         <CarouselNext className="static translate-y-0 w-8 h-8 rounded-full border border-border bg-background hover:bg-primary/10 hover:border-primary/40 transition-colors" />
                     </div>
                 </Carousel>
+
+                <div className="mt-6 flex justify-center sm:hidden">
+                    <Link
+                        to="/reviews"
+                        className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary hover:bg-primary/10 transition-colors">
+                        See all reviews
+                    </Link>
+                </div>
             </div>
         </section>
     )

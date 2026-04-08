@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useGetUserQuery } from '../api/profileApi'
 import ProfileForm from '../components/ProfileForm'
-import { Bookmark, Briefcase, User, Mail, Phone } from 'lucide-react'
+import { Bookmark, Briefcase, User, Mail, Phone, Star } from 'lucide-react'
 
 const ProfilePage = () => {
     const { data: user, isLoading } = useGetUserQuery()
@@ -46,7 +46,7 @@ const ProfilePage = () => {
                     <div className="flex-1 space-y-1">
                         <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-[10px] font-semibold px-2.5 py-1 rounded-full border border-primary/20 mb-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                            Active candidate
+                            {user?.isPlaced ? 'Placement Verified' : 'Active candidate'}
                         </div>
                         <h1 className="text-xl font-bold text-foreground leading-tight">{user.fullname}</h1>
                         <div className="flex flex-wrap items-center gap-3">
@@ -103,6 +103,18 @@ const ProfilePage = () => {
                     <div>
                         <p className="text-sm font-semibold text-foreground">Applied Jobs</p>
                         <p className="text-xs text-muted-foreground">Track your applications</p>
+                    </div>
+                </Link>
+
+                <Link
+                    to="/review/write"
+                    className="group flex items-center gap-4 p-5 border border-border rounded-2xl bg-background hover:border-primary/40 hover:bg-primary/5 transition-all shadow-sm sm:col-span-2">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                        <Star className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-semibold text-foreground">Write a Review</p>
+                        <p className="text-xs text-muted-foreground">Share your placement journey with other students</p>
                     </div>
                 </Link>
             </div>

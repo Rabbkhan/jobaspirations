@@ -1,8 +1,4 @@
-import {
-  applyForJob,
-  getMyApplications,
-  updateApplicationStatus,
-} from "./application.service.js";
+import { applyForJob, getMyApplications, updateApplicationStatus } from "./application.service.js";
 import { STATUS } from "#constants/statusCodes.js";
 
 // APPLY FOR JOB
@@ -15,9 +11,7 @@ export const applyForJobController = async (req, res) => {
 
     return res.status(STATUS.CREATED).json(result);
   } catch (error) {
-    return res
-      .status(error.status || 500)
-      .json({ success: false, message: error.message });
+    return res.status(error.status || 500).json({ success: false, message: error.message });
   }
 };
 
@@ -51,7 +45,7 @@ export const updateApplicationStatusController = async (req, res) => {
       });
     }
 
-    const result = await updateApplicationStatus(appId, status);
+    const result = await updateApplicationStatus(appId, status, req.user._id);
     return res.status(200).json(result);
   } catch (error) {
     console.error("STATUS UPDATE ERROR:", error);

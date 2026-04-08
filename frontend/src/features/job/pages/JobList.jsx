@@ -31,8 +31,14 @@ const JobList = () => {
 
     const jobs = data?.jobs || []
     const hasMore = data?.hasMore
+
+    const updateFilters = (nextFilters) => {
+        setPage(1)
+        setFilters((prev) => (typeof nextFilters === 'function' ? nextFilters(prev) : nextFilters))
+    }
+
     const resetFilters = () => {
-        setFilters(DEFAULT_FILTERS)
+        updateFilters(DEFAULT_FILTERS)
         setPage(1)
     }
 
@@ -69,13 +75,13 @@ const JobList = () => {
         <div className="max-w-6xl mx-auto px-4 py-6">
             <MobileFilterDrawer
                 filters={filters}
-                setFilters={setFilters}
+                setFilters={updateFilters}
                 resetFilters={resetFilters}
             />
 
             <HeaderFilterBar
                 filters={filters}
-                setFilters={setFilters}
+                setFilters={updateFilters}
                 resetFilters={resetFilters}
             />
 

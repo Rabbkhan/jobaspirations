@@ -6,9 +6,7 @@ export const getRecruiterDashboardStats = async (recruiterId) => {
   const totalJobs = await Job.countDocuments({ created_by: recruiterId });
 
   // ✅ 2. Get recruiter job IDs
-  const recruiterJobs = await Job.find({ created_by: recruiterId }).select(
-    "_id",
-  );
+  const recruiterJobs = await Job.find({ created_by: recruiterId }).select("_id");
   const jobIds = recruiterJobs.map((job) => job._id);
 
   // ✅ 3. Total Applicants

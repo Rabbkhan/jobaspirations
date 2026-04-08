@@ -29,7 +29,7 @@ export const adminAuthenticate = (req, res, next) => {
     };
 
     next();
-  } catch (err) {
+  } catch {
     return res.status(STATUS.UNAUTHORIZED).json({
       success: false,
       message: "Unauthorized",

@@ -1,9 +1,5 @@
 import express from "express";
-import {
-  adminAuthenticate,
-  authorizeRoles,
-  upload,
-} from "#middlewares/index.js";
+import { adminAuthenticate, authorizeRoles, upload } from "#middlewares/index.js";
 import {
   createBlogController,
   getAllBlogsController,

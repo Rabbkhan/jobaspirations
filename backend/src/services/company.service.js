@@ -44,13 +44,8 @@ export const createCompany = async (data, userId, file) => {
   };
 };
 
-
-
 export const getAllCompanies = async (userId) => {
-  const companies = await Company.find({ userId }).populate(
-    "userId",
-    "name email"
-  );
+  const companies = await Company.find({ userId }).populate("userId", "name email");
   return { success: true, companies };
 };
 
@@ -83,8 +78,6 @@ export const updateCompany = async (id, data, userId) => {
 
   return { success: true, message: MESSAGES.COMPANY_UPDATED, company };
 };
-
-
 
 export const deleteCompany = async (id, userId) => {
   const company = await Company.findById(id);

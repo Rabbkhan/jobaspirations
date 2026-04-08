@@ -8,23 +8,8 @@ import {
 
 const router = express.Router();
 
-router.get(
-  "/saved",
-  authenticate,
-  authorizeRoles("student"),
-  getSavedJobsController,
-);
-router.post(
-  "/save/:jobId",
-  authenticate,
-  authorizeRoles("student"),
-  saveJobController,
-);
-router.delete(
-  "/unsave/:jobId",
-  authenticate,
-  authorizeRoles("student"),
-  unsaveJobController,
-);
+router.get("/saved", authenticate, authorizeRoles("student"), getSavedJobsController);
+router.post("/save/:jobId", authenticate, authorizeRoles("student"), saveJobController);
+router.delete("/unsave/:jobId", authenticate, authorizeRoles("student"), unsaveJobController);
 
 export default router;

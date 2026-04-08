@@ -37,7 +37,7 @@ export const getBlogCategoriesController = async (req, res) => {
       success: true,
       categories,
     });
-  } catch (error) {
+  } catch {
     res.status(500).json({
       success: false,
       message: "Failed to fetch blog categories",
@@ -50,9 +50,7 @@ export const getRelatedBlogsController = async (req, res) => {
     const { slug } = req.params;
 
     // 1️⃣ Find the current blog by slug
-    const currentBlog = await blogModel
-      .findOne({ slug, published: true })
-      .lean();
+    const currentBlog = await blogModel.findOne({ slug, published: true }).lean();
     if (!currentBlog) {
       return res.status(404).json({
         success: false,
@@ -61,10 +59,7 @@ export const getRelatedBlogsController = async (req, res) => {
     }
 
     // 2️⃣ Fetch related blogs
-    const relatedBlogs = await getRelatedBlogsService(
-      currentBlog._id,
-      currentBlog.category,
-    );
+    const relatedBlogs = await getRelatedBlogsService(currentBlog._id, currentBlog.category);
 
     res.status(200).json({
       success: true,
@@ -91,9 +86,7 @@ export const getLatestBlogsController = async (req, res) => {
       .lean();
 
     res.status(200).json({ success: true, blogs: latestBlogs });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to fetch latest blogs" });
+  } catch {
+    res.status(500).json({ success: false, message: "Failed to fetch latest blogs" });
   }
 };

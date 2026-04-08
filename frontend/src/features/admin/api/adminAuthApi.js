@@ -19,8 +19,12 @@ export const adminAuthApi = baseApi.injectEndpoints({
                 url: '/user/admin/logout',
                 method: 'POST'
             })
+        }),
+
+        getAdminStudents: builder.query({
+            query: () => '/user/admin/students'
         })
     })
 })
 
-export const { useAdminLoginMutation, useAdminMeQuery, useAdminLogoutMutation } = adminAuthApi
+export const { useAdminLoginMutation, useAdminMeQuery, useAdminLogoutMutation, useGetAdminStudentsQuery } = adminAuthApi

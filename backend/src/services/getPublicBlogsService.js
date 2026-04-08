@@ -7,12 +7,7 @@ import { JSDOM } from "jsdom";
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
-export const getPublicBlogsService = async ({
-  page = 1,
-  limit = 10,
-  category,
-  search,
-} = {}) => {
+export const getPublicBlogsService = async ({ page = 1, limit = 10, category, search } = {}) => {
   // Build query for published blogs
   const query = { published: true };
 

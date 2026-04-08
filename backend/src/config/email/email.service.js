@@ -7,13 +7,13 @@ import {
   newApplicationAlertTemplate, // add this
   newJobAlertTemplate, // add this
   recruiterApprovedTemplate,
+  placementCongratulationsTemplate,
+  reviewApprovedTemplate,
+  reviewRejectedTemplate,
 } from "#config/email/email.templates.js";
+import { FRONTEND_URL } from "#config/env.js";
 
-export const sendVerificationCode = async (
-  email,
-  verificationCode,
-  userName,
-) => {
+export const sendVerificationCode = async (email, verificationCode, userName) => {
   try {
     const sender = getSenderInfo();
 
@@ -79,7 +79,7 @@ export const sendJobApplicationConfirmation = async (
   candidateName,
   jobTitle,
   companyName,
-  appliedDate,
+  appliedDate
 ) => {
   try {
     const sender = getSenderInfo();
@@ -88,12 +88,7 @@ export const sendJobApplicationConfirmation = async (
       to: email,
       subject: `Application Submitted for ${jobTitle} — Job Aspirations`,
       text: `Hi ${candidateName}, you have successfully applied for ${jobTitle} at ${companyName} on ${appliedDate}. Good luck!`,
-      html: jobApplicationConfirmationTemplate(
-        candidateName,
-        jobTitle,
-        companyName,
-        appliedDate,
-      ),
+      html: jobApplicationConfirmationTemplate(candidateName, jobTitle, companyName, appliedDate),
     });
     return true;
   } catch (error) {
@@ -117,7 +112,7 @@ export const sendNewApplicationAlert = async (
   recruiterName,
   candidateName,
   jobTitle,
-  recruiterPanelUrl,
+  recruiterPanelUrl
 ) => {
   try {
     const sender = getSenderInfo();
@@ -126,12 +121,7 @@ export const sendNewApplicationAlert = async (
       to: recruiterEmail,
       subject: `New Application Received for ${jobTitle} — Job Aspirations`,
       text: `Hello ${recruiterName}, ${candidateName} has applied for ${jobTitle}. Login to your recruiter panel to review their profile: ${recruiterPanelUrl}`,
-      html: newApplicationAlertTemplate(
-        recruiterName,
-        candidateName,
-        jobTitle,
-        recruiterPanelUrl,
-      ),
+      html: newApplicationAlertTemplate(recruiterName, candidateName, jobTitle, recruiterPanelUrl),
     });
     return true;
   } catch (error) {
@@ -162,7 +152,7 @@ export const sendNewJobAlert = async (
   companyName,
   location,
   jobType,
-  jobUrl,
+  jobUrl
 ) => {
   try {
     const sender = getSenderInfo();
@@ -171,14 +161,7 @@ export const sendNewJobAlert = async (
       to: email,
       subject: `New Job Alert: ${jobTitle} at ${companyName} — Job Aspirations`,
       text: `Hi ${candidateName}, a new job matching your profile has been posted: ${jobTitle} at ${companyName} in ${location}. Apply now: ${jobUrl}`,
-      html: newJobAlertTemplate(
-        candidateName,
-        jobTitle,
-        companyName,
-        location,
-        jobType,
-        jobUrl,
-      ),
+      html: newJobAlertTemplate(candidateName, jobTitle, companyName, location, jobType, jobUrl),
     });
     return true;
   } catch (error) {
@@ -204,6 +187,60 @@ export const sendRecruiterApprovedEmail = async (email, recruiterName) => {
     return true;
   } catch (error) {
     console.error("Failed to send recruiter approved email:", error);
+    return false;
+  }
+};
+
+// Trigger 8 — Student marked as placed
+export const sendPlacementEmail = async (email, studentName) => {
+  try {
+    const sender = getSenderInfo();
+    await transporter.sendMail({
+      from: `"${sender.name}" <${sender.email}>`,
+      to: email,
+      subject: "Congratulations on Your Placement! 🎉 — Job Aspirations",
+      text: `Congratulations ${studentName}! You have been marked as successfully placed. Share your story to inspire others.`,
+      html: placementCongratulationsTemplate(studentName, `${FRONTEND_URL}/review/write`),
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send placement email:", error);
+    return false;
+  }
+};
+
+// Trigger 9 — Admin approves review
+export const sendReviewApprovedEmail = async (email, studentName) => {
+  try {
+    const sender = getSenderInfo();
+    await transporter.sendMail({
+      from: `"${sender.name}" <${sender.email}>`,
+      to: email,
+      subject: "Your Review is Live! 🌟 — Job Aspirations",
+      text: `Hey ${studentName}, your review has been approved and is now live on Job Aspirations!`,
+      html: reviewApprovedTemplate(studentName, `${FRONTEND_URL}/reviews`),
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send review approved email:", error);
+    return false;
+  }
+};
+
+// Trigger 10 — Admin rejects review
+export const sendReviewRejectedEmail = async (email, studentName, reason) => {
+  try {
+    const sender = getSenderInfo();
+    await transporter.sendMail({
+      from: `"${sender.name}" <${sender.email}>`,
+      to: email,
+      subject: "Review Update — Job Aspirations",
+      text: `Hey ${studentName}, your review was not approved. Reason: ${reason}. You can edit and resubmit.`,
+      html: reviewRejectedTemplate(studentName, reason, `${FRONTEND_URL}/review/write`),
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to send review rejected email:", error);
     return false;
   }
 };

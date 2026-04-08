@@ -8,22 +8,14 @@ export const incrementBlogViewController = async (req, res) => {
     const cookieName = `viewed_${slug}`;
     if (req.cookies[cookieName]) {
       // User already viewed this blog, do not increment
-      return res
-        .status(200)
-        .json({ success: true, message: "Already counted" });
+      return res.status(200).json({ success: true, message: "Already counted" });
     }
 
     // Increment view
-    const blog = await blogModel.findOneAndUpdate(
-      { slug },
-      { $inc: { views: 1 } },
-      { new: true },
-    );
+    const blog = await blogModel.findOneAndUpdate({ slug }, { $inc: { views: 1 } }, { new: true });
 
     if (!blog) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Blog not found" });
+      return res.status(404).json({ success: false, message: "Blog not found" });
     }
 
     // Set a cookie valid for 1 day
@@ -36,8 +28,6 @@ export const incrementBlogViewController = async (req, res) => {
     res.status(200).json({ success: true, views: blog.views });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to increment views" });
+    res.status(500).json({ success: false, message: "Failed to increment views" });
   }
 };

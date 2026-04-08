@@ -48,7 +48,7 @@ export const verifyEmail = async (req, res) => {
       token: authToken,
       user: safeUser,
     });
-  } catch (error) {
+  } catch {
     res.status(500).json({
       success: false,
       message: "Email verification failed",

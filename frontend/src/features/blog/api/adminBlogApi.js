@@ -7,9 +7,14 @@ export const adminBlogApi = baseApi.injectEndpoints({
             providesTags: ['AdminBlogs']
         }),
 
+        getAdminBlogById: builder.query({
+            query: (id) => `/adminblog/${id}`,
+            providesTags: (result, error, id) => [{ type: 'AdminBlogs', id }]
+        }),
+
         createBlog: builder.mutation({
             query: (data) => ({
-                url: '/adminblog',
+                url: '/adminblog/create',
                 method: 'POST',
                 body: data
             }),

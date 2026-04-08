@@ -16,16 +16,11 @@ router.post(
   authenticate,
   authorizeRoles("student"),
   // requireEmailVerified,
-  applyForJobController,
+  applyForJobController
 );
 
 // Get my applications (STUDENT ONLY)
-router.get(
-  "/mine",
-  authenticate,
-  authorizeRoles("student"),
-  getMyApplicationsController,
-);
+router.get("/mine", authenticate, authorizeRoles("student"), getMyApplicationsController);
 
 /* ================= RECRUITER ONLY ================= */
 
@@ -34,7 +29,7 @@ router.put(
   "/:appId/status",
   authenticate,
   authorizeRoles("recruiter"),
-  updateApplicationStatusController,
+  updateApplicationStatusController
 );
 
 export default router;

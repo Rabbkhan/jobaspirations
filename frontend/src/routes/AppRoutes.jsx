@@ -15,9 +15,10 @@ import ProtectedRoute from '@/shared/routes/ProtectedRoute'
 import StudentRoute from '@/shared/routes/StudentRoute'
 import AdminRoute from '@/shared/routes/AdminRoute'
 import GuestOrStudentRoute from '@/shared/routes/GuestOrStudentRoute.jsx'
-import RecruiterRoute from '@/shared/routes/RecruiterRoute.jsx' // ✅ fixed typo
+import RecruiterRoute from '@/shared/routes/RecruiterRoute.jsx'
+
 /* =======================
-   AUTH (Public / Pre-login)
+   AUTH
 ======================= */
 import Login from '@/features/auth/pages/Login.jsx'
 import Register from '@/features/auth/pages/Register'
@@ -26,7 +27,7 @@ import ForgotPassword from '@/features/auth/pages/ForgotPassword'
 import ResetPassword from '@/features/auth/pages/ResetPassword'
 
 /* =======================
-   PUBLIC PAGES (No auth)
+   PUBLIC PAGES
 ======================= */
 import Home from '@/pages/home/Home'
 import JobList from '@/features/job/pages/JobList'
@@ -45,6 +46,14 @@ import Profile from '@/features/profile/pages/ProfilePage'
 import AppliedJobs from '@/features/profile/pages/AppliedJobs'
 import CareerGuidance from '@/pages/static/CareerGuidance'
 import Savedjob from '@/features/job/pages/Savedjobs.jsx'
+
+/* =======================
+   REVIEW PAGES
+   ReviewsPage  → pages/  (the public listing page)
+   ReviewWrite  → components/ (the write form)
+======================= */
+import ReviewsPage from '@/features/review/pages/ReviewsPage.jsx'
+import WriteReviewPage from '@/features/review/components/WriteReviewPage.jsx'
 
 /* =======================
    RECRUITER PAGES
@@ -75,6 +84,7 @@ import BlogCategories from '@/features/blog/admin/Blogcategories'
 import BlogEditorPage from '@/features/blog/admin/BlogEditorPage'
 import Settings from '@/features/admin/pages/Settings'
 import PendingApproval from '@/pages/static/PendingApproval.jsx'
+import AdminReviewsPage from '@/features/admin/pages/AdminReviewsPage' // ✅ new
 
 const AppRoutes = () => {
     return (
@@ -113,6 +123,9 @@ const AppRoutes = () => {
                         </GuestOrStudentRoute>
                     }
                 />
+
+                {/* ✅ /review — public listing, banner shows login prompt or write button based on auth state */}
+
                 <Route
                     path="/jobs"
                     element={
@@ -138,7 +151,24 @@ const AppRoutes = () => {
                     }
                 />
 
-                {/* ✅ fixed — added StudentRoute guard */}
+                <Route
+                    path="/reviews"
+                    element={
+                        <GuestOrStudentRoute>
+                            <ReviewsPage />
+                        </GuestOrStudentRoute>
+                    }
+                />
+
+                {/* ✅ /review/write — fixed: was missing leading slash & wrong path */}
+                <Route
+                    path="/review/write"
+                    element={
+                        <StudentRoute>
+                            <WriteReviewPage />
+                        </StudentRoute>
+                    }
+                />
                 <Route
                     path="/profile/saved-jobs"
                     element={
@@ -147,7 +177,6 @@ const AppRoutes = () => {
                         </StudentRoute>
                     }
                 />
-
                 <Route
                     path="/applied_jobs"
                     element={
@@ -160,8 +189,6 @@ const AppRoutes = () => {
                     path="/hire"
                     element={<HireTalent />}
                 />
-
-                {/* ✅ fixed — added StudentOrGuestRoute to block recruiters */}
                 <Route
                     path="/become-recruiter"
                     element={
@@ -182,7 +209,6 @@ const AppRoutes = () => {
                         </ProtectedRoute>
                     }
                 />
-
                 <Route
                     path="/blogs"
                     element={<BlogsPage />}
@@ -305,6 +331,11 @@ const AppRoutes = () => {
                         path="recruiters"
                         element={<RecruiterApprovalPage />}
                     />
+                    <Route
+                        path="reviews"
+                        element={<AdminReviewsPage />}
+                    />{' '}
+                    {/* ✅ new */}
                 </Route>
             </Route>
 

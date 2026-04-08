@@ -2,16 +2,13 @@
 const normalizeLocation = (apiJob) => {
   const city = apiJob.job_city?.toLowerCase().trim();
   const location = apiJob.job_location?.toLowerCase().trim();
-  const state = apiJob.job_state?.toLowerCase().trim();
-
   // use city first, fallback to job_location
   const src = city || location || "";
 
   if (!src || src === "india") return "Pan India";
 
   // existing cities
-  if (src.includes("bangalore") || src.includes("bengaluru"))
-    return "Bangalore";
+  if (src.includes("bangalore") || src.includes("bengaluru")) return "Bangalore";
   if (src.includes("hyderabad")) return "Hyderabad";
   if (src.includes("mumbai") || src.includes("bombay")) return "Mumbai";
   if (src.includes("delhi") || src.includes("new delhi")) return "Delhi";
@@ -33,12 +30,7 @@ const normalizeLocation = (apiJob) => {
   if (src.includes("remote")) return "Remote";
 
   // West Bengal
-  if (
-    src.includes("howrah") ||
-    src.includes("liluah") ||
-    src.includes("dankuni")
-  )
-    return "Howrah";
+  if (src.includes("howrah") || src.includes("liluah") || src.includes("dankuni")) return "Howrah";
   if (src.includes("hooghly")) return "Hooghly";
   if (src.includes("kharagpur")) return "Kharagpur";
   if (src.includes("durgapur")) return "Durgapur";
@@ -48,41 +40,23 @@ const normalizeLocation = (apiJob) => {
   // new cities from API
   if (src.includes("thane") || src.includes("navi mumbai")) return "Mumbai";
   if (src.includes("faridabad") || src.includes("haryana")) return "Gurgaon";
-  if (
-    src.includes("amritsar") ||
-    src.includes("ludhiana") ||
-    src.includes("punjab")
-  )
+  if (src.includes("amritsar") || src.includes("ludhiana") || src.includes("punjab"))
     return "Chandigarh";
   if (src.includes("nagpur")) return "Nagpur";
-  if (
-    src.includes("bhubaneswar") ||
-    src.includes("odisha") ||
-    src.includes("orissa")
-  )
+  if (src.includes("bhubaneswar") || src.includes("odisha") || src.includes("orissa"))
     return "Bhubaneswar";
   if (src.includes("goa")) return "Goa";
   if (src.includes("jharkhand") || src.includes("ranchi")) return "Jharkhand";
   if (src.includes("assam") || src.includes("guwahati")) return "Assam";
-  if (
-    src.includes("andhra") ||
-    src.includes("visakhapatnam") ||
-    src.includes("vijayawada")
-  )
+  if (src.includes("andhra") || src.includes("visakhapatnam") || src.includes("vijayawada"))
     return "Andhra Pradesh";
   if (src.includes("bihar") || src.includes("patna")) return "Bihar";
-  if (
-    src.includes("kochi") ||
-    src.includes("kerala") ||
-    src.includes("thiruvananthapuram")
-  )
+  if (src.includes("kochi") || src.includes("kerala") || src.includes("thiruvananthapuram"))
     return "Kochi";
-  if (src.includes("lucknow") || src.includes("uttar pradesh"))
-    return "Lucknow";
+  if (src.includes("lucknow") || src.includes("uttar pradesh")) return "Lucknow";
   if (src.includes("surat") || src.includes("gujarat")) return "Ahmedabad";
   if (src.includes("bhopal") || src.includes("madhya pradesh")) return "Indore";
-  if (src.includes("pan india") || src.includes("pan-india"))
-    return "Pan India";
+  if (src.includes("pan india") || src.includes("pan-india")) return "Pan India";
 
   return "Other";
 };
@@ -97,28 +71,17 @@ const mapIndustry = (companyType) => {
     type.includes("saas")
   )
     return "Software / IT Services";
-  if (type.includes("product") || type.includes("engineering"))
-    return "Product Engineering";
+  if (type.includes("product") || type.includes("engineering")) return "Product Engineering";
   if (type.includes("mechanical")) return "Mechanical Engineering";
   if (type.includes("electrical")) return "Electrical Engineering";
-  if (type.includes("automobile") || type.includes("automotive"))
-    return "Automobile / Automotive";
+  if (type.includes("automobile") || type.includes("automotive")) return "Automobile / Automotive";
   if (type.includes("civil") || type.includes("construction"))
     return "Civil & Construction Engineering";
-  if (
-    type.includes("health") ||
-    type.includes("pharma") ||
-    type.includes("medtech")
-  )
+  if (type.includes("health") || type.includes("pharma") || type.includes("medtech"))
     return "Healthcare / MedTech Engineering";
   if (type.includes("telecom")) return "Telecommunications";
-  if (type.includes("manufactur"))
-    return "Manufacturing / Industrial Engineering";
-  if (
-    type.includes("energy") ||
-    type.includes("power") ||
-    type.includes("solar")
-  )
+  if (type.includes("manufactur")) return "Manufacturing / Industrial Engineering";
+  if (type.includes("energy") || type.includes("power") || type.includes("solar"))
     return "Energy / Power / Renewable";
   return "Other";
 };
@@ -198,7 +161,7 @@ export const extractSkills = (apiJob) => {
   const qualifications = apiJob.job_highlights?.Qualifications ?? [];
   qualifications.forEach((q) => {
     const techWords = q.match(
-      /\b(React|Node|Python|Java|MongoDB|SQL|AWS|Docker|TypeScript|JavaScript|Express|NestJS|Redux|Git)\b/g,
+      /\b(React|Node|Python|Java|MongoDB|SQL|AWS|Docker|TypeScript|JavaScript|Express|NestJS|Redux|Git)\b/g
     );
     if (techWords) skills.push(...techWords);
   });
