@@ -68,7 +68,11 @@ const Users = () => {
                                         }`}>
                                         {student.isPlaced ? 'Placed' : 'Not placed'}
                                     </span>
-                                    {student.placedAt && <span className="text-[10px] text-muted-foreground">on {new Date(student.placedAt).toLocaleDateString('en-IN')}</span>}
+                                    {student.placedAt && (
+                                        <span className="text-[10px] text-muted-foreground">
+                                            on {new Date(student.placedAt).toLocaleDateString('en-IN')}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
 

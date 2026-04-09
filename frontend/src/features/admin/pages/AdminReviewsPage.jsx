@@ -271,7 +271,9 @@ const AdminReviewsPage = () => {
                                     </div>
 
                                     {/* Date */}
-                                    <p className="text-[11px] text-muted-foreground shrink-0">{new Date(review.createdAt).toLocaleDateString('en-IN')}</p>
+                                    <p className="text-[11px] text-muted-foreground shrink-0">
+                                        {new Date(review.createdAt).toLocaleDateString('en-IN')}
+                                    </p>
                                 </div>
 
                                 {/* Star rating */}
