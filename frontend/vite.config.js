@@ -66,17 +66,17 @@ export default defineConfig(({ mode }) => {
                         }
                     ]
                 }
-            }),
-            isProd &&
-                // sentryVitePlugin({
-                //     org: 'jobaspirations',
-                //     project: 'javascript-react',
-                //     telemetry: false,
-                //     authToken: process.env.SENTRY_TOKEN,
-                //     sourcemaps: {
-                //         filesToDeleteAfterUpload: 'dist/assets/**/*.map'
-                //     }
-                // })
+            })
+            // isProd &&
+            //     sentryVitePlugin({
+            //         org: 'jobaspirations',
+            //         project: 'javascript-react',
+            //         telemetry: false,
+            //         authToken: process.env.SENTRY_TOKEN,
+            //         sourcemaps: {
+            //             filesToDeleteAfterUpload: 'dist/assets/**/*.map'
+            //         }
+            //     })
         ],
 
         test: {
