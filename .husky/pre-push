@@ -2,15 +2,14 @@ echo "Running pre-push checks..."
 
 cd frontend || exit 1
 npm run lint:eslint:ci || exit 1
-npm run format:check || exit 1
 cd - >/dev/null || exit 1
 
 cd backend || exit 1
 npm run lint || exit 1
+npm run format:check || exit 1
 cd - >/dev/null || exit 1
 
 echo "Pre-push checks passed."
-
 
 
 echo "Running pre-push checks..."
