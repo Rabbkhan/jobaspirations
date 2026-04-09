@@ -3,15 +3,15 @@ import path from 'path'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, loadEnv } from 'vite'
-import { sentryVitePlugin } from '@sentry/vite-plugin'
+// import { sentryVitePlugin } from '@sentry/vite-plugin'
 import { VitePWA } from 'vite-plugin-pwa' // ← add this import
 
 export default defineConfig(({ mode }) => {
     Object.assign(process.env, loadEnv(mode, process.cwd(), ''))
     const isProd = mode === 'production'
-    if (mode === 'production' && !process.env.SENTRY_TOKEN) {
-        throw new Error('Missing SENTRY_TOKEN for production build')
-    }
+    // if (mode === 'production' && !process.env.SENTRY_TOKEN) {
+    //     throw new Error('Missing SENTRY_TOKEN for production build')
+    // }
     const env = loadEnv(mode, process.cwd(), 'VITE_')
     return {
         plugins: [
@@ -68,15 +68,15 @@ export default defineConfig(({ mode }) => {
                 }
             }),
             isProd &&
-                sentryVitePlugin({
-                    org: 'jobaspirations',
-                    project: 'javascript-react',
-                    telemetry: false,
-                    authToken: process.env.SENTRY_TOKEN,
-                    sourcemaps: {
-                        filesToDeleteAfterUpload: 'dist/assets/**/*.map'
-                    }
-                })
+                // sentryVitePlugin({
+                //     org: 'jobaspirations',
+                //     project: 'javascript-react',
+                //     telemetry: false,
+                //     authToken: process.env.SENTRY_TOKEN,
+                //     sourcemaps: {
+                //         filesToDeleteAfterUpload: 'dist/assets/**/*.map'
+                //     }
+                // })
         ],
 
         test: {
