@@ -1,5 +1,3 @@
-
-
 frontend_staged_files=$(git diff --cached --name-only --diff-filter=ACMR | grep "^frontend/")
 if [ -n "$frontend_staged_files" ]; then
   cd frontend || exit 1
