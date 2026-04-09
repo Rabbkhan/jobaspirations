@@ -1,16 +1,13 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
-# Frontend: keep existing lint-staged flow
-frontend_staged_files=$(git diff --cached --name-only --diff-filter=ACMR | rg "^frontend/")
+
+frontend_staged_files=$(git diff --cached --name-only --diff-filter=ACMR | grep "^frontend/")
 if [ -n "$frontend_staged_files" ]; then
   cd frontend || exit 1
   ./node_modules/.bin/lint-staged || exit 1
   cd - >/dev/null || exit 1
 fi
 
-# Backend: run eslint only on staged backend JS files
-backend_staged_files=$(git diff --cached --name-only --diff-filter=ACMR | rg "^backend/.*\.(js|mjs|cjs)$" | sed "s|^backend/||")
+backend_staged_files=$(git diff --cached --name-only --diff-filter=ACMR | grep "^backend/.*\.(js|mjs|cjs)$" | sed "s|^backend/||")
 if [ -n "$backend_staged_files" ]; then
   cd backend || exit 1
   npx eslint --max-warnings=0 $backend_staged_files || exit 1

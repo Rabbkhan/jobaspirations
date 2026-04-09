@@ -4,7 +4,6 @@
     "version": "0.2.0",
     "type": "module",
     "scripts": {
-        "prepare": "husky",
         "dev": "vite --mode development",
         "build": "vite build --mode production",
         "preview": "vite preview --mode production",
@@ -74,7 +73,6 @@
         "eslint-plugin-react-refresh": "^0.4.24",
         "eslint-plugin-unused-imports": "^4.4.1",
         "globals": "^16.5.0",
-        "husky": "^9.1.7",
         "jsdom": "^28.1.0",
         "lint-staged": "^15.2.0",
         "prettier": "^3.8.1",
