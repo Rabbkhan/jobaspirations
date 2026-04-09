@@ -12,7 +12,9 @@
         "test:coverage": "vitest run --coverage --mode test",
         "lint:eslint": "eslint .",
         "lint:eslint:ci": "eslint . --max-warnings=0",
-        "lint:fix": "eslint . --fix"
+        "lint:fix": "eslint . --fix",
+        "format:check": "prettier --check .",
+        "format:fix": "prettier --write ."
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",

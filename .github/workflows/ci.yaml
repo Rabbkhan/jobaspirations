@@ -69,3 +69,7 @@ jobs:
       - name: Run backend eslint
         working-directory: backend
         run: npm run lint
+
+      - name: Run backend prettier check
+        working-directory: backend
+        run: npm run format:check
