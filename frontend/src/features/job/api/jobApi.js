@@ -90,6 +90,14 @@ export const jobApi = baseApi.injectEndpoints({
             invalidatesTags: ['SavedJobs', 'Jobs']
         }),
 
+        triggerJobSync: builder.mutation({
+            query: () => ({
+                url: '/job/sync',
+                method: 'POST'
+            }),
+            invalidatesTags: ['Jobs']
+        }),
+
         unsaveJob: builder.mutation({
             query: (jobId) => ({
                 url: `/job/unsave/${jobId}`,
@@ -123,5 +131,6 @@ export const {
     useGetAppliedJobsQuery,
     useGetSavedJobsQuery,
     useSaveJobMutation,
-    useUnsaveJobMutation
+    useUnsaveJobMutation,
+    useTriggerJobSyncMutation
 } = jobApi

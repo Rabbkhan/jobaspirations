@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboardIcon, UsersIcon, BriefcaseIcon, FileTextIcon, SettingsIcon, FolderIcon, ShieldIcon } from 'lucide-react'
+import { LayoutDashboardIcon, UsersIcon, BriefcaseIcon, FileTextIcon, SettingsIcon, FolderIcon, ShieldIcon, RefreshCwIcon } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import LogoLight from '@/assets/images/jobaspirations_logo.svg'
 import LogoDark from '@/assets/images/logo-dark.svg'
+import { useTriggerJobSyncMutation } from '@/features/job/api/jobApi.js'
+import { toast } from 'sonner'
 
 const NAV = [
     {
@@ -30,6 +32,17 @@ const NAV = [
 
 const Sidebar = () => {
     const { admin, loading } = useSelector((state) => state.adminAuth)
+
+    const [triggerSync, { isLoading: isSyncing }] = useTriggerJobSyncMutation()
+
+    const handleSync = async () => {
+        try {
+            const result = await triggerSync().unwrap()
+            toast.success(`Sync done! Saved: ${result.data.totalSaved}, Failed: ${result.data.totalFailed}`)
+        } catch {
+            toast.error('Job sync failed')
+        }
+    }
 
     return (
         <aside className="w-64 shrink-0 h-screen sticky top-0 flex flex-col border-r border-border bg-background overflow-y-auto">
@@ -99,7 +112,15 @@ const Sidebar = () => {
                     </div>
                 ))}
             </nav>
-
+            <div className="px-4 py-3 border-t border-border">
+                <button
+                    onClick={handleSync}
+                    disabled={isSyncing}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent hover:border-border transition-colors disabled:opacity-50">
+                    <RefreshCwIcon className={`w-4 h-4 shrink-0 ${isSyncing ? 'animate-spin' : ''}`} />
+                    {isSyncing ? 'Syncing jobs...' : 'Sync external jobs'}
+                </button>
+            </div>
             {/* ── Footer ── */}
             <div className="px-4 py-3 border-t border-border">
                 <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} JobAspirations</p>
